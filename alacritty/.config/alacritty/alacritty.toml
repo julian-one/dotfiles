@@ -1,0 +1,38 @@
+import = ["~/.config/alacritty/catppuccin-mocha.toml"]
+
+[shell]
+program = "/bin/bash"
+args = ["-l"]
+
+[env]
+TERM = "xterm-256color"
+
+[cursor]
+style = "Beam"
+
+[font]
+normal = { family = "Hack Nerd Font" }
+bold = { family = "Hack Nerd Font" }
+italic = { family = "Hack Nerd Font" }
+bold_italic = { family = "Hack Nerd Font" }
+size = 16.0
+offset = { x = 0, y = 0 }
+glyph_offset = { x = 0, y = 0 }
+
+[window]
+dimensions = { columns = 120, lines = 40 }
+position = { x = 640, y = 320 }
+padding = { x = 20, y = 20 }
+decorations = "Buttonless"
+opacity = 0.9
+blur = true
+option_as_alt = "Both"
+
+
+[selection]
+semantic_escape_chars = ".,:;!#$%^&*()[]{}\"'`"
+
+[scrolling]
+history = 10000
+multiplier = 3
+
