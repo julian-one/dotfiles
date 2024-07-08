@@ -9,7 +9,7 @@ esac
 # Path to the bash it configuration
 export BASH_IT="/Users/julian-one/.bash_it"
 
-export BASH_IT_THEME='minimal'
+export BASH_IT_THEME='pure'
 
 export GIT_HOSTING='git@git.domain.com'
 
