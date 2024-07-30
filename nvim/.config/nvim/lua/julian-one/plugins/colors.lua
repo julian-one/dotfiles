@@ -1,3 +1,10 @@
+function ColorMyPencils(color)
+  color = color or 'catppuccin' -- default to catppuccin if no color is specified
+  vim.cmd.colorscheme(color)
+  vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
+  vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
+end
+
 return {
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -56,8 +63,7 @@ return {
         },
       }
 
-      -- setup must be called before loading
-      vim.cmd.colorscheme 'catppuccin'
+      ColorMyPencils()
     end,
   },
 }
