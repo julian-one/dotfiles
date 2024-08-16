@@ -49,3 +49,7 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 vim.opt.signcolumn = 'yes'
+
+-- spell checking
+vim.opt.spelllang = 'en_us'
+vim.opt.spell = true
