@@ -70,7 +70,7 @@ return {
           filetypes = { 'templ' },
         },
         html = {
-          filetypes = { 'html', 'htmx' },
+          filetypes = { 'html', 'htmx', 'templ'},
         },
         lua_ls = {
           settings = {
