@@ -16,10 +16,16 @@ return {
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
+      local actions = require 'telescope.actions'
       require('telescope').setup {
         defaults = {
           file_ignore_patterns = { '.git', 'node_modules' },
           path_display = { 'truncate' },
+          mappings = {
+            i = {
+              ['<C-q>'] = actions.send_to_qflist + actions.open_qflist,
+            },
+          },
         },
         extensions = {
           ['ui-select'] = {
