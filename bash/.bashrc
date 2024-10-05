@@ -1,6 +1,7 @@
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
-eval "$(/usr/local/bin/brew shellenv)"
+# eval "$(/usr/local/bin/brew shellenv)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 export PATH=$PATH:/usr/local/bin
 export PATH=$PATH:/Users/julian-one/Downloads/templ_Darwin_x86_64

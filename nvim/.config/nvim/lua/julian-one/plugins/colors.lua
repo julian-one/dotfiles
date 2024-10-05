@@ -1,68 +1,38 @@
 function ColorMyPencils(color)
-  color = color or 'catppuccin' -- default to catppuccin if no color is specified
+  color = color or 'vscode' -- default to vscode if no color is specified
   vim.cmd.colorscheme(color)
   vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
   vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
 end
 
 return {
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'catppuccin/nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+  { -- Use vscode.nvim colorscheme
+    'Mofiqul/vscode.nvim',
+    priority = 1000, -- Make sure to load this before all other start plugins.
     config = function()
-      require('catppuccin').setup {
-        flavour = 'auto', -- latte, frappe, macchiato, mocha
-        background = { -- :h background
-          light = 'latte',
-          dark = 'mocha',
+      require('vscode').setup {
+        -- Enable transparent background
+        transparent = false,
+
+        -- Enable italic comment
+        italic_comments = true,
+
+        -- Disable nvim-tree background color
+        disable_nvimtree_bg = true,
+
+        -- Override colors (vscode theme colors)
+        color_overrides = {
+          vscLineNumber = '#FFFFFF',
         },
-        transparent_background = false, -- disables setting the background color.
-        show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
-        term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
-        dim_inactive = {
-          enabled = false, -- dims the background color of inactive window
-          shade = 'dark',
-          percentage = 0.15, -- percentage of the shade to apply to the inactive window
-        },
-        no_italic = false, -- Force no italic
-        no_bold = false, -- Force no bold
-        no_underline = false, -- Force no underline
-        styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
-          comments = { 'italic' }, -- Change the style of comments
-          conditionals = { 'italic' },
-          loops = {},
-          functions = {},
-          keywords = {},
-          strings = {},
-          variables = {},
-          numbers = {},
-          booleans = {},
-          properties = {},
-          types = {},
-          operators = {},
-          -- miscs = {}, -- Uncomment to turn off hard-coded styles
-        },
-        color_overrides = {},
-        custom_highlights = {},
-        default_integrations = true,
-        integrations = {
-          cmp = true,
-          gitsigns = true,
-          nvimtree = true,
-          treesitter = true,
-          notify = false,
-          mini = {
-            enabled = true,
-            indentscope_color = '',
-          },
-          -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+
+        -- Override highlight groups (see :h highlight-args)
+        group_overrides = {
+          -- this supports the same val table as vim.api.nvim_set_hl
+          Cursor = { fg = '#FFFFFF', bg = '#FF0000', bold = true },
         },
       }
 
+      -- Load the color scheme
       ColorMyPencils()
     end,
   },

@@ -64,13 +64,13 @@ return {
 
       local servers = {
         gopls = {},
-        tsserver = {},
+        ts_ls = {},
         tailwindcss = {},
         templ = {
           filetypes = { 'templ' },
         },
         html = {
-          filetypes = { 'html', 'htmx', 'templ'},
+          filetypes = { 'html', 'htmx', 'templ' },
         },
         lua_ls = {
           settings = {
