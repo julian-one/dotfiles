@@ -19,7 +19,7 @@ vim.opt.smartindent = true -- Automatically indent new lines.
 vim.opt.wrap = false
 vim.opt.showmode = false
 
-vim.opt.clipboard = 'unnamedplus'
+-- vim.opt.clipboard = 'unnamedplus'
 
 vim.opt.breakindent = true
 

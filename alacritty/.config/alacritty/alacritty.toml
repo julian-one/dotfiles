@@ -1,4 +1,4 @@
-import = ["~/.config/alacritty/catppuccin-mocha.toml"]
+import = ["~/.config/alacritty/vscode-colors.toml"]
 
 [shell]
 program = "/bin/bash"
@@ -8,25 +8,36 @@ args = ["-l"]
 TERM = "xterm-256color"
 
 [cursor]
-style = "Beam"
+style = { shape = "Beam", blinking = "On" } # Beam cursor with blinking enabled
+vi_mode_style = { shape = "Block", blinking = "Always" } # Block cursor with always blinking in vi mode
+blink_interval = 500    # Set the blinking interval to 500ms (faster blinking)
+blink_timeout = 0       # Cursor will never stop blinking
+unfocused_hollow = true # Hollow box cursor when unfocused
+thickness = 0.2         # Slightly thicker cursor
+
 
 [font]
-normal = { family = "Hack Nerd Font" }
-bold = { family = "Hack Nerd Font" }
-italic = { family = "Hack Nerd Font" }
-bold_italic = { family = "Hack Nerd Font" }
+normal = { family = "Hack Nerd Font", style = "Regular" }
+bold = { family = "Hack Nerd Font", style = "Bold" }
+italic = { family = "Hack Nerd Font", style = "Italic" }
+bold_italic = { family = "Hack Nerd Font", style = "Bold Italic" }
+
 size = 16.0
 offset = { x = 0, y = 0 }
 glyph_offset = { x = 0, y = 0 }
+builtin_box_drawing = true
+
+
 
 [window]
-dimensions = { columns = 120, lines = 40 }
-position = { x = 640, y = 320 }
+dimensions = { columns = 150, lines = 50 }
+position = { x = 100, y = 100 }
 padding = { x = 20, y = 20 }
 decorations = "Buttonless"
-opacity = 0.9
+opacity = 0.85
 blur = true
 option_as_alt = "Both"
+decorations_theme_variant = "Dark"
 
 
 [selection]
