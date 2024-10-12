@@ -1,4 +1,4 @@
-import = ["~/.config/alacritty/vscode-colors.toml"]
+import = ["~/.config/alacritty/colors.toml"]
 
 [shell]
 program = "/bin/bash"

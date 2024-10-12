@@ -1,55 +1,64 @@
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
+-- General options
 vim.g.have_nerd_font = true
 vim.opt.termguicolors = true
 vim.opt.updatetime = 50
+vim.opt.mouse = 'a'
 
+-- Line numbering
 vim.opt.number = true
 vim.opt.relativenumber = true
 
-vim.opt.mouse = 'a'
+-- Indentation
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
+vim.opt.smartindent = true
 
-vim.opt.tabstop = 4 -- Number of spaces that a <Tab> in the file counts for.
-vim.opt.softtabstop = 4 -- Number of spaces that a <Tab> counts for while performing editing operations.
-vim.opt.shiftwidth = 4 -- Number of spaces to use for each step of (auto)indent.
-vim.opt.expandtab = true -- Convert tabs to spaces.
-vim.opt.smartindent = true -- Automatically indent new lines.
-
+-- UI settings
+vim.opt.signcolumn = 'yes'
 vim.opt.wrap = false
 vim.opt.showmode = false
-
--- vim.opt.clipboard = 'unnamedplus'
-
 vim.opt.breakindent = true
+vim.opt.cursorline = true
+vim.opt.scrolloff = 10
 
-vim.opt.swapfile = false -- Disable swap file creation.
-vim.opt.backup = false -- Disable backup file creation.
-vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir' -- Set the directory for undo files.
-vim.opt.undofile = true -- Enable persistent undo.
-
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-
--- Configure how new splits should be opened
+-- Splits
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
--- Sets how neovim will display certain whitespace characters in the editor.
+-- Search
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
+
+-- Undo and backups
+vim.opt.swapfile = false
+vim.opt.backup = false
+vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
+vim.opt.undofile = true
+
+-- Display options
+vim.opt.ruler = false
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
-
--- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
 
--- Show which line your cursor is on
-vim.opt.cursorline = true
-
--- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
-
-vim.opt.signcolumn = 'yes'
-
--- spell checking
+-- Spell checking
 vim.opt.spelllang = 'en_us'
 vim.opt.spell = true
+
+-- Completion menu
+vim.opt.completeopt = { 'menuone', 'noselect' }
+vim.opt.pumheight = 10
+vim.opt.pumblend = 10
+
+-- Tabline
+vim.opt.showtabline = 1
+
+-- GUI cursor
+vim.opt.guicursor = ''
+
+-- LSP
+vim.opt.autoread = false
