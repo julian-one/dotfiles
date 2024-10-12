@@ -20,11 +20,43 @@ return {
       require('telescope').setup {
         defaults = {
           file_ignore_patterns = { '.git', 'node_modules' },
+          vimgrep_arguments = {
+            'rg',
+            '--color=never',
+            '--no-heading',
+            '--with-filename',
+            '--line-number',
+            '--column',
+            '--smart-case',
+            '--hidden',
+            '--glob',
+            '!.git/**', -- Exclude `.git` directory
+          },
           path_display = { 'truncate' },
           mappings = {
             i = {
               ['<C-q>'] = actions.send_to_qflist + actions.open_qflist,
             },
+          },
+        },
+        pickers = {
+          find_files = {
+            theme = 'dropdown',
+          },
+          live_grep = {
+            theme = 'dropdown',
+          },
+          grep_string = {
+            theme = 'dropdown',
+          },
+          buffers = {
+            theme = 'dropdown',
+          },
+          help_tags = {
+            theme = 'dropdown',
+          },
+          oldfiles = {
+            theme = 'dropdown',
           },
         },
         extensions = {
