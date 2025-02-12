@@ -1,11 +1,13 @@
-export BASH_SILENCE_DEPRECATION_WARNING=1
+# ~/.bashrc: executed by bash(1) for non-login shells.
 
-# eval "$(/usr/local/bin/brew shellenv)"
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
-export PATH=$PATH:/usr/local/bin
-export PATH=$PATH:/Users/julian-one/Downloads/templ_Darwin_x86_64
-export PATH=$PATH:$(go env GOPATH)/bin
+# Enable command history
+HISTSIZE=1000
+HISTFILESIZE=2000
 
-alias templ='/Users/julian-one/Downloads/templ_Darwin_x86_64/templ'
-alias vim='nvim'
+# Add local bin to PATH
+export PATH="$HOME/bin:$PATH"
+
+alias code='nvim'

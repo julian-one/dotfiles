@@ -1,3 +1,4 @@
+-- cmp.lua
 return {
   {
     'hrsh7th/cmp-nvim-lsp',
@@ -5,12 +6,12 @@ return {
   {
     'hrsh7th/nvim-cmp',
     dependencies = {
-      'hrsh7th/cmp-buffer', -- source for text in buffer
-      'hrsh7th/cmp-path', -- source for file system paths
-      'L3MON4D3/LuaSnip', -- snippet engine
-      'saadparwaiz1/cmp_luasnip', -- for autocompletion
+      'hrsh7th/cmp-buffer',           -- source for text in buffer
+      'hrsh7th/cmp-path',             -- source for file system paths
+      'L3MON4D3/LuaSnip',             -- snippet engine
+      'saadparwaiz1/cmp_luasnip',     -- for autocompletion
       'rafamadriz/friendly-snippets', -- useful snippets
-      'onsails/lspkind.nvim', -- vs-code like pictograms
+      'onsails/lspkind.nvim',         -- vs-code like pictograms
     },
     config = function()
       local cmp = require 'cmp'
@@ -25,7 +26,10 @@ return {
             luasnip.lsp_expand(args.body)
           end,
         },
-        completion = { completeopt = 'menu,menuone,preview,noselect' },
+        completion = {
+          completeopt = 'menu,menuone,noselect',
+          preselect = cmp.PreselectMode.None,
+        },
 
         mapping = cmp.mapping.preset.insert {
           ['<C-n>'] = cmp.mapping.select_next_item(),
@@ -45,34 +49,31 @@ return {
             end
           end, { 'i', 's' }),
         },
-        sources = {
-          { name = 'copilot' },
+        sources = cmp.config.sources({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'buffer' },
           { name = 'path' },
-        },
+        }),
         experimental = {
-          ghost_text = false,
+          ghost_text = false, -- Disable ghost text
         },
         window = {
-          width = 50,
-          height = 15,
-          border = { '', '', '-', '|', '+', '+', '+', '+' },
           completion = cmp.config.window.bordered(),
           documentation = cmp.config.window.bordered(),
         },
         formatting = {
-          fields = { 'kind', 'abbr', 'menu' },
           expandable_indicator = true,
+          fields = { 'kind', 'abbr', 'menu' },
           format = lspkind.cmp_format {
-            with_text = true,
+            mode = 'symbol_text',
+            maxwidth = 50,
+            ellipsis_char = '...',
             menu = {
               nvim_lsp = '[LSP]',
               buffer = '[Buffer]',
               luasnip = '[Snippet]',
               path = '[Path]',
-              copilot = '[Copilot]',
             },
           },
         },

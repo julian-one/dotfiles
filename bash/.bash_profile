@@ -1,31 +1,16 @@
-#!/usr/bin/env bash
+# ~/.bash_profile: executed for login shells.
 
-# If not running interactively, don't do anything
-case $- in
-  *i*) ;;
-    *) return;;
-esac
-
-# Path to the bash it configuration
-export BASH_IT="/Users/julian-one/.bash_it"
-
-export BASH_IT_THEME='Easy'
-
-export GIT_HOSTING='git@git.domain.com'
-
-# Don't check mail when opening terminal.
-unset MAILCHECK
-
-# Change this to your console based IRC client of choice.
-export IRC_CLIENT='irssi'
-
-# Set this to false to turn off version control status checking within the prompt for all themes
-export SCM_CHECK=true
-
-# Load Bash It
-source "$BASH_IT"/bash_it.sh
-
-# Load .bashrc
+# Load .bashrc if it exists
 if [ -f ~/.bashrc ]; then
-  source ~/.bashrc
+    source ~/.bashrc
 fi
+
+export BASH_SILENCE_DEPRECATION_WARNING=1
+eval "$(/opt/homebrew/bin/brew shellenv)"
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export CC=/opt/homebrew/opt/llvm/bin/clang
+export CXX=/opt/homebrew/opt/llvm/bin/clang++
+export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+export PATH="$HOME/go/bin:$PATH"
