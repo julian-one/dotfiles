@@ -59,13 +59,16 @@ return {
 
       -- Go LSP (gopls)
       lspconfig.gopls.setup({
+        on_attach = function(client, _)
+          client.server_capabilities.didChangeWatchedFiles = false
+        end,
         cmd = { "gopls" },
         capabilities = capabilities,
         filetypes = { "go", "gomod", "gowork", "gotmpl" },
         root_dir = lspconfig.util.root_pattern("go.mod", ".git"),
         settings = {
           gopls = {
-            directoryFilters = {},
+            directoryFilters = { "-vendor" },
             analyses = {
               unusedparams = true,
               shadow = true,
@@ -76,6 +79,21 @@ return {
             deepCompletion = true,
           },
         },
+      })
+
+      -- TypeScript & JavaScript LSP (ts_ls)
+      lspconfig.ts_ls.setup({
+        capabilities = capabilities,
+        filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact" },
+        root_dir = lspconfig.util.root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git"),
+      })
+
+      -- Svelte LSP (svelte)
+      lspconfig.svelte.setup({
+        cmd = { "/opt/homebrew/bin/svelteserver", "--stdio" },
+        capabilities = capabilities,
+        filetypes = { "svelte" },
+        root_dir = lspconfig.util.root_pattern("package.json", ".git"),
       })
     end,
   },

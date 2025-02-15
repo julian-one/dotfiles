@@ -2,19 +2,11 @@ require("config.lazy")
 
 vim.opt.wrap = false
 
+-- Search
+vim.opt.hlsearch = false
+
 -- Mouse
 vim.opt.mouse = ""
-vim.keymap.set("", "<ScrollWheelUp>", "<Nop>", { silent = true })
-vim.keymap.set("", "<ScrollWheelDown>", "<Nop>", { silent = true })
-vim.keymap.set("", "<ScrollWheelLeft>", "<Nop>", { silent = true })
-vim.keymap.set("", "<ScrollWheelRight>", "<Nop>", { silent = true })
-
-vim.api.nvim_set_keymap("", "<ScrollWheelUp>", "<Nop>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("", "<ScrollWheelDown>", "<Nop>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("", "<ScrollWheelLeft>", "<Nop>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("", "<ScrollWheelRight>", "<Nop>", { noremap = true, silent = true })
-
-
 
 -- Numbering
 vim.opt.number = true

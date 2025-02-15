@@ -42,11 +42,15 @@ return {
             vim.keymap.set('n', '<leader>sc', function()
                 builtin.find_files({ cwd = vim.fn.stdpath("config") })
             end, { desc = '[S]earch [C]onfig' })
-
             vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
             vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+            vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
             vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
             vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[S]earch [B]uffers' })
+            vim.keymap.set('n', 'gd', builtin.lsp_definitions, { desc = '[G]oto [D]efinition' })
+            vim.keymap.set('n', 'gr', builtin.lsp_references, { desc = '[G]oto [R]eferences' })
+            vim.keymap.set('n', 'gI', builtin.lsp_implementations, { desc = '[G]oto [I]mplementaion' })
+            vim.keymap.set('n', '<leader>D', builtin.lsp_type_definitions, { desc = '[G]oto Type [D]efention' })
         end
     }
 }
