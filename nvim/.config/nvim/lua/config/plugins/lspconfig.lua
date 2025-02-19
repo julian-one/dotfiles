@@ -39,7 +39,7 @@ return {
 
       -- Lua LSP (lua_ls)
       lspconfig.lua_ls.setup({
-        cmd = { "/opt/homebrew/bin/lua-language-server" },
+        cmd = { "/usr/local/bin/lua-language-server" },
         capabilities = capabilities,
         settings = {
           Lua = {
