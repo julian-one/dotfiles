@@ -7,7 +7,4 @@
 HISTSIZE=1000
 HISTFILESIZE=2000
 
-# Add local bin to PATH
-export PATH="$HOME/bin:$PATH"
-
 alias code='nvim'

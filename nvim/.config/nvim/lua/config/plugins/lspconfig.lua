@@ -59,9 +59,6 @@ return {
 
       -- Go LSP (gopls)
       lspconfig.gopls.setup({
-        on_attach = function(client, _)
-          client.server_capabilities.didChangeWatchedFiles = false
-        end,
         cmd = { "gopls" },
         capabilities = capabilities,
         filetypes = { "go", "gomod", "gowork", "gotmpl" },
