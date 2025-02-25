@@ -10,7 +10,9 @@ return {
     null_ls.setup({
       sources = {
         null_ls.builtins.completion.spell,
-        formatting.sql_formatter,
+        formatting.sqlformat.with({
+          args = { "-", "--identifiers=lower", "--keywords=upper" },
+        }),
         formatting.prettier,
         require("none-ls.diagnostics.eslint"),
         require("none-ls.code_actions.eslint"),
