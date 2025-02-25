@@ -94,7 +94,7 @@ return {
         filetypes = { "sql", "spanner" },
         root_dir = lspconfig.util.root_pattern(".git", ".sqls.yml"),
         on_attach = function(client, _)
-          -- Disable sqls formatting
+          -- Disable formatting
           client.server_capabilities.documentFormattingProvider = false
           client.server_capabilities.documentRangeFormattingProvider = false
         end,
@@ -132,6 +132,19 @@ return {
           scss = { validate = true },
           less = { validate = true },
         },
+      })
+
+      -- Tailwind
+      lspconfig.tailwindcss.setup({
+        cmd = { "tailwindcss-language-server", "--stdio" },
+        capabilities = capabilities,
+        filetypes = {
+          "templ", "html", "css", "scss", "javascript", "javascriptreact",
+          "typescript", "typescriptreact", "svelte",
+        },
+        root_dir = lspconfig.util.root_pattern(
+          "tailwind.config.js"
+        ),
       })
     end,
   },
