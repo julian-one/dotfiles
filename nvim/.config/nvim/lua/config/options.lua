@@ -3,6 +3,8 @@ vim.opt.mouse = ""
 -- Search
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
 -- Numbering
 vim.opt.number = true
@@ -14,14 +16,10 @@ vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.smartindent = true
+vim.opt.breakindent = true
+
 
 vim.opt.wrap = false
-
--- Completions
-vim.opt.completeopt = { 'menuone', 'noselect' }
-vim.opt.pumheight = 10
-vim.opt.pumblend = 10
-
 vim.opt.scrolloff = 8
 vim.opt.signcolumn = 'yes'
 

@@ -7,6 +7,7 @@ return {
     dependencies = {
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
       'rafamadriz/friendly-snippets',
@@ -26,7 +27,7 @@ return {
           end,
         },
         completion = {
-          completeopt = 'menu,menuone,noselect',
+          completeopt = 'menu,menuone,noinsert',
           preselect = cmp.PreselectMode.None,
         },
         formatting = {
@@ -49,10 +50,13 @@ return {
           ['<C-Space>'] = cmp.mapping.complete(),
         },
         sources = cmp.config.sources({
+          { name = 'lazydev',
+            group_index = 0 },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'buffer' },
           { name = 'path' },
+          { name = 'nvim_lsp_signature_help' },
         }),
         window = {
           completion = cmp.config.window.bordered(),
