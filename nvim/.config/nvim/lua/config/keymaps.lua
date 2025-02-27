@@ -27,3 +27,6 @@ vim.keymap.set("n", "<leader>tt", function()
     terminal_buf = vim.api.nvim_get_current_buf()
   end
 end, { desc = "[T]oggle [T]erminal" })
+
+-- no macros plz
+vim.keymap.set('n', 'q', '<Nop>', { noremap = true, silent = true })

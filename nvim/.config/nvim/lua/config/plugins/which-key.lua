@@ -5,10 +5,10 @@ return {
     icons = {},
     opts = {
       spec = {
-        { "<leader>g", name = "+Git" },
-        { "<leader>s", name = "+Search" },
-        { "<leader>t", name = "+Terminal" },
-        { "<leader>c", name = "+Code" },
+        { "<leader>g", name = "[G]it" },
+        { "<leader>s", name = "[S]earch" },
+        { "<leader>t", name = "[T]erminal" },
+        { "<leader>c", name = "[C]ode" },
       },
     },
     keys = {
