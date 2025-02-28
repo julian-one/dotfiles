@@ -1,5 +1,8 @@
 vim.opt.mouse = ""
 
+vim.g.have_nerd_font = false
+vim.opt.termguicolors = true
+
 -- Search
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
@@ -22,12 +25,6 @@ vim.opt.breakindent = true
 vim.opt.wrap = false
 vim.opt.scrolloff = 8
 vim.opt.signcolumn = 'yes'
-
--- Spell
-vim.opt.spell = true
-vim.opt.spelllang = "en"
-vim.opt.spellfile = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
-
 
 -- Undo
 vim.opt.swapfile = false
