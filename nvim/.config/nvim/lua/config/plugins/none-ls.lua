@@ -10,6 +10,10 @@ return {
     null_ls.setup({
       sources = {
         null_ls.builtins.completion.spell,
+        null_ls.builtins.diagnostics.write_good,
+        null_ls.builtins.diagnostics.yamllint,
+        formatting.codespell,
+        formatting.yamlfix,
         formatting.sqlformat.with({
           args = { "-", "--identifiers=lower", "--keywords=upper" },
         }),
