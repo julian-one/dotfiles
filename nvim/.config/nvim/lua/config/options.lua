@@ -21,10 +21,9 @@ vim.opt.expandtab = true
 vim.opt.smartindent = true
 vim.opt.breakindent = true
 
-
 vim.opt.wrap = false
 vim.opt.scrolloff = 8
-vim.opt.signcolumn = 'yes'
+vim.opt.signcolumn = "yes"
 
 -- Undo
 vim.opt.swapfile = false
