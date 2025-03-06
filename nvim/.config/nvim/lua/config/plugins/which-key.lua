@@ -2,22 +2,28 @@ return {
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
-		icons = {},
 		opts = {
+			delay = 0,
+			icons = {
+				mappings = vim.g.have_nerd_font,
+			},
+
 			spec = {
-				{ "<leader>g", name = "[G]it" },
-				{ "<leader>s", name = "[S]earch" },
-				{ "<leader>t", name = "[T]erminal" },
-				{ "<leader>c", name = "[C]ode" },
+				{ "<leader>c", group = "[C]ode" },
+				{ "<leader>d", group = "[D]ocument" },
+				{ "<leader>r", group = "[R]ename" },
+				{ "<leader>s", group = "[S]earch" },
+				{ "<leader>t", group = "[T]oggle" },
+				{ "<leader>g", group = "[G]it" },
 			},
 		},
 		keys = {
 			{
 				"<leader>?",
 				function()
-					require("which-key").show({ mode = "n", auto = true })
+					require("which-key").show({ global = false })
 				end,
-				desc = "Show Normal Mode Keymaps",
+				desc = "Buffer Local Keymaps (which-key)",
 			},
 		},
 	},
