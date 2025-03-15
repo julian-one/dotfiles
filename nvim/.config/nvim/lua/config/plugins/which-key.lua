@@ -15,6 +15,7 @@ return {
 				{ "<leader>s", group = "[S]earch" },
 				{ "<leader>t", group = "[T]oggle" },
 				{ "<leader>g", group = "[G]it" },
+				{ "<leader>x", group = "[X]rouble" },
 			},
 		},
 		keys = {
