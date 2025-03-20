@@ -2,6 +2,9 @@ vim.keymap.set("n", "<leader>on", vim.cmd.Ex, { desc = "[O]pen [N]etrw" })
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "[Y]ank to system clipboard" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true, desc = "[Esc]ape terminal mode" })
+--
+vim.keymap.set("v", "<", "<gv")
+vim.keymap.set("v", ">", ">gv")
 
 local terminal_buf = nil
 vim.keymap.set("n", "<leader>tt", function()
