@@ -42,6 +42,7 @@ return {
 				html = { "prettier" },
 				yaml = { "yamlfix" },
 				markdown = { "prettier" },
+				["*"] = { "codespell" },
 			},
 		},
 	},
