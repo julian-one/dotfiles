@@ -123,16 +123,24 @@ return {
 			})
 
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities.textDocument.foldingRange = {
+				dynamicRegistration = false,
+				lineFoldingOnly = true,
+			}
 			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 			local servers = {
 				gopls = {},
 				ts_ls = {},
+				eslint = {},
 				tailwindcss = {},
 				templ = {},
 				svelte = {},
 				html = {},
+				htmx = {},
 				cssls = {},
+				jsonls = {},
+				yamlls = {},
 				lua_ls = {
 					settings = {
 						Lua = {
