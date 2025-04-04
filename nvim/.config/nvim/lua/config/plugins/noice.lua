@@ -2,22 +2,7 @@ return {
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
-		opts = {
-			lsp = {
-				hover = {
-					enabled = true,
-					opts = {
-						border = "rounded",
-					},
-				},
-				signature = {
-					enabled = true,
-					opts = {
-						border = "rounded",
-					},
-				},
-			},
-		},
+		opts = {},
 		keys = {
 			{
 				"<leader>nd",
