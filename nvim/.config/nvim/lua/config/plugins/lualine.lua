@@ -2,7 +2,8 @@ return {
 	"nvim-lualine/lualine.nvim",
 	event = "VeryLazy",
 	dependencies = {
-		"nvim-tree/nvim-web-devicons", -- optional, but recommended for icons
+		"nvim-tree/nvim-web-devicons",
+		"SmiteshP/nvim-navic",
 	},
 	config = function()
 		local tokyonight = require("lualine.themes._tokyonight").get("night")
@@ -26,6 +27,13 @@ return {
 				lualine_x = { "encoding", "fileformat", "filetype" },
 				lualine_y = { "progress" },
 				lualine_z = { "location" },
+			},
+			winbar = {
+				lualine_c = {
+					"navic",
+					color_correction = nil,
+					navic_opts = nil,
+				},
 			},
 			inactive_sections = {
 				lualine_a = {},
