@@ -84,6 +84,19 @@ return {
 						})
 					end
 
+					-- local navic = require("nvim-navic")
+					-- if client and client.server_capabilities.documentSymbolProvider then
+					-- 	navic.attach(client, event.buf)
+					-- end
+					local navic = require("nvim-navic")
+					if client and client.server_capabilities.documentSymbolProvider then
+						-- Only attach if navic isn't already attached
+						local ok, is_attached = pcall(navic.is_available, event.buf)
+						if not ok or not is_attached then
+							navic.attach(client, event.buf)
+						end
+					end
+
 					if
 						client
 						and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf)
@@ -123,11 +136,18 @@ return {
 			})
 
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities.textDocument.foldingRange = {
-				dynamicRegistration = false,
-				lineFoldingOnly = true,
-			}
-			capabilities = require("blink.cmp").get_lsp_capabilities()
+
+			capabilities =
+				vim.tbl_deep_extend("force", capabilities, require("blink.cmp").get_lsp_capabilities({}, false))
+
+			capabilities = vim.tbl_deep_extend("force", capabilities, {
+				textDocument = {
+					foldingRange = {
+						dynamicRegistration = false,
+						lineFoldingOnly = true,
+					},
+				},
+			})
 
 			local servers = {
 				gopls = {},
