@@ -1,6 +1,11 @@
 vim.keymap.set("n", "<leader>on", vim.cmd.Ex, { desc = "[O]pen [N]etrw" })
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "[Y]ank to system clipboard" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+vim.keymap.set("n", "<leader>co", "<cmd>copen<CR>", { desc = "Open Quickfix list" })
+vim.keymap.set("n", "<leader>cc", "<cmd>cclose<CR>", { desc = "Close Quickfix list" })
+vim.keymap.set("n", "<leader>cn", "<cmd>cnext<CR>", { desc = "Next Quickfix item" })
+vim.keymap.set("n", "<leader>cp", "<cmd>cprev<CR>", { desc = "Prev Quickfix item" })
+
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true, desc = "[Esc]ape terminal mode" })
 --
 vim.keymap.set("v", "<", "<gv")

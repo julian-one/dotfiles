@@ -7,12 +7,5 @@ return {
 		},
 		event = "VeryLazy",
 		opts = {},
-		keys = {
-			{
-				"<leader>nd",
-				"<cmd>NoiceDismiss<cr>",
-				desc = "[N]oice [D]ismiss Message",
-			},
-		},
 	},
 }

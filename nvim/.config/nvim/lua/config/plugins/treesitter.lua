@@ -20,7 +20,7 @@ return {
 				},
 				sync_install = false,
 				auto_install = false,
-				ignore_install = { "query" },
+				ignore_install = {},
 				modules = {},
 				highlight = {
 					enable = true,
