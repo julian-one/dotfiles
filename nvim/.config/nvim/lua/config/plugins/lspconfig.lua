@@ -18,6 +18,17 @@ return {
 			"saghen/blink.cmp",
 		},
 		config = function()
+			-- Modern way to style floating previews
+			local _open_floating_preview = vim.lsp.util.open_floating_preview
+			---@diagnostic disable-next-line: duplicate-set-field
+			vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
+				opts = opts or {}
+				opts.border = opts.border or "rounded"
+				opts.max_width = opts.max_width
+				opts.max_height = opts.max_height
+				return _open_floating_preview(contents, syntax, opts, ...)
+			end
+
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
 				callback = function(event)
@@ -82,19 +93,6 @@ return {
 								vim.api.nvim_clear_autocmds({ group = "kickstart-lsp-highlight", buffer = event2.buf })
 							end,
 						})
-					end
-
-					-- local navic = require("nvim-navic")
-					-- if client and client.server_capabilities.documentSymbolProvider then
-					-- 	navic.attach(client, event.buf)
-					-- end
-					local navic = require("nvim-navic")
-					if client and client.server_capabilities.documentSymbolProvider then
-						-- Only attach if navic isn't already attached
-						local ok, is_attached = pcall(navic.is_available, event.buf)
-						if not ok or not is_attached then
-							navic.attach(client, event.buf)
-						end
 					end
 
 					if

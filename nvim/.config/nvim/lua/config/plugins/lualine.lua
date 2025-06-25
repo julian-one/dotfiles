@@ -3,7 +3,6 @@ return {
 	event = "VeryLazy",
 	dependencies = {
 		"nvim-tree/nvim-web-devicons",
-		"SmiteshP/nvim-navic",
 	},
 	config = function()
 		local tokyonight = require("lualine.themes._tokyonight").get("night")
@@ -18,22 +17,36 @@ return {
 					statusline = {},
 					winbar = {},
 				},
+				ignore_focus = {},
+				always_divide_middle = true,
+				always_show_tabline = true,
 				globalstatus = true,
+				refresh = {
+					statusline = 1000,
+					tabline = 1000,
+					winbar = 1000,
+					refresh_time = 16, -- ~60fps
+					events = {
+						"WinEnter",
+						"BufEnter",
+						"BufWritePost",
+						"SessionLoadPost",
+						"FileChangedShellPost",
+						"VimResized",
+						"Filetype",
+						"CursorMoved",
+						"CursorMovedI",
+						"ModeChanged",
+					},
+				},
 			},
 			sections = {
-				lualine_a = { { "mode" } },
+				lualine_a = { "mode" },
 				lualine_b = { "branch", "diff", "diagnostics" },
-				lualine_c = { { "filename", path = 1 } },
+				lualine_c = { "filename" },
 				lualine_x = { "encoding", "fileformat", "filetype" },
 				lualine_y = { "progress" },
 				lualine_z = { "location" },
-			},
-			winbar = {
-				lualine_c = {
-					"navic",
-					color_correction = nil,
-					navic_opts = nil,
-				},
 			},
 			inactive_sections = {
 				lualine_a = {},
@@ -43,7 +56,10 @@ return {
 				lualine_y = {},
 				lualine_z = {},
 			},
-			extensions = { "fugitive", "quickfix", "man" },
+			tabline = {},
+			winbar = {},
+			inactive_winbar = {},
+			extensions = {},
 		})
 	end,
 }
