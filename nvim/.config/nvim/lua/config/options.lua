@@ -19,10 +19,10 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 
 -- Indentation
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 2
-vim.opt.shiftwidth = 2
-vim.opt.expandtab = true
+vim.opt.tabstop = 8
+vim.opt.softtabstop = 8
+vim.opt.shiftwidth = 8
+vim.opt.expandtab = false
 vim.opt.smartindent = true
 vim.opt.breakindent = true
 
@@ -31,7 +31,3 @@ vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
-
--- Spell
--- vim.opt.spelllang = "en_us"
--- vim.opt.spell = true
