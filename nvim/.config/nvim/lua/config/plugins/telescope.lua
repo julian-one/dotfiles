@@ -18,16 +18,6 @@ return {
 					layout_config = { prompt_position = "top" },
 					file_ignore_patterns = { "node_modules", ".git/" },
 				},
-				pickers = {
-					find_files = {
-						theme = "dropdown",
-						previewer = false,
-					},
-					buffers = {
-						theme = "dropdown",
-						previewer = false,
-					},
-				},
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
@@ -43,7 +33,6 @@ return {
 
 			telescope.load_extension("fzf")
 			telescope.load_extension("ui-select")
-			telescope.load_extension("noice")
 
 			vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 			vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
