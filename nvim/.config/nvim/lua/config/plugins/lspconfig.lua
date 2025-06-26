@@ -24,8 +24,9 @@ return {
 			vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
 				opts = opts or {}
 				opts.border = opts.border or "rounded"
-				opts.max_width = opts.max_width
-				opts.max_height = opts.max_height
+				opts.winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None"
+				-- opts.max_width = opts.max_width
+				opts.max_height = 15
 				return _open_floating_preview(contents, syntax, opts, ...)
 			end
 
