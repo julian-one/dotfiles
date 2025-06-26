@@ -95,6 +95,14 @@ return {
 							end,
 						})
 					end
+					local navic = require("nvim-navic")
+					if client and client.server_capabilities.documentSymbolProvider then
+						-- Only attach if navic isn't already attached
+						local ok, is_attached = pcall(navic.is_available, event.buf)
+						if not ok or not is_attached then
+							navic.attach(client, event.buf)
+						end
+					end
 
 					if
 						client
