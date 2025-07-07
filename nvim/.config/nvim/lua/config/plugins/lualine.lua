@@ -5,12 +5,10 @@ return {
 		"nvim-tree/nvim-web-devicons",
 	},
 	config = function()
-		local tokyonight = require("lualine.themes._tokyonight").get("night")
-
 		require("lualine").setup({
 			options = {
 				icons_enabled = true,
-				theme = tokyonight,
+				theme = "auto",
 				component_separators = { left = "", right = "" },
 				section_separators = { left = "", right = "" },
 				disabled_filetypes = {

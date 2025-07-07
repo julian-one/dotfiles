@@ -35,7 +35,7 @@ return {
 					TypeParameter = "󰊄 ",
 				},
 				lsp = {
-					auto_attach = false,
+					auto_attach = true,
 					preference = nil,
 				},
 				highlight = false,
