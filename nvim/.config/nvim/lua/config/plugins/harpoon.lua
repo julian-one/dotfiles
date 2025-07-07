@@ -8,64 +8,62 @@ return {
 		},
 		config = function()
 			local harpoon = require("harpoon")
-			-- REQUIRED: Initialize Harpoon with the default configuration.
+			local tele_conf = require("telescope.config").values
+			local pickers = require("telescope.pickers")
+			local finders = require("telescope.finders")
+
+			-- Initialize Harpoon
 			harpoon:setup()
 
-			-- Default keybindings
-			vim.keymap.set("n", "<leader>a", function()
+			-- Add file
+			vim.keymap.set("n", "<leader>ha", function()
 				harpoon:list():add()
-			end, { desc = "Harpoon: Add file" })
-			vim.keymap.set("n", "<C-e>", function()
+			end, { desc = "Harpoon: Add current file" })
+
+			-- Toggle quick menu
+			vim.keymap.set("n", "<leader>hh", function()
 				harpoon.ui:toggle_quick_menu(harpoon:list())
 			end, { desc = "Harpoon: Toggle quick menu" })
 
-			vim.keymap.set("n", "<C-h>", function()
-				harpoon:list():select(1)
-			end, { desc = "Harpoon: Go to file 1" })
-			vim.keymap.set("n", "<C-t>", function()
-				harpoon:list():select(2)
-			end, { desc = "Harpoon: Go to file 2" })
-			vim.keymap.set("n", "<C-n>", function()
-				harpoon:list():select(3)
-			end, { desc = "Harpoon: Go to file 3" })
-			vim.keymap.set("n", "<C-s>", function()
-				harpoon:list():select(4)
-			end, { desc = "Harpoon: Go to file 4" })
+			-- Navigate to specific files with <leader>h1..h4
+			for i = 1, 4 do
+				vim.keymap.set("n", "<leader>h" .. i, function()
+					harpoon:list():select(i)
+				end, { desc = "Harpoon: Go to file " .. i })
+			end
 
-			-- Toggle previous & next buffers stored within Harpoon list
-			vim.keymap.set("n", "<C-S-P>", function()
-				harpoon:list():prev()
-			end, { desc = "Harpoon: Previous mark" })
-			vim.keymap.set("n", "<C-S-N>", function()
+			-- Cycle through marks
+			vim.keymap.set("n", "<leader>hn", function()
 				harpoon:list():next()
 			end, { desc = "Harpoon: Next mark" })
 
-			-- Telescope integration: define a picker to select a harpoon mark via Telescope
-			local tele_conf = require("telescope.config").values
-			local function harpoon_picker()
-				local harpoon_list = harpoon:list()
-				local results = {}
-				for _, mark in ipairs(harpoon_list.items or {}) do
-					table.insert(results, mark.value)
-				end
+			vim.keymap.set("n", "<leader>hp", function()
+				harpoon:list():prev()
+			end, { desc = "Harpoon: Previous mark" })
 
-				if #results == 0 then
+			-- Telescope picker
+			local function harpoon_picker()
+				local items = harpoon:list().items or {}
+				if vim.tbl_isempty(items) then
 					vim.notify("No Harpoon marks set", vim.log.levels.INFO, { title = "Harpoon" })
 					return
 				end
 
-				require("telescope.pickers")
+				local results = vim.tbl_map(function(mark)
+					return mark.value
+				end, items)
+
+				pickers
 					.new({}, {
 						prompt_title = "Harpoon Marks",
-						finder = require("telescope.finders").new_table({ results = results }),
+						finder = finders.new_table({ results = results }),
 						previewer = tele_conf.file_previewer({}),
 						sorter = tele_conf.generic_sorter({}),
 					})
 					:find()
 			end
 
-			-- Optional: Keybinding for the Telescope picker integration.
-			vim.keymap.set("n", "<leader>hp", harpoon_picker, { desc = "Harpoon: Telescope picker" })
+			vim.keymap.set("n", "<leader>ht", harpoon_picker, { desc = "Harpoon: Telescope picker" })
 		end,
 	},
 }
