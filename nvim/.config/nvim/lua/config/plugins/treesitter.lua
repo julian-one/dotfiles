@@ -17,6 +17,7 @@ return {
 					"json",
 					"html",
 					"css",
+					"sql",
 				},
 				sync_install = false,
 				auto_install = false,

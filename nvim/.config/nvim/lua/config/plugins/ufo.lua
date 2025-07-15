@@ -52,7 +52,9 @@ return {
 				return newVirtText
 			end
 
-			local ftMap = {}
+			local ftMap = {
+				templ = { "treesitter", "indent" },
+			}
 
 			require("ufo").setup({
 				fold_virt_text_handler = handler,
