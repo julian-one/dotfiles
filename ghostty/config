@@ -32,7 +32,7 @@ quit-after-last-window-closed = true
 shell-integration-features = true
 
 # theme
-theme = tokyonight
+theme = rose-pine-moon
 
 # macos
 macos-option-as-alt = true

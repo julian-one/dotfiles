@@ -22,7 +22,7 @@ return {
 			},
 			formatters_by_ft = {
 				lua = { "stylua" },
-				go = { "goimports", "gofmt" },
+				go = { "goimports", "gofumpt", "golines" },
 				templ = { "templ" },
 				javascript = { "prettier" },
 				typescript = { "prettier" },
@@ -30,6 +30,7 @@ return {
 				css = { "prettier" },
 				html = { "prettier" },
 				yaml = { "yamlfix" },
+				sql = { "pg_format" },
 			},
 		},
 	},
