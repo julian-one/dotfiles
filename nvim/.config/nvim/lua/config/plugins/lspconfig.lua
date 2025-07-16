@@ -203,6 +203,14 @@ return {
 				},
 			})
 
+			-- Configure LSP hover window with rounded borders
+			local original_hover = vim.lsp.buf.hover
+			vim.lsp.buf.hover = function()
+				original_hover({
+					border = "rounded",
+				})
+			end
+
 			-- LSP servers and clients are able to communicate to each other what features they support.
 			--  By default, Neovim doesn't support everything that is in the LSP specification.
 			--  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
