@@ -225,11 +225,12 @@ else
     log_success "Homebrew is installed"
 fi
 
-# Step 2: Install GNU Stow
+# Step 2: Install GNU Stow and bash completion
 echo ""
 log_info "Step 2: Installing required tools..."
 install_brew_package "stow"
 install_brew_package "git"
+install_brew_package "bash-completion@2"
 
 # Step 3: Fix old tmux.conf symlink if it points to the old location
 echo ""
@@ -417,6 +418,13 @@ if [[ -d "$HOME/.tmux/plugins/tpm" ]]; then
     fi
 else
     log_warning "TPM not installed - tmux plugins may not work"
+fi
+
+# Verify bash completion
+if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] || [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
+    log_success "bash-completion@2 is installed"
+else
+    log_warning "bash-completion@2 not found - tab completion may be limited"
 fi
 
 # Summary
