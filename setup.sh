@@ -70,6 +70,9 @@ is_our_symlink() {
             bash)
                 [[ "$target" == *"dotfiles/bash/.bash_profile"* ]] || [[ "$target" == *"dotfiles/bash/.bashrc"* ]]
                 ;;
+            git)
+                [[ "$target" == *"dotfiles/git/.gitconfig"* ]]
+                ;;
             *)
                 [[ "$target" == *"$DOTFILES_DIR"* ]] || [[ "$target" == *"dotfiles"* ]]
                 ;;
@@ -157,6 +160,9 @@ stow_package() {
             ;;
         ghostty)
             stow_would_create="$target_home/.config/ghostty/config"
+            ;;
+        git)
+            stow_would_create="$target_home/.gitconfig"
             ;;
         bash)
             # Handle multiple files for bash
@@ -287,7 +293,7 @@ echo ""
 log_info "Step 7: Creating symlinks for remaining configurations..."
 
 # Process remaining packages
-for package in nvim tmux ghostty; do
+for package in nvim tmux ghostty git; do
     if [[ -d "$package" ]]; then
         stow_package "$package"
     else
@@ -382,6 +388,9 @@ fi
 if [[ -d "$DOTFILES_DIR/bash" ]]; then
     verify_symlink "$HOME/.bash_profile" "bash"
     verify_symlink "$HOME/.bashrc" "bash"
+fi
+if [[ -d "$DOTFILES_DIR/git" ]]; then
+    verify_symlink "$HOME/.gitconfig" "git"
 fi
 
 # Verify tmux plugins
