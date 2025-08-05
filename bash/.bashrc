@@ -46,6 +46,30 @@ if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 fi
 
+# Enable bash completion
+if ! shopt -oq posix; then
+    # Check for bash-completion@2 (Homebrew)
+    if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
+        . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+    elif [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
+        . "/usr/local/etc/profile.d/bash_completion.sh"
+    # Fallback to system bash completion if available
+    elif [[ -f /etc/bash_completion ]] && ! [[ "$OSTYPE" =~ ^darwin ]]; then
+        . /etc/bash_completion
+    fi
+fi
+
+# Load additional completion files manually if bash-completion isn't available
+if ! command -v _completion_loader &> /dev/null; then
+    # Git completion (if available)
+    [[ -r "/usr/local/etc/bash_completion.d/git-completion.bash" ]] && . "/usr/local/etc/bash_completion.d/git-completion.bash"
+    [[ -r "/opt/homebrew/etc/bash_completion.d/git-completion.bash" ]] && . "/opt/homebrew/etc/bash_completion.d/git-completion.bash"
+    
+    # Homebrew completion
+    [[ -r "/usr/local/etc/bash_completion.d/brew" ]] && . "/usr/local/etc/bash_completion.d/brew"
+    [[ -r "/opt/homebrew/etc/bash_completion.d/brew" ]] && . "/opt/homebrew/etc/bash_completion.d/brew"
+fi
+
 # Load local bashrc customizations if they exist
 if [ -f ~/.bashrc.local ]; then
     . ~/.bashrc.local
