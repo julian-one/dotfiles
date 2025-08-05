@@ -16,7 +16,6 @@ return {
 		opts = {
 			notify_on_error = false,
 			format_on_save = {
-				-- I recommend these options. See :help conform.format for details.
 				lsp_format = "fallback",
 				timeout_ms = 3000,
 			},
@@ -29,8 +28,6 @@ return {
 				svelte = { "prettier" },
 				css = { "prettier" },
 				html = { "prettier" },
-				yaml = { "yamlfix" },
-				sql = { "pg_format" },
 			},
 		},
 	},
