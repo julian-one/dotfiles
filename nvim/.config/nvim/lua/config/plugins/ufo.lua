@@ -1,10 +1,22 @@
 return {
 	{
 		"kevinhwang91/nvim-ufo",
-		event = "BufReadPost",
+		event = { "BufReadPost", "BufNewFile" },
 		dependencies = {
 			"kevinhwang91/promise-async",
 			"luukvbaal/statuscol.nvim",
+		},
+		keys = {
+			{ "zR", function() require("ufo").openAllFolds() end, desc = "Open all folds" },
+			{ "zM", function() require("ufo").closeAllFolds() end, desc = "Close all folds" },
+			{ "zr", function() require("ufo").openFoldsExceptKinds() end, desc = "Open folds except kinds" },
+			{ "zm", function() require("ufo").closeFoldsWith() end, desc = "Close folds with" },
+			{ "K", function()
+				local winid = require("ufo").peekFoldedLinesUnderCursor()
+				if not winid then
+					vim.lsp.buf.hover()
+				end
+			end, desc = "Peek fold or LSP hover" },
 		},
 		config = function()
 			-- Setup statuscol to control fold column display
@@ -64,7 +76,7 @@ return {
 				end,
 				preview = {
 					win_config = {
-						border = { "", "─", "", "", "", "─", "", "" },
+						border = "rounded",
 						winhighlight = "Normal:Folded",
 						winblend = 0,
 					},
@@ -77,17 +89,6 @@ return {
 				},
 			})
 
-			-- Keymaps
-			vim.keymap.set("n", "zR", require("ufo").openAllFolds)
-			vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
-			vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
-			vim.keymap.set("n", "zm", require("ufo").closeFoldsWith)
-			vim.keymap.set("n", "K", function()
-				local winid = require("ufo").peekFoldedLinesUnderCursor()
-				if not winid then
-					vim.lsp.buf.hover()
-				end
-			end, { desc = "Peek fold or show hover" })
 		end,
 	},
 }
