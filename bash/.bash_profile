@@ -1,0 +1,32 @@
+# .bash_profile
+# Executed for login shells
+
+# Source bashrc if it exists
+if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+fi
+
+# Add Homebrew to PATH (for Apple Silicon Macs)
+if [ -f "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# Add common paths
+export PATH="/usr/local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
+# Set default editor
+export EDITOR=nvim
+export VISUAL=nvim
+
+# History settings
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+export HISTCONTROL=ignoredups:erasedups
+
+# Better ls colors
+export CLICOLOR=1
+export LSCOLORS=ExFxBxDxCxegedabagacad
+
+# Tmux plugin manager path
+export TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins"
