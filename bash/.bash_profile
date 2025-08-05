@@ -1,14 +1,12 @@
 # .bash_profile
 # Executed for login shells
 
+# Suppress zsh default shell warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
 # Source bashrc if it exists
 if [ -f ~/.bashrc ]; then
     . ~/.bashrc
-fi
-
-# Add Homebrew to PATH (for Apple Silicon Macs)
-if [ -f "/opt/homebrew/bin/brew" ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 # Add common paths

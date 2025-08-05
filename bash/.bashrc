@@ -30,16 +30,6 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 
-# Enable bash completion if available
-if [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-fi
-
-# Homebrew bash completion (macOS)
-if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
-    . "$(brew --prefix)/etc/bash_completion"
-fi
-
 # Better history handling
 shopt -s histappend
 shopt -s checkwinsize
@@ -60,3 +50,4 @@ fi
 if [ -f ~/.bashrc.local ]; then
     . ~/.bashrc.local
 fi
+
