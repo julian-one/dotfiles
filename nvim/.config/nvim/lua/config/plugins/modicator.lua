@@ -1,13 +1,40 @@
 return {
 	{
 		"mawkler/modicator.nvim",
-		dependencies = "rose-pine/neovim", -- Add your colorscheme plugin here
+		dependencies = "catppuccin/nvim",
 		opts = {
-			-- Warn if any required option above is missing. May emit false positives
-			-- if some other plugin modifies them, which in that case you can just
-			-- ignore. Feel free to remove this line after you've gotten Modicator to
-			-- work properly.
-			show_warnings = true,
+			highlights = {
+				defaults = {
+					bold = true,
+				},
+			},
+			integration = {
+				lualine = {
+					enabled = true,
+					mode_section = nil,
+					highlight = "bg",
+				},
+			},
 		},
+		config = function(_, opts)
+			local modicator = require("modicator")
+			local colors = require("catppuccin.palettes").get_palette("latte")
+			
+			modicator.setup(vim.tbl_deep_extend("force", opts, {
+				highlights = {
+					defaults = {
+						bold = true,
+					},
+					NormalMode = { fg = colors.blue },
+					InsertMode = { fg = colors.green },
+					VisualMode = { fg = colors.mauve },
+					CommandMode = { fg = colors.peach },
+					ReplaceMode = { fg = colors.red },
+					SelectMode = { fg = colors.flamingo },
+					TerminalMode = { fg = colors.teal },
+					TerminalNormalMode = { fg = colors.blue },
+				},
+			}))
+		end,
 	},
 }

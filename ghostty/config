@@ -1,3 +1,6 @@
+# command = "/Users/julian-one/ghostty-tmux.sh"
+
+
 # fonts
 font-family = Comic Code Ligatures
 font-size = 18
@@ -18,7 +21,6 @@ clipboard-trim-trailing-spaces = true
 # window
 initial-window = true
 resize-overlay = never
-background-opacity = 0.95
 window-save-state = always
 window-step-resize = false
 background-blur-radius = 15
@@ -32,10 +34,11 @@ quit-after-last-window-closed = true
 shell-integration-features = true
 
 # theme
-theme = rose-pine-moon
+theme = catppuccin-latte
 
 # macos
 macos-option-as-alt = true
 macos-titlebar-style = transparent
 macos-titlebar-proxy-icon = hidden
 title = " "
+
