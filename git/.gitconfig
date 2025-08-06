@@ -28,3 +28,6 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+
+[includeIf "gitdir:~/Desktop/whg/**"]
+	path = ~/Desktop/dotfiles/git/work.gitconfig
