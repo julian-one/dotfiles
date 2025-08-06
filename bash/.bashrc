@@ -46,28 +46,24 @@ if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 fi
 
-# Enable bash completion
-if ! shopt -oq posix; then
-    # Check for bash-completion@2 (Homebrew)
-    if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
-        . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-    elif [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
-        . "/usr/local/etc/profile.d/bash_completion.sh"
-    # Fallback to system bash completion if available
-    elif [[ -f /etc/bash_completion ]] && ! [[ "$OSTYPE" =~ ^darwin ]]; then
-        . /etc/bash_completion
-    fi
+# Enable extended globbing for completions
+shopt -s extglob 2>/dev/null
+
+# Enable bash completion - simple completions for bash 3.2 compatibility
+
+# Simple git completion
+if command -v git >/dev/null 2>&1; then
+    complete -W "add branch checkout clone commit diff fetch init log merge pull push rebase reset status stash" git
 fi
 
-# Load additional completion files manually if bash-completion isn't available
-if ! command -v _completion_loader &> /dev/null; then
-    # Git completion (if available)
-    [[ -r "/usr/local/etc/bash_completion.d/git-completion.bash" ]] && . "/usr/local/etc/bash_completion.d/git-completion.bash"
-    [[ -r "/opt/homebrew/etc/bash_completion.d/git-completion.bash" ]] && . "/opt/homebrew/etc/bash_completion.d/git-completion.bash"
-    
-    # Homebrew completion
-    [[ -r "/usr/local/etc/bash_completion.d/brew" ]] && . "/usr/local/etc/bash_completion.d/brew"
-    [[ -r "/opt/homebrew/etc/bash_completion.d/brew" ]] && . "/opt/homebrew/etc/bash_completion.d/brew"
+# Simple brew completion
+if command -v brew >/dev/null 2>&1; then
+    complete -W "install uninstall list search info update upgrade cleanup doctor --help" brew
+fi
+
+# Simple SSH completion for known hosts
+if [[ -r ~/.ssh/known_hosts ]]; then
+    complete -W "$(awk '{print $1}' ~/.ssh/known_hosts 2>/dev/null | cut -d, -f1 | sort -u)" ssh
 fi
 
 # Load local bashrc customizations if they exist

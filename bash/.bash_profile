@@ -12,6 +12,7 @@ fi
 # Add common paths
 export PATH="/usr/local/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
 
 # Set default editor
 export EDITOR=nvim
@@ -29,12 +30,11 @@ export LSCOLORS=ExFxBxDxCxegedabagacad
 # Tmux plugin manager path
 export TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins"
 
+# Enable extended globbing for completions
+shopt -s extglob 2>/dev/null
+
 # Enable bash completion (required for login shells)
 if ! shopt -oq posix; then
-    # Check for bash-completion@2 (Homebrew)
-    if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
-        . "/opt/homebrew/etc/profile.d/bash_completion.sh"
-    elif [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
-        . "/usr/local/etc/profile.d/bash_completion.sh"
-    fi
+    # Simple completion setup - individual files loaded in .bashrc
+    :
 fi
