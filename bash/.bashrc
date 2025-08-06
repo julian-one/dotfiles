@@ -66,6 +66,26 @@ if [[ -r ~/.ssh/known_hosts ]]; then
     complete -W "$(awk '{print $1}' ~/.ssh/known_hosts 2>/dev/null | cut -d, -f1 | sort -u)" ssh
 fi
 
+# Docker completion (if you use Docker)
+if command -v docker >/dev/null 2>&1; then
+    complete -W "run pull push build images ps stop start restart rm rmi exec logs inspect" docker
+fi
+
+# NPM completion (if you use Node.js)
+if command -v npm >/dev/null 2>&1; then
+    complete -W "install uninstall update run start test build init publish --save --save-dev --global" npm
+fi
+
+# Make completion (reads Makefile targets)
+if command -v make >/dev/null 2>&1; then
+    complete -W "$(make -qp 2>/dev/null | awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$)/ {split($1,A,/ /); for(i in A)print A[i]}' | sort -u 2>/dev/null)" make
+fi
+
+# Systemctl completion (if on Linux)
+if command -v systemctl >/dev/null 2>&1; then
+    complete -W "start stop restart reload status enable disable list-units" systemctl
+fi
+
 # Load local bashrc customizations if they exist
 if [ -f ~/.bashrc.local ]; then
     . ~/.bashrc.local
