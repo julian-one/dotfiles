@@ -67,8 +67,8 @@ is_our_symlink() {
             ghostty)
                 [[ "$target" == *"dotfiles/ghostty/.config/ghostty"* ]]
                 ;;
-            bash)
-                [[ "$target" == *"dotfiles/bash/.bash_profile"* ]] || [[ "$target" == *"dotfiles/bash/.bashrc"* ]]
+            zsh)
+                [[ "$target" == *"dotfiles/zsh/.zshrc"* ]] || [[ "$target" == *"dotfiles/zsh/.zprofile"* ]] || [[ "$target" == *"dotfiles/zsh/.zshenv"* ]]
                 ;;
             git)
                 [[ "$target" == *"dotfiles/git/.gitconfig"* ]]
@@ -164,31 +164,84 @@ stow_package() {
         git)
             stow_would_create="$target_home/.gitconfig"
             ;;
-        bash)
-            # Handle multiple files for bash
-            for file in "$target_home/.bash_profile" "$target_home/.bashrc"; do
+        zsh)
+            # Handle multiple files for zsh
+            for file in "$target_home/.zshrc" "$target_home/.zprofile" "$target_home/.zshenv"; do
                 handle_existing_path "$file" "$package"
             done
+            # Also handle completions directory
+            handle_existing_path "$target_home/.config/zsh/completions" "$package"
             ;;
     esac
     
-    # Check for conflicts (for non-bash packages)
-    if [[ "$package" != "bash" ]] && [[ -n "$stow_would_create" ]]; then
+    # Check for conflicts
+    if [[ -n "$stow_would_create" ]]; then
         handle_existing_path "$stow_would_create" "$package"
     fi
     
-    # Always unstow first (ignore errors) then restow
-    log_verbose "Unstowing $package first (force mode)"
-    stow -D "$package" -t "$target_home" 2>/dev/null || true
-    
-    log_info "Stowing $package..."
-    if stow -v "$package" -t "$target_home" 2>&1 | while read -r line; do
-            log_verbose "$line"
-        done; then
-        log_success "Successfully stowed $package"
+    # Skip stow for packages that need absolute paths - handle them manually
+    if [[ "$package" == "zsh" ]] || [[ "$package" == "git" ]] || [[ "$package" == "nvim" ]] || [[ "$package" == "tmux" ]] || [[ "$package" == "ghostty" ]]; then
+        log_info "Creating absolute path symlinks for $package..."
+        
+        case "$package" in
+            zsh)
+                rm -f "$target_home/.zshrc" "$target_home/.zprofile" "$target_home/.zshenv" 2>/dev/null || true
+                ln -s "$DOTFILES_DIR/zsh/.zshrc" "$target_home/.zshrc"
+                ln -s "$DOTFILES_DIR/zsh/.zprofile" "$target_home/.zprofile"
+                ln -s "$DOTFILES_DIR/zsh/.zshenv" "$target_home/.zshenv"
+                
+                # Create symlink for completions directory
+                mkdir -p "$target_home/.config/zsh"
+                rm -rf "$target_home/.config/zsh/completions" 2>/dev/null || true
+                ln -s "$DOTFILES_DIR/zsh/completions" "$target_home/.config/zsh/completions"
+                
+                log_success "Created absolute symlinks for zsh"
+                ;;
+            git)
+                rm -f "$target_home/.gitconfig" 2>/dev/null || true
+                ln -s "$DOTFILES_DIR/git/.gitconfig" "$target_home/.gitconfig"
+                
+                # Also link work.gitconfig if it exists
+                if [[ -f "$DOTFILES_DIR/git/work.gitconfig" ]]; then
+                    mkdir -p "$target_home/.config/git"
+                    rm -f "$target_home/.config/git/work.gitconfig" 2>/dev/null || true
+                    ln -s "$DOTFILES_DIR/git/work.gitconfig" "$target_home/.config/git/work.gitconfig"
+                fi
+                
+                log_success "Created absolute symlinks for git"
+                ;;
+            nvim)
+                mkdir -p "$target_home/.config"
+                rm -rf "$target_home/.config/nvim" 2>/dev/null || true
+                ln -s "$DOTFILES_DIR/nvim/.config/nvim" "$target_home/.config/nvim"
+                log_success "Created absolute symlink for nvim"
+                ;;
+            tmux)
+                rm -f "$target_home/.tmux.conf" 2>/dev/null || true
+                ln -s "$DOTFILES_DIR/tmux/.tmux.conf" "$target_home/.tmux.conf"
+                log_success "Created absolute symlink for tmux"
+                ;;
+            ghostty)
+                mkdir -p "$target_home/.config"
+                rm -rf "$target_home/.config/ghostty" 2>/dev/null || true
+                ln -s "$DOTFILES_DIR/ghostty" "$target_home/.config/ghostty"
+                log_success "Created absolute symlink for ghostty"
+                ;;
+        esac
     else
-        log_error "Failed to stow $package"
-        return 1
+        # For other packages, use stow as normal
+        log_verbose "Unstowing $package first (force mode)"
+        stow -D "$package" -t "$target_home" 2>/dev/null || true
+        
+        log_info "Stowing $package..."
+        if stow -v "$package" -t "$target_home" 2>&1 | while read -r line; do
+                log_verbose "$line"
+            done; then
+            log_success "Successfully stowed $package"
+        else
+            log_error "Failed to stow $package"
+            return 1
+        fi
     fi
     
     return 0
@@ -225,12 +278,17 @@ else
     log_success "Homebrew is installed"
 fi
 
-# Step 2: Install GNU Stow and bash completion
+# Step 2: Install GNU Stow and shell completions
 echo ""
 log_info "Step 2: Installing required tools..."
 install_brew_package "stow"
 install_brew_package "git"
-install_brew_package "bash-completion@2"
+
+# Install zsh plugins
+install_brew_package "zsh-syntax-highlighting"
+install_brew_package "zsh-autosuggestions"
+install_brew_package "zsh-history-substring-search"
+install_brew_package "powerlevel10k"
 
 # Step 3: Fix old tmux.conf symlink if it points to the old location
 echo ""
@@ -270,23 +328,31 @@ echo ""
 log_info "Step 5: Creating directories..."
 execute mkdir -p "$HOME/.config"
 
-# Step 6: Stow bash configuration first (for environment setup)
+# Step 6: Stow shell configurations
 echo ""
-log_info "Step 6: Setting up bash configuration first..."
+log_info "Step 6: Setting up shell configurations..."
 
 cd "$DOTFILES_DIR"
 
-# Stow bash first to ensure environment variables are available
-if [[ -d "bash" ]]; then
-    stow_package "bash"
+# Stow zsh configuration
+if [[ -d "zsh" ]]; then
+    stow_package "zsh"
     
-    # Source bash configuration if just installed
-    if [[ -f "$HOME/.bash_profile" ]]; then
-        log_info "Sourcing bash configuration..."
-        source "$HOME/.bash_profile"
+    # Verify the symlinks were created correctly
+    if [[ -L "$HOME/.zshrc" ]] && [[ -L "$HOME/.zprofile" ]] && [[ -L "$HOME/.zshenv" ]]; then
+        log_success "Zsh configuration symlinks created successfully"
+        
+        # Test that .zshrc can be sourced without errors
+        if zsh -c "source $HOME/.zshrc 2>/dev/null"; then
+            log_success "Zsh configuration can be sourced without errors"
+        else
+            log_warning "Zsh configuration may have issues - check for errors on next login"
+        fi
+    else
+        log_warning "Zsh symlinks may not have been created properly"
     fi
 else
-    log_verbose "Bash directory not found"
+    log_verbose "Zsh directory not found"
 fi
 
 # Step 7: Stow remaining configurations
@@ -386,9 +452,11 @@ verify_symlink "$HOME/.tmux.conf" "tmux"
 if [[ -d "$DOTFILES_DIR/ghostty" ]]; then
     verify_symlink "$HOME/.config/ghostty" "ghostty"
 fi
-if [[ -d "$DOTFILES_DIR/bash" ]]; then
-    verify_symlink "$HOME/.bash_profile" "bash"
-    verify_symlink "$HOME/.bashrc" "bash"
+if [[ -d "$DOTFILES_DIR/zsh" ]]; then
+    verify_symlink "$HOME/.zshrc" "zsh"
+    verify_symlink "$HOME/.zprofile" "zsh"
+    verify_symlink "$HOME/.zshenv" "zsh"
+    verify_symlink "$HOME/.config/zsh/completions" "zsh"
 fi
 if [[ -d "$DOTFILES_DIR/git" ]]; then
     verify_symlink "$HOME/.gitconfig" "git"
@@ -420,11 +488,23 @@ else
     log_warning "TPM not installed - tmux plugins may not work"
 fi
 
-# Verify bash completion
-if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] || [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
-    log_success "bash-completion@2 is installed"
+# Verify zsh plugins
+if [[ -f "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] || [[ -f "/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+    log_success "zsh-syntax-highlighting is installed"
 else
-    log_warning "bash-completion@2 not found - tab completion may be limited"
+    log_warning "zsh-syntax-highlighting not found"
+fi
+
+if [[ -f "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] || [[ -f "/usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+    log_success "zsh-autosuggestions is installed"
+else
+    log_warning "zsh-autosuggestions not found"
+fi
+
+if [[ -f "/opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme" ]] || [[ -f "/usr/local/share/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
+    log_success "powerlevel10k theme is installed"
+else
+    log_warning "powerlevel10k theme not found"
 fi
 
 # Summary

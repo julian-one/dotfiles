@@ -30,4 +30,4 @@
 	required = true
 
 [includeIf "gitdir:~/Desktop/whg/**"]
-	path = ~/Desktop/dotfiles/git/work.gitconfig
+	path = ~/.config/git/work.gitconfig
