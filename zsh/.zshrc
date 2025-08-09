@@ -95,12 +95,6 @@ zstyle ':completion:*' cache-path "$HOME/.cache/zsh/zcompcache"
 # ======= Key Bindings =======
 bindkey -e  # Use emacs key bindings
 
-# Better history searching
-bindkey '^[[A' history-substring-search-up     # Up arrow
-bindkey '^[[B' history-substring-search-down   # Down arrow
-bindkey '^P' history-substring-search-up       # Ctrl+P
-bindkey '^N' history-substring-search-down     # Ctrl+N
-
 # Home/End keys
 bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
@@ -196,29 +190,40 @@ extract() {
 }
 
 # ======= Plugin Management =======
-# Load plugins in background for faster startup
-{
-  # Load zsh-syntax-highlighting if installed
-  if [[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-      source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-  elif [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-      source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-  fi
+# Load zsh-syntax-highlighting if installed
+if [[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+    source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
-  # Load zsh-autosuggestions if installed
-  if [[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-      source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-  elif [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-      source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-  fi
+# Load zsh-autosuggestions if installed
+if [[ -f /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+    source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+elif [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+    source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
 
-  # Load zsh-history-substring-search if installed
-  if [[ -f /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
-      source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-  elif [[ -f /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
-      source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-  fi
-} &!
+# Load zsh-history-substring-search if installed
+if [[ -f /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
+    source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+    # Bind keys for history substring search after plugin loads
+    bindkey '^[[A' history-substring-search-up     # Up arrow
+    bindkey '^[[B' history-substring-search-down   # Down arrow
+    bindkey '^P' history-substring-search-up       # Ctrl+P
+    bindkey '^N' history-substring-search-down     # Ctrl+N
+elif [[ -f /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
+    source /usr/local/share/zsh-history-substring-search/zsh-history-substring-search.zsh
+    # Bind keys for history substring search after plugin loads
+    bindkey '^[[A' history-substring-search-up     # Up arrow
+    bindkey '^[[B' history-substring-search-down   # Down arrow
+    bindkey '^P' history-substring-search-up       # Ctrl+P
+    bindkey '^N' history-substring-search-down     # Ctrl+N
+else
+    # Fallback to standard history search if plugin not available
+    bindkey '^[[A' up-line-or-history     # Up arrow
+    bindkey '^[[B' down-line-or-history   # Down arrow
+fi
 
 # ======= FZF Integration =======
 # Load fzf in background for faster startup
