@@ -65,10 +65,10 @@ is_our_symlink() {
                 [[ "$target" == *"dotfiles/tmux/.tmux.conf"* ]]
                 ;;
             ghostty)
-                [[ "$target" == *"dotfiles/ghostty/.config/ghostty"* ]]
+                [[ "$target" == *"dotfiles/ghostty"* ]]
                 ;;
             zsh)
-                [[ "$target" == *"dotfiles/zsh/.zshrc"* ]] || [[ "$target" == *"dotfiles/zsh/.zprofile"* ]] || [[ "$target" == *"dotfiles/zsh/.zshenv"* ]]
+                [[ "$target" == *"dotfiles/zsh/"* ]]
                 ;;
             git)
                 [[ "$target" == *"dotfiles/git/.gitconfig"* ]]
@@ -159,14 +159,14 @@ stow_package() {
             stow_would_create="$target_home/.tmux.conf"
             ;;
         ghostty)
-            stow_would_create="$target_home/.config/ghostty/config"
+            stow_would_create="$target_home/.config/ghostty"
             ;;
         git)
             stow_would_create="$target_home/.gitconfig"
             ;;
         zsh)
             # Handle multiple files for zsh
-            for file in "$target_home/.zshrc" "$target_home/.zprofile" "$target_home/.zshenv"; do
+            for file in "$target_home/.zshrc" "$target_home/.zprofile" "$target_home/.zshenv" "$target_home/.p10k.zsh"; do
                 handle_existing_path "$file" "$package"
             done
             # Also handle completions directory
@@ -185,17 +185,18 @@ stow_package() {
         
         case "$package" in
             zsh)
-                rm -f "$target_home/.zshrc" "$target_home/.zprofile" "$target_home/.zshenv" 2>/dev/null || true
+                rm -f "$target_home/.zshrc" "$target_home/.zprofile" "$target_home/.zshenv" "$target_home/.p10k.zsh" 2>/dev/null || true
                 ln -s "$DOTFILES_DIR/zsh/.zshrc" "$target_home/.zshrc"
                 ln -s "$DOTFILES_DIR/zsh/.zprofile" "$target_home/.zprofile"
                 ln -s "$DOTFILES_DIR/zsh/.zshenv" "$target_home/.zshenv"
+                ln -s "$DOTFILES_DIR/zsh/.p10k.zsh" "$target_home/.p10k.zsh"
                 
                 # Create symlink for completions directory
                 mkdir -p "$target_home/.config/zsh"
                 rm -rf "$target_home/.config/zsh/completions" 2>/dev/null || true
                 ln -s "$DOTFILES_DIR/zsh/completions" "$target_home/.config/zsh/completions"
                 
-                log_success "Created absolute symlinks for zsh"
+                log_success "Created absolute symlinks for zsh and p10k"
                 ;;
             git)
                 rm -f "$target_home/.gitconfig" 2>/dev/null || true
@@ -456,6 +457,7 @@ if [[ -d "$DOTFILES_DIR/zsh" ]]; then
     verify_symlink "$HOME/.zshrc" "zsh"
     verify_symlink "$HOME/.zprofile" "zsh"
     verify_symlink "$HOME/.zshenv" "zsh"
+    verify_symlink "$HOME/.p10k.zsh" "zsh"
     verify_symlink "$HOME/.config/zsh/completions" "zsh"
 fi
 if [[ -d "$DOTFILES_DIR/git" ]]; then
