@@ -1,43 +1,35 @@
-# command = "/Users/julian-one/ghostty-tmux.sh"
-
-
-# fonts
-font-family = Comic Code Ligatures
+# Font configuration
+# Programming font with ligatures
+font-family = "Comic Code Ligatures"
+# Comfortable reading size
 font-size = 18
-font-style = medium
-bold-is-bright = true
 
-# increase line spacing
-adjust-cell-height = 20% 
+# Increase line spacing for better readability
+adjust-cell-height = 20%
 
-# cursor
-cursor-style = block
-cursor-style-blink = false
+# Add padding around terminal content
+window-padding-x = 20
+window-padding-y = 20
 
-# clipboard
+# Copy selected text to system clipboard automatically
 copy-on-select = clipboard
-clipboard-trim-trailing-spaces = true
 
-# window
-initial-window = true
-resize-overlay = never
-window-save-state = always
-window-step-resize = false
+# Visual effects
+# Blur background when transparent
 background-blur-radius = 15
-window-padding-balance = true
+# Don't confirm when closing window
 confirm-close-surface = false
 
-# behavior
-auto-update = check
-auto-update-channel = stable
-quit-after-last-window-closed = true
-shell-integration-features = true
-
-# theme
-theme = catppuccin-latte
-
-# macos
+# macOS specific settings
+# Use Option key as Alt modifier
 macos-option-as-alt = true
-macos-titlebar-style = transparent
+# Transparent titlebar
+macos-titlebar-style = native
+# Hide proxy icon in titlebar
 macos-titlebar-proxy-icon = hidden
+# Empty title for clean look
 title = " "
+# Remove ghost emoji from window
+macos-icon = official
+# Maximize window when opened
+fullscreen = true

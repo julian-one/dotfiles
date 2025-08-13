@@ -1,15 +1,23 @@
-# Dotfiles
+# Minimal Dotfiles
 
-Personal development environment configuration for macOS and Arch Linux.
+Minimal development environment configuration for macOS and Arch Linux, following the philosophy of using built-in features and default appearance.
+
+## Philosophy
+
+This configuration embraces minimalism:
+- **Built-in features only** - No external plugins or themes
+- **Default appearance** - No custom colors or styling
+- **Essential functionality** - Only what's actually needed
+- **Fast and reliable** - Minimal dependencies, quick startup
 
 ## Features
 
-- **Neovim** - LSP, Telescope, Copilot, and 30+ plugins with modular Lua configuration
-- **Zsh** - Powerlevel10k prompt, syntax highlighting, autosuggestions, and custom completions
-- **Tmux** - Custom status bar, Catppuccin theme, vi-mode navigation
-- **Ghostty** - Modern terminal with Comic Code Ligatures and blur effects
-- **Git** - Aliases and conditional work profile includes
-- **Fonts** - Comic Code with ligatures for coding
+- **Neovim** - Minimal config with essential plugins (treesitter, blink.cmp, harpoon) and comprehensive LSP support
+- **Bash** - Built-in features only, simple prompt with git branch display
+- **Ghostty** - Modern terminal with Comic Code font and minimal configuration
+- **Git** - Work profile configuration support
+- **Fonts** - Comic Code Ligatures for enhanced coding experience
+- **Cross-platform** - Automated setup for macOS and Arch Linux
 
 ## Quick Start
 
@@ -20,11 +28,10 @@ make all
 ```
 
 The Makefile will:
-- Install package manager (Homebrew/pacman) and required packages
-- Back up existing configurations  
+- Install package manager (Homebrew/pacman) and core packages
 - Create symlinks to dotfiles
 - Install Comic Code fonts
-- Install tmux plugins and language servers
+- Install essential language servers
 - Verify installation
 
 ## Available Commands
@@ -41,24 +48,24 @@ make help             # Show all available commands
 
 ### Individual Components
 ```bash
-make install-packages    # Install core packages
-make install-zsh-plugins # Install zsh plugins
+make install-packages    # Install core packages  
 make install-fonts       # Install Comic Code fonts
+make stow-bash           # Link bash configuration only
 make stow-nvim           # Link neovim configuration only
-make stow-zsh            # Link zsh configuration only
-make stow-tmux           # Link tmux configuration only
+make stow-ghostty        # Link ghostty configuration only
+make stow-git            # Link git configuration only
 ```
 
 ## Structure
 
 ```
 dotfiles/
-├── nvim/          # Neovim configuration
-├── zsh/           # Shell configuration
-├── tmux/          # Tmux configuration
-├── ghostty/       # Terminal configuration
-├── git/           # Git configuration
-└── Makefile       # Cross-platform setup
+├── bash/          # Bash shell configuration (.bashrc, .bash_profile)
+├── nvim/          # Neovim configuration (minimal with comprehensive LSP)
+├── ghostty/       # Ghostty terminal configuration
+├── git/           # Git configuration (work profile)
+├── fonts/         # Comic Code Ligatures font files
+└── Makefile       # Cross-platform setup automation
 ```
 
 ## Platform Support
@@ -78,7 +85,7 @@ dotfiles/
 ### macOS
 ```bash
 # Prerequisites
-brew install stow neovim tmux ripgrep fd fzf
+brew install stow neovim ripgrep fd fzf lua-language-server ghostty
 
 # Create symlinks
 make stow
@@ -86,9 +93,9 @@ make stow
 
 ### Arch Linux
 ```bash
-# Prerequisites
-sudo pacman -S stow neovim tmux ripgrep fd fzf
-yay -S lua-language-server  # Optional
+# Prerequisites  
+sudo pacman -S stow neovim ripgrep fd fzf
+yay -S lua-language-server ghostty  # Optional
 
 # Create symlinks  
 make stow

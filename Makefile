@@ -38,19 +38,19 @@ NC := \033[0m
 
 # Helper functions
 define log_info
-	@echo -e "$(BLUE)[INFO]$(NC) $(1)"
+	echo -e "$(BLUE)[INFO]$(NC) $(1)"
 endef
 
 define log_success
-	@echo -e "$(GREEN)[✓]$(NC) $(1)"
+	echo -e "$(GREEN)[✓]$(NC) $(1)"
 endef
 
 define log_warning
-	@echo -e "$(YELLOW)[⚠]$(NC) $(1)"
+	echo -e "$(YELLOW)[⚠]$(NC) $(1)"
 endef
 
 define log_error
-	@echo -e "$(RED)[✗]$(NC) $(1)"
+	echo -e "$(RED)[✗]$(NC) $(1)"
 endef
 
 # Font configuration
@@ -63,18 +63,14 @@ endif
 
 # Package lists per OS
 ifeq ($(OS),macOS)
-	CORE_PACKAGES := stow git neovim ripgrep fd fzf tmux lua-language-server typescript-language-server node
-	ZSH_PACKAGES := zsh-syntax-highlighting zsh-autosuggestions zsh-history-substring-search powerlevel10k
+	CORE_PACKAGES := stow git neovim ripgrep fd fzf lua-language-server node go stylua black shfmt clang-format
+	BREW_PACKAGES := typescript-language-server gopls vscode-langservers-extracted yaml-language-server tailwindcss-language-server prettier sql-formatter bash-language-server typos-lsp golangci-lint eslint
 	CASK_PACKAGES := ghostty
 else ifeq ($(OS),Linux)
 	# Core packages available in official repos
-	CORE_PACKAGES := stow git neovim ripgrep fd fzf tmux nodejs npm
+	CORE_PACKAGES := stow git neovim ripgrep fd fzf nodejs npm go prettier clang
 	# AUR packages (if yay is available)
-	AUR_PACKAGES := lua-language-server typescript-language-server
-	# Zsh plugins from official repos
-	ZSH_PACKAGES := zsh-syntax-highlighting zsh-autosuggestions zsh-history-substring-search
-	# AUR zsh packages
-	AUR_ZSH_PACKAGES := zsh-theme-powerlevel10k-git
+	AUR_PACKAGES := lua-language-server typescript-language-server gopls vscode-langservers-extracted yaml-language-server tailwindcss-language-server sql-formatter bash-language-server typos-lsp stylua black shfmt golangci-lint eslint
 	# Applications from repos or AUR
 	APP_PACKAGES := 
 	AUR_APP_PACKAGES := ghostty
@@ -83,146 +79,124 @@ endif
 # Default target
 .PHONY: all
 all: install stow verify
-	$(call log_success,"Dotfiles setup complete!")
+	@$(call log_success,"Dotfiles setup complete!")
 
 # Install package managers if needed
 .PHONY: setup-package-manager
 setup-package-manager:
 ifeq ($(OS),macOS)
-	$(call log_info,"Checking Homebrew installation...")
+	@$(call log_info,"Checking Homebrew installation...")
 	@if ! command -v brew >/dev/null 2>&1; then \
-		$(call log_warning,"Installing Homebrew..."); \
+		echo -e "$(YELLOW)[⚠]$(NC) Installing Homebrew..."; \
 		/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
 		if [ -f "$(BREW_PREFIX)/bin/brew" ]; then \
 			echo 'eval "$$($(BREW_PREFIX)/bin/brew shellenv)"' >> ~/.zprofile; \
 			eval "$$($(BREW_PREFIX)/bin/brew shellenv)"; \
 		fi; \
-		$(call log_success,"Homebrew installed"); \
+		echo -e "$(GREEN)[✓]$(NC) Homebrew installed"; \
 	else \
-		$(call log_success,"Homebrew already installed"); \
+		echo -e "$(GREEN)[✓]$(NC) Homebrew already installed"; \
 	fi
 else ifeq ($(OS),Linux)
-	$(call log_info,"Checking package manager setup...")
+	@$(call log_info,"Checking package manager setup...")
 	@if ! command -v pacman >/dev/null 2>&1; then \
-		$(call log_error,"pacman not found. This script is designed for Arch Linux."); \
+		echo -e "$(RED)[✗]$(NC) pacman not found. This script is designed for Arch Linux."; \
 		exit 1; \
 	fi
 	@if ! command -v yay >/dev/null 2>&1; then \
-		$(call log_warning,"yay not found. Installing yay for AUR access..."); \
+		echo -e "$(YELLOW)[⚠]$(NC) yay not found. Installing yay for AUR access..."; \
 		sudo pacman -S --needed base-devel git; \
 		git clone https://aur.archlinux.org/yay.git /tmp/yay; \
 		cd /tmp/yay && makepkg -si --noconfirm; \
 		rm -rf /tmp/yay; \
-		$(call log_success,"yay installed"); \
+		echo -e "$(GREEN)[✓]$(NC) yay installed"; \
 	else \
-		$(call log_success,"yay already installed"); \
+		echo -e "$(GREEN)[✓]$(NC) yay already installed"; \
 	fi
 endif
 
 # Install all packages
 .PHONY: install
-install: setup-package-manager install-packages install-zsh-plugins install-apps install-fonts install-tmux-plugins install-npm-packages
+install: setup-package-manager install-packages install-apps install-fonts install-npm-packages install-go-packages
 
 .PHONY: install-packages
 install-packages:
 ifeq ($(OS),macOS)
-	$(call log_info,"Installing Homebrew packages...")
+	@$(call log_info,"Installing Homebrew core packages...")
 	@for package in $(CORE_PACKAGES); do \
 		if brew list $$package >/dev/null 2>&1; then \
-			$(call log_success,"$$package already installed"); \
+			echo -e "$(GREEN)[✓]$(NC) $$package already installed"; \
 		else \
-			$(call log_info,"Installing $$package..."); \
+			echo -e "$(BLUE)[INFO]$(NC) Installing $$package..."; \
 			brew install $$package; \
 		fi; \
 	done
+	@$(call log_info,"Installing additional Homebrew packages...")
+	@for package in $(BREW_PACKAGES); do \
+		if brew list $$package >/dev/null 2>&1; then \
+			echo -e "$(GREEN)[✓]$(NC) $$package already installed"; \
+		else \
+			echo -e "$(BLUE)[INFO]$(NC) Installing $$package..."; \
+			brew install $$package; \
+			if ! brew link $$package >/dev/null 2>&1; then \
+				echo -e "$(YELLOW)[⚠]$(NC) Force linking $$package..."; \
+				brew link --overwrite $$package >/dev/null 2>&1; \
+			fi; \
+		fi; \
+	done
 else ifeq ($(OS),Linux)
-	$(call log_info,"Installing core packages...")
+	@$(call log_info,"Installing core packages...")
 	@sudo pacman -S --needed --noconfirm $(CORE_PACKAGES) 2>/dev/null || \
 		for package in $(CORE_PACKAGES); do \
 			if pacman -Qi $$package >/dev/null 2>&1; then \
-				$(call log_success,"$$package already installed"); \
+				echo -e "$(GREEN)[✓]$(NC) $$package already installed"; \
 			else \
-				$(call log_info,"Installing $$package..."); \
+				echo -e "$(BLUE)[INFO]$(NC) Installing $$package..."; \
 				sudo pacman -S --needed --noconfirm $$package; \
 			fi; \
 		done
 	@if [ "$(HAS_YAY)" = "true" ] && [ -n "$(AUR_PACKAGES)" ]; then \
-		$(call log_info,"Installing AUR packages..."); \
+		echo -e "$(BLUE)[INFO]$(NC) Installing AUR packages..."; \
 		for package in $(AUR_PACKAGES); do \
 			if yay -Qi $$package >/dev/null 2>&1; then \
-				$(call log_success,"$$package already installed"); \
+				echo -e "$(GREEN)[✓]$(NC) $$package already installed"; \
 			else \
-				$(call log_info,"Installing $$package from AUR..."); \
+				echo -e "$(BLUE)[INFO]$(NC) Installing $$package from AUR..."; \
 				yay -S --needed --noconfirm $$package; \
 			fi; \
 		done; \
 	fi
 endif
 
-.PHONY: install-zsh-plugins
-install-zsh-plugins:
-ifeq ($(OS),macOS)
-	$(call log_info,"Installing zsh plugins via Homebrew...")
-	@for package in $(ZSH_PACKAGES); do \
-		if brew list $$package >/dev/null 2>&1; then \
-			$(call log_success,"$$package already installed"); \
-		else \
-			$(call log_info,"Installing $$package..."); \
-			brew install $$package; \
-		fi; \
-	done
-else ifeq ($(OS),Linux)
-	$(call log_info,"Installing zsh plugins...")
-	@sudo pacman -S --needed --noconfirm $(ZSH_PACKAGES) 2>/dev/null || \
-		for package in $(ZSH_PACKAGES); do \
-			if pacman -Qi $$package >/dev/null 2>&1; then \
-				$(call log_success,"$$package already installed"); \
-			else \
-				$(call log_info,"Installing $$package..."); \
-				sudo pacman -S --needed --noconfirm $$package; \
-			fi; \
-		done
-	@if [ "$(HAS_YAY)" = "true" ] && [ -n "$(AUR_ZSH_PACKAGES)" ]; then \
-		$(call log_info,"Installing AUR zsh packages..."); \
-		for package in $(AUR_ZSH_PACKAGES); do \
-			if yay -Qi $$package >/dev/null 2>&1; then \
-				$(call log_success,"$$package already installed"); \
-			else \
-				$(call log_info,"Installing $$package from AUR..."); \
-				yay -S --needed --noconfirm $$package; \
-			fi; \
-		done; \
-	fi
-endif
 
 .PHONY: install-apps
 install-apps:
 ifeq ($(OS),macOS)
-	$(call log_info,"Installing applications via Homebrew casks...")
+	@$(call log_info,"Installing applications via Homebrew casks...")
 	@for cask in $(CASK_PACKAGES); do \
 		if brew list --cask $$cask >/dev/null 2>&1; then \
-			$(call log_success,"$$cask already installed"); \
+			echo -e "$(GREEN)[✓]$(NC) $$cask already installed"; \
 		else \
 			if brew search --casks "^$$cask$$" >/dev/null 2>&1; then \
-				$(call log_info,"Installing $$cask..."); \
+				echo -e "$(BLUE)[INFO]$(NC) Installing $$cask..."; \
 				brew install --cask $$cask; \
 			else \
-				$(call log_warning,"$$cask not available via Homebrew"); \
+				echo -e "$(YELLOW)[⚠]$(NC) $$cask not available via Homebrew"; \
 			fi; \
 		fi; \
 	done
 else ifeq ($(OS),Linux)
-	$(call log_info,"Installing applications...")
+	@$(call log_info,"Installing applications...")
 	@if [ -n "$(APP_PACKAGES)" ]; then \
 		sudo pacman -S --needed --noconfirm $(APP_PACKAGES); \
 	fi
 	@if [ "$(HAS_YAY)" = "true" ] && [ -n "$(AUR_APP_PACKAGES)" ]; then \
-		$(call log_info,"Installing AUR applications..."); \
+		echo -e "$(BLUE)[INFO]$(NC) Installing AUR applications..."; \
 		for package in $(AUR_APP_PACKAGES); do \
 			if yay -Qi $$package >/dev/null 2>&1; then \
-				$(call log_success,"$$package already installed"); \
+				echo -e "$(GREEN)[✓]$(NC) $$package already installed"; \
 			else \
-				$(call log_info,"Installing $$package from AUR..."); \
+				echo -e "$(BLUE)[INFO]$(NC) Installing $$package from AUR..."; \
 				yay -S --needed --noconfirm $$package; \
 			fi; \
 		done; \
@@ -231,7 +205,7 @@ endif
 
 .PHONY: install-fonts
 install-fonts:
-	$(call log_info,"Installing Comic Code fonts...")
+	@$(call log_info,"Installing Comic Code fonts...")
 	@if [ -d "$(FONT_SOURCE)" ]; then \
 		mkdir -p "$(FONT_DIR)"; \
 		for font in "$(FONT_SOURCE)"/*.otf; do \
@@ -258,26 +232,67 @@ ifeq ($(OS),Linux)
 	fi
 endif
 
-.PHONY: install-tmux-plugins
-install-tmux-plugins:
-	$(call log_info,"Setting up Tmux plugins...")
-	@mkdir -p ~/.tmux/plugins
-	@if [ ! -d ~/.tmux/plugins/tpm ]; then \
-		$(call log_info,"Installing Tmux Plugin Manager..."); \
-		git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm; \
-		$(call log_success,"TPM installed"); \
-	else \
-		$(call log_success,"TPM already installed"); \
-	fi
 
 .PHONY: install-npm-packages
 install-npm-packages:
-	$(call log_info,"Installing npm packages...")
+	@$(call log_info,"Installing npm packages...")
 	@if command -v npm >/dev/null 2>&1; then \
-		npm install -g pyright; \
-		$(call log_success,"pyright installed via npm"); \
+		for package in pyright svelte-language-server; do \
+			if npm list -g $$package >/dev/null 2>&1; then \
+				echo -e "$(GREEN)[✓]$(NC) $$package already installed"; \
+			else \
+				echo -e "$(BLUE)[INFO]$(NC) Installing $$package..."; \
+				npm install -g $$package; \
+			fi; \
+		done; \
+		echo -e "$(GREEN)[✓]$(NC) npm packages installed"; \
 	else \
-		$(call log_warning,"npm not available, skipping pyright"); \
+		echo -e "$(YELLOW)[⚠]$(NC) npm not available, skipping npm packages"; \
+	fi
+
+.PHONY: install-go-packages
+install-go-packages:
+	@$(call log_info,"Installing Go packages...")
+	@if command -v go >/dev/null 2>&1; then \
+		for tool in templ goimports gofumpt golines; do \
+			case $$tool in \
+				templ) \
+					if ! command -v templ >/dev/null 2>&1; then \
+						echo -e "$(BLUE)[INFO]$(NC) Installing templ..."; \
+						go install github.com/a-h/templ/cmd/templ@latest; \
+					else \
+						echo -e "$(GREEN)[✓]$(NC) templ already installed"; \
+					fi \
+					;; \
+				goimports) \
+					if ! command -v goimports >/dev/null 2>&1; then \
+						echo -e "$(BLUE)[INFO]$(NC) Installing goimports..."; \
+						go install golang.org/x/tools/cmd/goimports@latest; \
+					else \
+						echo -e "$(GREEN)[✓]$(NC) goimports already installed"; \
+					fi \
+					;; \
+				gofumpt) \
+					if ! command -v gofumpt >/dev/null 2>&1; then \
+						echo -e "$(BLUE)[INFO]$(NC) Installing gofumpt..."; \
+						go install mvdan.cc/gofumpt@latest; \
+					else \
+						echo -e "$(GREEN)[✓]$(NC) gofumpt already installed"; \
+					fi \
+					;; \
+				golines) \
+					if ! command -v golines >/dev/null 2>&1; then \
+						echo -e "$(BLUE)[INFO]$(NC) Installing golines..."; \
+						go install github.com/segmentio/golines@latest; \
+					else \
+						echo -e "$(GREEN)[✓]$(NC) golines already installed"; \
+					fi \
+					;; \
+			esac; \
+		done; \
+		echo -e "$(GREEN)[✓]$(NC) All Go tools installed"; \
+	else \
+		echo -e "$(YELLOW)[⚠]$(NC) go not available, skipping Go tools"; \
 	fi
 
 # Create symlinks using absolute paths (similar to your current script)
@@ -286,32 +301,28 @@ stow: create-dirs stow-configs
 
 .PHONY: create-dirs
 create-dirs:
-	$(call log_info,"Creating necessary directories...")
+	@$(call log_info,"Creating necessary directories...")
 	@mkdir -p ~/.config ~/.config/zsh ~/.config/git
 
 .PHONY: stow-configs
 stow-configs:
-	$(call log_info,"Creating configuration symlinks...")
+	@$(call log_info,"Creating configuration symlinks...")
 	@cd $(DOTFILES_DIR) && \
-	for package in zsh git nvim tmux ghostty; do \
+	for package in bash git nvim ghostty; do \
 		if [ -d "$$package" ]; then \
-			$(call log_info,"Linking $$package configuration..."); \
+			echo -e "$(BLUE)[INFO]$(NC) Linking $$package configuration..."; \
 			$(MAKE) stow-$$package; \
 		else \
-			$(call log_warning,"$$package directory not found, skipping"); \
+			echo -e "$(YELLOW)[⚠]$(NC) $$package directory not found, skipping"; \
 		fi; \
 	done
 
-.PHONY: stow-zsh
-stow-zsh:
-	@rm -f ~/.zshrc ~/.zprofile ~/.zshenv ~/.p10k.zsh 2>/dev/null || true
-	@rm -rf ~/.config/zsh/completions 2>/dev/null || true
-	@ln -sf $(DOTFILES_DIR)/zsh/.zshrc ~/.zshrc
-	@ln -sf $(DOTFILES_DIR)/zsh/.zprofile ~/.zprofile
-	@ln -sf $(DOTFILES_DIR)/zsh/.zshenv ~/.zshenv
-	@ln -sf $(DOTFILES_DIR)/zsh/.p10k.zsh ~/.p10k.zsh
-	@ln -sf $(DOTFILES_DIR)/zsh/completions ~/.config/zsh/completions
-	$(call log_success,"Zsh configuration linked")
+.PHONY: stow-bash
+stow-bash:
+	@rm -f ~/.bashrc ~/.bash_profile ~/.profile 2>/dev/null || true
+	@ln -sf $(DOTFILES_DIR)/bash/.bashrc ~/.bashrc
+	@ln -sf $(DOTFILES_DIR)/bash/.bash_profile ~/.bash_profile
+	@$(call log_success,"Bash configuration linked")
 
 .PHONY: stow-git
 stow-git:
@@ -320,53 +331,44 @@ stow-git:
 	@if [ -f "$(DOTFILES_DIR)/git/work.gitconfig" ]; then \
 		ln -sf $(DOTFILES_DIR)/git/work.gitconfig ~/.config/git/work.gitconfig; \
 	fi
-	$(call log_success,"Git configuration linked")
+	@$(call log_success,"Git configuration linked")
 
 .PHONY: stow-nvim
 stow-nvim:
 	@rm -rf ~/.config/nvim 2>/dev/null || true
 	@ln -sf $(DOTFILES_DIR)/nvim/.config/nvim ~/.config/nvim
-	$(call log_success,"Neovim configuration linked")
+	@$(call log_success,"Neovim configuration linked")
 
-.PHONY: stow-tmux
-stow-tmux:
-	@rm -f ~/.tmux.conf 2>/dev/null || true
-	@ln -sf $(DOTFILES_DIR)/tmux/.tmux.conf ~/.tmux.conf
-	$(call log_success,"Tmux configuration linked")
-	@if command -v tmux >/dev/null 2>&1 && tmux info >/dev/null 2>&1; then \
-		$(call log_info,"Reloading tmux configuration..."); \
-		tmux source-file ~/.tmux.conf 2>/dev/null || true; \
-	fi
 
 .PHONY: stow-ghostty
 stow-ghostty:
 	@rm -rf ~/.config/ghostty 2>/dev/null || true
 	@ln -sf $(DOTFILES_DIR)/ghostty ~/.config/ghostty
-	$(call log_success,"Ghostty configuration linked")
+	@$(call log_success,"Ghostty configuration linked")
 
 # Verification
 .PHONY: verify
 verify:
-	$(call log_info,"Verifying installation...")
+	@$(call log_info,"Verifying installation...")
 	@$(MAKE) verify-links
 	@$(MAKE) verify-tools
 
 .PHONY: verify-links
 verify-links:
-	@for link in ~/.zshrc ~/.zprofile ~/.zshenv ~/.p10k.zsh ~/.gitconfig ~/.config/nvim ~/.tmux.conf; do \
+	@for link in ~/.bashrc ~/.bash_profile ~/.gitconfig ~/.config/nvim; do \
 		if [ -L "$$link" ] && [ -e "$$link" ]; then \
-			$(call log_success,"$$link is correctly linked"); \
+			echo -e "$(GREEN)[✓]$(NC) $$link is correctly linked"; \
 		else \
-			$(call log_warning,"$$link is missing or not linked"); \
+			echo -e "$(YELLOW)[⚠]$(NC) $$link is missing or not linked"; \
 		fi; \
 	done
 	@if [ -d "$(DOTFILES_DIR)/ghostty" ] && [ -L ~/.config/ghostty ]; then \
-		$(call log_success,"~/.config/ghostty is correctly linked"); \
+		echo -e "$(GREEN)[✓]$(NC) ~/.config/ghostty is correctly linked"; \
 	fi
 
 .PHONY: verify-tools
 verify-tools:
-	@for tool in git stow nvim tmux; do \
+	@for tool in git stow nvim; do \
 		if command -v $$tool >/dev/null 2>&1; then \
 			$(call log_success,"$$tool is available"); \
 		else \
@@ -379,21 +381,6 @@ ifeq ($(OS),macOS)
 	else \
 		$(call log_error,"brew is not available"); \
 	fi
-	@if [ -f "$(BREW_PREFIX)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then \
-		$(call log_success,"zsh-syntax-highlighting is installed"); \
-	else \
-		$(call log_warning,"zsh-syntax-highlighting not found"); \
-	fi
-	@if [ -f "$(BREW_PREFIX)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then \
-		$(call log_success,"zsh-autosuggestions is installed"); \
-	else \
-		$(call log_warning,"zsh-autosuggestions not found"); \
-	fi
-	@if [ -f "$(BREW_PREFIX)/share/powerlevel10k/powerlevel10k.zsh-theme" ]; then \
-		$(call log_success,"powerlevel10k theme is installed"); \
-	else \
-		$(call log_warning,"powerlevel10k theme not found"); \
-	fi
 else ifeq ($(OS),Linux)
 	@if command -v pacman >/dev/null 2>&1; then \
 		$(call log_success,"pacman is available"); \
@@ -405,30 +392,15 @@ else ifeq ($(OS),Linux)
 	else \
 		$(call log_warning,"yay is not available (AUR packages may not be installed)"); \
 	fi
-	@if [ -f "/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then \
-		$(call log_success,"zsh-syntax-highlighting is installed"); \
-	else \
-		$(call log_warning,"zsh-syntax-highlighting not found"); \
-	fi
-	@if [ -f "/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then \
-		$(call log_success,"zsh-autosuggestions is installed"); \
-	else \
-		$(call log_warning,"zsh-autosuggestions not found"); \
-	fi
-	@if [ -f "/usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme" ] || [ -d "/usr/share/powerlevel10k" ]; then \
-		$(call log_success,"powerlevel10k theme is installed"); \
-	else \
-		$(call log_warning,"powerlevel10k theme not found"); \
-	fi
 endif
 
 # Cleanup and uninstall
 .PHONY: clean
 clean:
-	$(call log_info,"Removing symlinks...")
-	@rm -f ~/.zshrc ~/.zprofile ~/.zshenv ~/.p10k.zsh ~/.gitconfig ~/.tmux.conf 2>/dev/null || true
-	@rm -rf ~/.config/nvim ~/.config/ghostty ~/.config/zsh/completions 2>/dev/null || true
-	$(call log_success,"Symlinks removed")
+	@$(call log_info,"Removing symlinks...")
+	@rm -f ~/.bashrc ~/.bash_profile ~/.gitconfig 2>/dev/null || true
+	@rm -rf ~/.config/nvim ~/.config/ghostty 2>/dev/null || true
+	@$(call log_success,"Symlinks removed")
 
 .PHONY: info
 info:
@@ -461,13 +433,11 @@ help:
 	@echo "Individual targets:"
 	@echo "  setup-package-manager - Install package manager"
 	@echo "  install-packages - Install core packages"
-	@echo "  install-zsh-plugins - Install zsh plugins"
 	@echo "  install-apps    - Install applications"
 	@echo "  install-fonts   - Install Comic Code fonts"
-	@echo "  stow-zsh        - Link zsh configuration"
+	@echo "  stow-bash       - Link bash configuration"
 	@echo "  stow-git        - Link git configuration"
 	@echo "  stow-nvim       - Link neovim configuration"
-	@echo "  stow-tmux       - Link tmux configuration"
 	@echo "  stow-ghostty    - Link ghostty configuration"
 	@echo ""
 	@echo "OS-specific targets:"

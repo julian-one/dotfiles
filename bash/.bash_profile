@@ -1,4 +1,4 @@
-# .zprofile
+# .bash_profile
 # Executed for login shells
 
 # ======= Path Configuration =======
@@ -63,12 +63,9 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 
-# ======= Zsh Specific Settings =======
+# ======= Bash Specific Settings =======
 # History file location
-export HISTFILE="$HOME/.zsh_history"
-
-# Completion cache directory
-export ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$HOST"
+export HISTFILE="$HOME/.bash_history"
 
 # ======= Security =======
 # GPG TTY for signing commits
@@ -79,8 +76,8 @@ if [[ -z "$SSH_AUTH_SOCK" ]]; then
     eval "$(ssh-agent -s)" > /dev/null 2>&1
 fi
 
-# ======= Source .zshrc for interactive shells =======
-# This ensures .zshrc is loaded for login shells too
-if [[ -o interactive ]] && [[ -f ~/.zshrc ]]; then
-    source ~/.zshrc
+# ======= Source .bashrc for interactive shells =======
+# This ensures .bashrc is loaded for login shells too
+if [[ $- == *i* ]] && [[ -f ~/.bashrc ]]; then
+    source ~/.bashrc
 fi
