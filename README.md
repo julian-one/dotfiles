@@ -1,6 +1,4 @@
-# Minimal Dotfiles
-
-Minimal development environment for macOS and Arch Linux with Neovim, Bash, Ghostty, and Git configurations.
+# Dotfiles
 
 ## Usage
 
@@ -25,7 +23,7 @@ make help             # Show all commands
 - **Neovim** - LSP, treesitter, completion
 - **Bash** - Simple prompt with git branch
 - **Ghostty** - Terminal with Comic Code font
-- **Git** - Work profile configuration
+- **Git** - Profile configurations
 
 ## License
 
