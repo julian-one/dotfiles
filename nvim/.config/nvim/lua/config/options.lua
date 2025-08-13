@@ -10,13 +10,17 @@ vim.o.wrap = false
 
 -- Indentation settings
 vim.o.expandtab = false -- use real Tab characters, not spaces
+vim.o.tabstop = 4 -- width of a tab character in columns
+vim.o.shiftwidth = 4 -- width for autoindents
+vim.o.softtabstop = 4 -- number of columns for a tab in insert mode
 vim.o.smartindent = true -- smart auto-indent in program files
+vim.o.autoindent = true -- copy indent from current line when starting a new line
 
 -- Swap/backup/undo settings
 vim.o.swapfile = false -- no swap files
 vim.o.backup = false -- no backup files
 vim.o.undofile = true
-vim.o.undodir = os.getenv("HOME") .. "/.vim/undodir" -- where to store undo history
+vim.o.undodir = vim.fn.stdpath("data") .. "/undo" -- where to store undo history
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
