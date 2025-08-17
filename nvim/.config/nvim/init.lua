@@ -38,6 +38,7 @@ vim.pack.add({
 	{ src = "https://github.com/mason-org/mason.nvim" },                             -- LSP server installer
 	{ src = 'https://github.com/NvChad/showkeys',                 opt = true },      -- Show keypresses
 	{ src = "https://github.com/Saghen/blink.cmp" },                                 -- Completion engine
+	{ src = "https://github.com/folke/trouble.nvim" },                               -- Diagnostic list
 })
 
 -- Plugin Setup
@@ -45,6 +46,7 @@ require "mason".setup()                              -- Initialize Mason for LSP
 require "showkeys".setup({ position = "top-right" }) -- Show keypresses in top-right
 require "mini.pick".setup()                          -- Initialize fuzzy finder
 require "oil".setup()                                -- Initialize file explorer
+require "trouble".setup()                            -- Initialize trouble diagnostics
 
 -- Completion Setup (blink.cmp)
 require("blink.cmp").setup({
@@ -93,6 +95,13 @@ vim.lsp.enable({
 	"html",        -- HTML Language Server
 	"cssls"        -- CSS Language Server
 })
+
+-- Trouble Diagnostic Keymaps (after LSP setup)
+map('n', '<leader>xx', ':Trouble diagnostics toggle<CR>') -- Toggle trouble diagnostics
+map('n', '<leader>xd', ':Trouble diagnostics toggle filter.buf=0<CR>') -- Document diagnostics
+map('n', '<leader>xs', ':Trouble symbols toggle focus=false<CR>') -- Document symbols
+map('n', '<leader>xl', ':Trouble loclist toggle<CR>') -- Location list
+map('n', '<leader>xq', ':Trouble qflist toggle<CR>') -- Quickfix list
 
 -- Treesitter Configuration
 require('nvim-treesitter').setup({

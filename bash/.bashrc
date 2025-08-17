@@ -77,14 +77,5 @@ git_branch() {
     fi
 }
 
-# Vague.nvim colorscheme for bash
-# Background: #141415, Foreground: #cdcdcd, Comment: #606079
-# Function: #c48282, String: #e8b589, Keyword: #6e94b2
-export CLICOLOR=1
-export LSCOLORS="ExGxBxDxCxEgEdxbxgxcxd"
-
-# LS_COLORS for GNU ls (if available)
-export LS_COLORS="di=1;34:ln=1;36:so=1;35:pi=1;33:ex=1;32:bd=1;33;40:cd=1;33;40:su=1;37;41:sg=1;37;43:tw=1;37;42:ow=1;37;43"
-
-# Colorized prompt matching vague.nvim theme
-PS1='\[\033[38;2;205;205;205m\]\u\[\033[38;2;96;96;121m\]:\[\033[38;2;232;181;137m\]\w\[\033[38;2;110;148;178m\]$(git_branch)\[\033[0m\] \[\033[38;2;196;130;130m\]❯\[\033[0m\] '
+# Simple prompt
+PS1='\u:\w$(git_branch) \$ '
