@@ -1,43 +1,77 @@
-# command = "/Users/julian-one/ghostty-tmux.sh"
-
-
-# fonts
-font-family = Comic Code Ligatures
+# Font configuration
+font-family = "Comic Code Ligatures"
 font-size = 18
-font-style = medium
-bold-is-bright = true
 
-# increase line spacing
-adjust-cell-height = 20% 
+# Increase line spacing for better readability
+adjust-cell-height = 20%
 
-# cursor
-cursor-style = block
-cursor-style-blink = false
+# Add padding around terminal content
+window-padding-x = 20
+window-padding-y = 20
 
-# clipboard
+# Copy selected text to system clipboard automatically
 copy-on-select = clipboard
-clipboard-trim-trailing-spaces = true
 
-# window
-initial-window = true
-resize-overlay = never
-window-save-state = always
-window-step-resize = false
+# Visual effects
+# Blur background when transparent
 background-blur-radius = 15
-window-padding-balance = true
+# Don't confirm when closing window
 confirm-close-surface = false
 
-# behavior
-auto-update = check
-auto-update-channel = stable
-quit-after-last-window-closed = true
-shell-integration-features = true
+# Vague.nvim colorscheme
+background = #141415
+foreground = #cdcdcd
 
-# theme
-theme = catppuccin-latte
+# Black (normal and bright)
+palette = 0=#141415
+palette = 8=#252530
 
-# macos
+# Red (normal and bright)
+palette = 1=#d8647e
+palette = 9=#d8647e
+
+# Green (normal and bright)
+palette = 2=#7fa563
+palette = 10=#7fa563
+
+# Yellow (normal and bright)
+palette = 3=#e0a363
+palette = 11=#f3be7c
+
+# Blue (normal and bright)
+palette = 4=#6e94b2
+palette = 12=#7e98e8
+
+# Magenta (normal and bright)
+palette = 5=#bb9dbd
+palette = 13=#bb9dbd
+
+# Cyan (normal and bright)
+palette = 6=#b4d4cf
+palette = 14=#9bb4bc
+
+# White (normal and bright)
+palette = 7=#cdcdcd
+palette = 15=#c3c3d5
+
+# Cursor colors
+cursor-color = #c48282
+cursor-text = #141415
+
+# Selection colors
+selection-background = #333738
+selection-foreground = #cdcdcd
+
+# macOS specific settings
+# Use Option key as Alt modifier
 macos-option-as-alt = true
-macos-titlebar-style = transparent
+# Transparent titlebar
+macos-titlebar-style = native
+# Hide proxy icon in titlebar
 macos-titlebar-proxy-icon = hidden
+# Empty title for clean look
 title = " "
+# Remove ghost emoji from window
+macos-icon = official
+# Maximize window when opened
+fullscreen = true

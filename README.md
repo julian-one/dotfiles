@@ -1,15 +1,6 @@
 # Dotfiles
 
-Personal development environment configuration for macOS and Arch Linux.
-
-## Features
-
-- **Neovim** - LSP, Telescope, Copilot, and 30+ plugins with modular Lua configuration
-- **Zsh** - Powerlevel10k prompt, syntax highlighting, autosuggestions, and custom completions
-- **Tmux** - Custom status bar, Catppuccin theme, vi-mode navigation
-- **Ghostty** - Modern terminal with Comic Code Ligatures and blur effects
-- **Git** - Aliases and conditional work profile includes
-- **Fonts** - Comic Code with ligatures for coding
+Modern, minimal development environment focused on simplicity and productivity.
 
 ## Quick Start
 
@@ -19,80 +10,72 @@ cd ~/dotfiles
 make all
 ```
 
-The Makefile will:
-- Install package manager (Homebrew/pacman) and required packages
-- Back up existing configurations  
-- Create symlinks to dotfiles
-- Install Comic Code fonts
-- Install tmux plugins and language servers
-- Verify installation
-
-## Available Commands
+## Commands
 
 ```bash
-make all              # Full setup (install + stow + verify)
-make install          # Install all packages and dependencies
-make stow             # Create configuration symlinks
-make verify           # Verify installation and links
-make clean            # Remove all symlinks
-make info             # Show system information
-make help             # Show all available commands
+make all              # Complete setup (install + link)
+make install          # Install packages via Homebrew
+make link             # Create configuration symlinks
+make clean            # Remove symlinks
+make verify           # Verify installation
+make help             # Show all commands
 ```
 
-### Individual Components
-```bash
-make install-packages    # Install core packages
-make install-zsh-plugins # Install zsh plugins
-make install-fonts       # Install Comic Code fonts
-make stow-nvim           # Link neovim configuration only
-make stow-zsh            # Link zsh configuration only
-make stow-tmux           # Link tmux configuration only
-```
+## What's Included
+
+### 🚀 Core Tools
+- **Neovim** - Modern editor with LSP, treesitter, and fuzzy finding
+- **Ghostty** - Fast terminal with Comic Code Ligatures font
+- **Bash** - Enhanced shell with vi mode and git integration
+- **Git** - Streamlined configuration
+
+### 📦 Dependencies
+- **Homebrew** - Package manager for macOS
+- **Git** - Version control
+- **Neovim** - Text editor
+- **Ripgrep** - Fast text search
+- **fd** - Fast file finder
+- **fzf** - Fuzzy finder
+- **tree-sitter** - Syntax highlighting
+
+## Configuration Highlights
+
+- **Unified color scheme** - Vague.nvim theme across all tools
+- **Vi mode everywhere** - Consistent keybindings
+- **LSP-powered development** - Go, TypeScript, Svelte, HTML, CSS support
+- **Smart history** - Enhanced command history with timestamps
+- **XDG compliance** - Proper config directory structure
 
 ## Structure
 
 ```
 dotfiles/
-├── nvim/          # Neovim configuration
-├── zsh/           # Shell configuration
-├── tmux/          # Tmux configuration
-├── ghostty/       # Terminal configuration
-├── git/           # Git configuration
-└── Makefile       # Cross-platform setup
+├── bash/           # Shell configuration
+│   ├── .bashrc     # Interactive shell settings
+│   └── .bash_profile # Login shell environment
+├── ghostty/        # Terminal configuration
+│   └── config      # Theme and display settings
+├── git/            # Git configurations
+│   └── work.gitconfig # Work profile
+├── nvim/           # Neovim configuration
+│   └── .config/nvim/init.lua # Single-file config
+├── fonts/          # Comic Code Ligatures font
+└── Makefile        # Automated setup
 ```
 
-## Platform Support
+## Customization
 
-### macOS (Intel & Apple Silicon)
-- **Package Manager**: Homebrew
-- **Auto-detection**: Intel (`/usr/local`) vs Apple Silicon (`/opt/homebrew`)
-- **Prerequisites**: Command Line Tools for Xcode
+Edit configurations directly:
+- **Neovim**: `nvim ~/.config/nvim/init.lua`
+- **Bash**: `nvim ~/.bashrc`
+- **Terminal**: `nvim ~/.config/ghostty/config`
 
-### Arch Linux
-- **Package Manager**: pacman + yay (AUR)
-- **Auto-installation**: yay will be installed automatically if not present
-- **Prerequisites**: base-devel group
+## Troubleshooting
 
-## Manual Installation
-
-### macOS
-```bash
-# Prerequisites
-brew install stow neovim tmux ripgrep fd fzf
-
-# Create symlinks
-make stow
-```
-
-### Arch Linux
-```bash
-# Prerequisites
-sudo pacman -S stow neovim tmux ripgrep fd fzf
-yay -S lua-language-server  # Optional
-
-# Create symlinks  
-make stow
-```
+Run `make verify` to check installation status. Common issues:
+- **Homebrew not found**: Install from [brew.sh](https://brew.sh)
+- **Symlinks not created**: Check file permissions
+- **LSP not working**: Run `:Mason` in Neovim to install language servers
 
 ## License
 

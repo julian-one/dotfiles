@@ -1,6 +1,7 @@
 [user]
 	name = Julian One
 	email = 38872371+julian-one@users.noreply.github.com
+	signingkey = 2AD7598F6AB2D5AB
 
 [core]
 	editor = nvim
@@ -14,6 +15,9 @@
 
 [push]
 	default = simple
+
+[commit]
+	gpgsign = true
 
 [alias]
 	st = status

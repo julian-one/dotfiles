@@ -1,4 +1,4 @@
-# .zprofile
+# .bash_profile
 # Executed for login shells
 
 # ======= Path Configuration =======
@@ -31,9 +31,6 @@ export LC_ALL=en_US.UTF-8
 # Node.js
 export NODE_ENV=development
 
-# Python
-export PYTHONDONTWRITEBYTECODE=1  # Don't write .pyc files
-
 # Go
 export GOPATH="$HOME/go"
 
@@ -42,31 +39,10 @@ if [[ -f "$HOME/.cargo/env" ]]; then
     source "$HOME/.cargo/env"
 fi
 
-# ======= Terminal Settings =======
-# Better ls colors for macOS
-export CLICOLOR=1
-export LSCOLORS=ExFxBxDxCxegedabagacad
-
-# Enable color support for various commands
-export GREP_OPTIONS='--color=auto'
-
 # ======= Application Settings =======
-# Tmux plugin manager path
-export TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins"
-
-# FZF configuration
+# FZF configuration - vague.nvim theme colors
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-export FZF_DEFAULT_OPTS='
-  --height 40% 
-  --layout=reverse 
-  --border 
-  --info=inline
-  --color=dark
-  --color=fg:-1,bg:-1,hl:#5f87af
-  --color=fg+:#d0d0d0,bg+:#262626,hl+:#5fd7ff
-  --color=info:#afaf87,prompt:#d7005f,pointer:#af5fff
-  --color=marker:#87ff00,spinner:#af5fff,header:#87afaf
-'
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --color=bg:#141415,fg:#cdcdcd,border:#878787,hl:#c48282,fg+:#cdcdcd,bg+:#252530,hl+:#e8b589,info:#606079,prompt:#6e94b2,pointer:#c48282,marker:#7fa563,spinner:#bb9dbd'
 
 # Ripgrep configuration
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
@@ -77,12 +53,9 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 
-# ======= Zsh Specific Settings =======
+# ======= Bash Specific Settings =======
 # History file location
-export HISTFILE="$HOME/.zsh_history"
-
-# Completion cache directory
-export ZSH_COMPDUMP="$XDG_CACHE_HOME/zsh/zcompdump-$HOST"
+export HISTFILE="$HOME/.bash_history"
 
 # ======= Security =======
 # GPG TTY for signing commits
@@ -93,8 +66,8 @@ if [[ -z "$SSH_AUTH_SOCK" ]]; then
     eval "$(ssh-agent -s)" > /dev/null 2>&1
 fi
 
-# ======= Source .zshrc for interactive shells =======
-# This ensures .zshrc is loaded for login shells too
-if [[ -o interactive ]] && [[ -f ~/.zshrc ]]; then
-    source ~/.zshrc
+# ======= Source .bashrc for interactive shells =======
+# This ensures .bashrc is loaded for login shells too
+if [[ $- == *i* ]] && [[ -f ~/.bashrc ]]; then
+    source ~/.bashrc
 fi
