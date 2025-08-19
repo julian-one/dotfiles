@@ -1,99 +1,162 @@
+-- ============================================================================
+-- NEOVIM CONFIGURATION
+-- ============================================================================
+
+-- ============================================================================
+-- CORE SETTINGS
+-- ============================================================================
+
+-- Mouse
 vim.opt.mouse = ""
 
--- Visual Settings
-vim.opt.number = true                              -- Line numbers
-vim.opt.relativenumber = true                      -- Relative line numbers
-vim.opt.cursorline = true                          -- Highlight current line
-vim.opt.cursorcolumn = false                       -- Don't highlight cursor column
-vim.opt.wrap = false                               -- Don't wrap lines
-vim.opt.scrolloff = 10                             -- Keep 10 lines above/below cursor
-vim.opt.sidescrolloff = 8                          -- Keep 8 columns left/right of cursor
-vim.opt.termguicolors = true                       -- Enable 24-bit RGB colors
-vim.opt.signcolumn = "yes"                         -- Always show sign column
-vim.opt.colorcolumn = "100"                        -- Show column at 100 characters
-vim.opt.showmatch = true                           -- Highlight matching brackets
-vim.opt.matchtime = 2                              -- How long to show matching bracket
-vim.opt.cmdheight = 1                              -- Command line height
-vim.opt.showmode = false                           -- Don't show mode in command line
-vim.opt.pumheight = 10                             -- Popup menu height
-vim.opt.pumblend = 10                              -- Popup menu transparency
-vim.opt.winblend = 0                               -- Floating window transparency
-vim.opt.winborder = "rounded"                      -- Rounded window borders
-vim.opt.conceallevel = 0                           -- Don't hide markup
-vim.opt.concealcursor = ""                         -- Don't hide cursor line markup
-vim.opt.lazyredraw = true                          -- Don't redraw during macros
-vim.opt.synmaxcol = 300                            -- Syntax highlighting limit
+-- Leader Keys
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
--- Indentation
-vim.opt.tabstop = 2                                -- Tab width
-vim.opt.shiftwidth = 2                             -- Indent width
-vim.opt.softtabstop = 2                            -- Soft tab stop
-vim.opt.expandtab = true                           -- Use spaces instead of tabs
-vim.opt.smartindent = true                         -- Smart auto-indenting
-vim.opt.autoindent = true                          -- Copy indent from current line
+-- ============================================================================
+-- VISUAL & UI SETTINGS
+-- ============================================================================
 
--- Search Settings
-vim.opt.ignorecase = true                          -- Case insensitive search
-vim.opt.smartcase = true                           -- Case sensitive if uppercase in search
-vim.opt.hlsearch = false                           -- Don't highlight search results
-vim.opt.incsearch = true                           -- Show matches as you type
+-- Line Numbers & Cursor
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.cursorline = true
+vim.opt.cursorcolumn = false
 
--- File Handling
-vim.opt.backup = false                             -- Don't create backup files
-vim.opt.writebackup = false                        -- Don't create backup before writing
-vim.opt.swapfile = false                           -- Don't create swap files
-vim.opt.undofile = true                            -- Persistent undo
-vim.opt.undodir = vim.fn.expand("~/.vim/undodir")  -- Undo directory
-vim.opt.autoread = true                            -- Auto reload files changed outside vim
-vim.opt.autowrite = false                          -- Don't auto save
+-- Display & Layout
+vim.opt.wrap = false
+vim.opt.scrolloff = 10
+vim.opt.sidescrolloff = 8
+vim.opt.signcolumn = "yes"
+vim.opt.colorcolumn = "100"
+vim.opt.showmatch = true
+vim.opt.matchtime = 2
+
+-- Colors & Transparency
+vim.opt.termguicolors = true
+vim.opt.pumblend = 10
+vim.opt.winblend = 0
+vim.opt.winborder = "rounded"
+
+-- Command Line & UI
+vim.opt.cmdheight = 1
+vim.opt.showmode = false
+vim.opt.pumheight = 10
+
+-- Concealing & Syntax
+vim.opt.conceallevel = 0
+vim.opt.concealcursor = ""
+vim.opt.synmaxcol = 300
 
 -- Performance
-vim.opt.updatetime = 300                           -- Faster completion
-vim.opt.timeoutlen = 500                           -- Key timeout duration
-vim.opt.ttimeoutlen = 0                            -- Key code timeout
+vim.opt.lazyredraw = true
 
--- Completion
-vim.opt.completeopt = "menuone,noinsert,noselect"  -- Completion options
+-- ============================================================================
+-- EDITING & INDENTATION
+-- ============================================================================
 
--- Behavior Settings
-vim.opt.hidden = true                              -- Allow hidden buffers
-vim.opt.errorbells = false                         -- No error bells
-vim.opt.backspace = "indent,eol,start"             -- Better backspace behavior
-vim.opt.autochdir = false                          -- Don't auto change directory
-vim.opt.iskeyword:append("-")                      -- Treat dash as part of word
-vim.opt.path:append("**")                          -- Include subdirectories in search
-vim.opt.selection = "exclusive"                    -- Selection behavior
-vim.opt.clipboard:append("unnamedplus")            -- Use system clipboard
-vim.opt.modifiable = true                          -- Allow buffer modifications
-vim.opt.encoding = "UTF-8"                         -- Set encoding
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
+vim.opt.expandtab = true
+vim.opt.smartindent = true
+vim.opt.autoindent = true
 
--- Cursor Settings
-vim.opt.guicursor = "n-v-c:block,i-ci-ve:block,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175"
+-- ============================================================================
+-- SEARCH SETTINGS
+-- ============================================================================
 
--- Split Behavior
-vim.opt.splitbelow = true                          -- Horizontal splits go below
-vim.opt.splitright = true                          -- Vertical splits go right
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
 
--- Folding
-vim.opt.foldmethod = "expr"                        -- Use expression for folding
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- Use treesitter for folding
-vim.opt.foldlevel = 99                             -- Start with all folds open
+-- ============================================================================
+-- FILE HANDLING & BACKUP
+-- ============================================================================
 
--- Key Mappings Setup
+vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.swapfile = false
+vim.opt.undofile = true
+vim.opt.undodir = vim.fn.expand("~/.vim/undodir")
+vim.opt.autoread = true
+vim.opt.autowrite = false
+
+-- ============================================================================
+-- PERFORMANCE & TIMING
+-- ============================================================================
+
+vim.opt.updatetime = 300
+vim.opt.timeoutlen = 500
+vim.opt.ttimeoutlen = 0
+
+-- ============================================================================
+-- COMPLETION & BEHAVIOR
+-- ============================================================================
+
+vim.opt.completeopt = "menuone,noinsert,noselect"
+vim.opt.hidden = true
+vim.opt.errorbells = false
+vim.opt.backspace = "indent,eol,start"
+vim.opt.autochdir = false
+vim.opt.iskeyword:append("-")
+vim.opt.path:append("**")
+vim.opt.selection = "exclusive"
+vim.opt.clipboard:append("unnamedplus")
+vim.opt.modifiable = true
+vim.opt.encoding = "UTF-8"
+
+-- ============================================================================
+-- SPELL CHECKING
+-- ============================================================================
+
+vim.opt.spell = false
+vim.opt.spelllang = "en_us"
+
+-- ============================================================================
+-- WINDOW BEHAVIOR
+-- ============================================================================
+
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+
+-- ============================================================================
+-- FOLDING CONFIGURATION
+-- ============================================================================
+
+vim.opt.foldmethod = "expr"
+vim.opt.foldlevel = 99
+
+-- LSP-based folding
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function()
+		local clients = vim.lsp.get_clients({ bufnr = 0 })
+		for _, client in pairs(clients) do
+			if client.server_capabilities.foldingRangeProvider then
+				vim.opt_local.foldexpr = "v:lua.vim.lsp.foldexpr()"
+				break
+			end
+		end
+	end,
+})
+
+-- ============================================================================
+-- KEY MAPPINGS
+-- ============================================================================
+
 local map = vim.keymap.set
-vim.g.mapleader = " "      -- Set leader key to space
-vim.g.maplocalleader = " " -- Set local leader key
 
 -- File Operations
-map('n', '<leader>o', ':update<CR> :source<CR>') -- Save and source file
-map('n', '<leader>w', ':write<CR>')              -- Save file
-map('n', '<leader>q', ':quit<CR>')               -- Quit
-map('n', '<leader>v', ':e $MYVIMRC<CR>')         -- Edit vimrc
+map("n", "<leader>o", ":update<CR> :source<CR>", { desc = "Save and source file" })
+map("n", "<leader>w", ":write<CR>", { desc = "Save file" })
+map("n", "<leader>q", ":quit<CR>", { desc = "Quit" })
+map("n", "<leader>v", ":e $MYVIMRC<CR>", { desc = "Edit vimrc" })
 
 -- System Integration
-map({ 'n', 'v' }, '<leader>y', '"+y') -- Yank to system clipboard
-map({ 'n', 'v' }, '<leader>d', '"+d') -- Delete to system clipboard
-map({ 'n', 'v' }, '<leader>c', '1z=') -- Quick spell correction (first suggestion)
+map({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
+map({ "n", "v" }, "<leader>z", "1z=", { desc = "Quick spell correction" })
+map("n", "<leader>s", ":set spell!<CR>", { desc = "Toggle spell check" })
 
 -- Search & Navigation
 map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
@@ -107,141 +170,188 @@ map("n", "<C-j>", "<C-w>j", { desc = "Move to bottom window" })
 map("n", "<C-k>", "<C-w>k", { desc = "Move to top window" })
 map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
--- Window Splitting 
+-- Window Management
 map("n", "<leader>sv", ":vsplit<CR>", { desc = "Split window vertically" })
 map("n", "<leader>sh", ":split<CR>", { desc = "Split window horizontally" })
 
--- Move Lines
+-- Line Movement
 map("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
 map("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
 map("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 map("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
--- Better Visual Mode Indenting
+-- Visual Mode Indenting
 map("v", "<", "<gv", { desc = "Indent left and reselect" })
 map("v", ">", ">gv", { desc = "Indent right and reselect" })
 
--- Plugin Management
+-- ============================================================================
+-- PLUGIN MANAGEMENT
+-- ============================================================================
+
 vim.pack.add({
-	{ src = "https://github.com/vague2k/vague.nvim" },                               -- Colorscheme
-	{ src = "https://github.com/stevearc/oil.nvim" },                                -- File explorer
-	{ src = "https://github.com/echasnovski/mini.pick" },                            -- Fuzzy finder
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" }, -- Syntax highlighting
-	{ src = 'https://github.com/neovim/nvim-lspconfig' },                            -- LSP configurations
-	{ src = "https://github.com/mason-org/mason.nvim" },                             -- LSP server installer
-	{ src = "https://github.com/Saghen/blink.cmp" },                                 -- Completion engine
-	{ src = "https://github.com/folke/trouble.nvim" },                               -- Diagnostic list
-	{ src = "https://github.com/mbbill/undotree" },                                  -- Undo tree visualizer
+	{ src = "https://github.com/vague2k/vague.nvim" },
+	{ src = "https://github.com/stevearc/oil.nvim" },
+	{ src = "https://github.com/echasnovski/mini.pick" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
+	{ src = "https://github.com/neovim/nvim-lspconfig" },
+	{ src = "https://github.com/mason-org/mason.nvim" },
+	{ src = "https://github.com/Saghen/blink.cmp" },
+	{ src = "https://github.com/folke/trouble.nvim" },
+	{ src = "https://github.com/mbbill/undotree" },
+	{ src = "https://github.com/stevearc/conform.nvim" },
+	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
 })
 
--- Plugin Setup
-require "mason".setup()                              -- Initialize Mason for LSP management
-require "mini.pick".setup()                          -- Initialize fuzzy finder
-require "oil".setup()                                -- Initialize file explorer
-require "trouble".setup()                            -- Initialize trouble diagnostics
+-- ============================================================================
+-- PLUGIN CONFIGURATION
+-- ============================================================================
 
--- Completion Setup (blink.cmp)
-require("blink.cmp").setup({
-	keymap = { preset = 'default' },      -- Use default keymaps
-	sources = {
-		default = { 'lsp', 'path', 'buffer' } -- Enable LSP, path, and buffer completion
+-- Core Plugin Setup
+require("mason").setup()
+require("mini.pick").setup()
+require("oil").setup()
+require("trouble").setup()
+require("gitsigns").setup()
+
+-- Code Formatting (Conform)
+require("conform").setup({
+	notify_on_error = false,
+	format_on_save = {
+		lsp_format = "fallback",
+		timeout_ms = 3000,
 	},
-	signature = { enabled = true },       -- Show function signatures
+	formatters_by_ft = {
+		lua = { "stylua" },
+		go = { "goimports", "gofumpt", "golines" },
+		templ = { "templ" },
+		javascript = { "prettier" },
+		typescript = { "prettier" },
+		svelte = { "prettier" },
+		css = { "prettier" },
+		html = { "prettier" },
+	},
+})
+
+-- Completion Engine (Blink)
+require("blink.cmp").setup({
+	keymap = { preset = "default" },
+	sources = {
+		default = { "lsp", "path", "buffer" },
+	},
+	signature = { enabled = true },
 	completion = {
-		documentation = { auto_show = true } -- Show documentation for completion items
+		documentation = { auto_show = true },
 	},
 	fuzzy = {
-		implementation = "lua" -- Use Lua implementation (no Rust dependency)
-	}
+		implementation = "lua",
+	},
 })
 
--- Navigation & Search Keymaps
-map('n', '<leader>f', ":Pick files<CR>")     -- Fuzzy find files
-map('n', '<leader>g', ":Pick grep_live<CR>") -- Live grep text in files
-map('n', '<leader>b', ":Pick buffers<CR>")   -- Show open buffers
-map('n', '<leader>h', ":Pick help<CR>")      -- Fuzzy find help
-map('n', '<leader>e', ":Oil<CR>")            -- Open file explorer
-map('n', '<leader>u', ":UndotreeToggle<CR>")     -- Toggle undo tree
+-- ============================================================================
+-- PLUGIN KEYMAPS
+-- ============================================================================
 
--- LSP Configuration and Keymaps
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function(event)
-    local opts = {buffer = event.buf}
+-- File Navigation & Search
+map("n", "<leader>f", ":Pick files<CR>", { desc = "Fuzzy find files" })
+map("n", "<leader>g", ":Pick grep_live<CR>", { desc = "Live grep search" })
+map("n", "<leader>b", ":Pick buffers<CR>", { desc = "Show open buffers" })
+map("n", "<leader>h", ":Pick help<CR>", { desc = "Fuzzy find help" })
+map("n", "<leader>e", ":Oil<CR>", { desc = "Open file explorer" })
+map("n", "<leader>u", ":UndotreeToggle<CR>", { desc = "Toggle undo tree" })
 
-    -- Navigation
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+-- Trouble Diagnostics
+map("n", "<leader>xx", ":Trouble diagnostics toggle<CR>", { desc = "Toggle diagnostics" })
+map("n", "<leader>xd", ":Trouble diagnostics toggle filter.buf=0<CR>", { desc = "Buffer diagnostics" })
+map("n", "<leader>xs", ":Trouble symbols toggle focus=false<CR>", { desc = "Document symbols" })
+map("n", "<leader>xl", ":Trouble loclist toggle<CR>", { desc = "Location list" })
+map("n", "<leader>xq", ":Trouble qflist toggle<CR>", { desc = "Quickfix list" })
 
-    -- Information
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+-- ============================================================================
+-- LSP CONFIGURATION
+-- ============================================================================
 
-    -- Code actions
-    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-
-    -- Diagnostics
-    vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
-    vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
-  end,
-})
-
--- Better LSP UI
-vim.diagnostic.config({
-  virtual_text = { prefix = '●' },
-  signs = true,
-  underline = true,
-  update_in_insert = false,
-  severity_sort = true,
-})
-
-vim.diagnostic.config({
-  signs = {
-    text = {
-      [vim.diagnostic.severity.ERROR] = "󰅚",
-      [vim.diagnostic.severity.WARN] = "󰀪",
-      [vim.diagnostic.severity.INFO] = "󰋽",
-      [vim.diagnostic.severity.HINT] = "󰌶",
-    }
-  }
-})
-
--- LSP Configuration
--- Enable LSP servers for full-stack development (Go backend + Svelte frontend on GCP)
+-- LSP Servers
 vim.lsp.enable({
-	"lua_ls",     -- Lua Language Server
-	"gopls",      -- Go Language Server
-	"svelte",     -- Svelte Language Server
-	"ts_ls",      -- TypeScript/JavaScript Language Server
-	"tailwindcss", -- TailwindCSS Language Server
-	"templ",      -- Templ Language Server
-	"emmetls",    -- Emmet Language Server
-	"jsonls",     -- JSON Language Server
-	"yamlls",     -- YAML Language Server
-	"dockerls",   -- Docker Language Server
-	"html",       -- HTML Language Server
-	"cssls"       -- CSS Language Server
+	"lua_ls",
+	"gopls",
+	"svelte",
+	"ts_ls",
+	"tailwindcss",
+	"templ",
+	"emmetls",
+	"jsonls",
+	"yamlls",
+	"dockerls",
+	"html",
+	"cssls",
 })
 
--- Trouble Diagnostic Keymaps (after LSP setup)
-map('n', '<leader>xx', ':Trouble diagnostics toggle<CR>')              -- Toggle trouble diagnostics
-map('n', '<leader>xd', ':Trouble diagnostics toggle filter.buf=0<CR>') -- Document diagnostics
-map('n', '<leader>xs', ':Trouble symbols toggle focus=false<CR>')      -- Document symbols
-map('n', '<leader>xl', ':Trouble loclist toggle<CR>')                  -- Location list
-map('n', '<leader>xq', ':Trouble qflist toggle<CR>')                   -- Quickfix list
+-- LSP Keymaps (Auto-configured on LSP attach)
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(event)
+		local opts = { buffer = event.buf }
 
--- Treesitter Configuration
-require('nvim-treesitter').setup({
+		-- Navigation
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+		vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+
+		-- Information
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+
+		-- Code Actions
+		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+
+		-- Diagnostics
+		vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+		vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, opts)
+	end,
+})
+
+-- LSP UI Configuration
+vim.diagnostic.config({
+	virtual_text = { prefix = "●" },
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "󰅚",
+			[vim.diagnostic.severity.WARN] = "󰀪",
+			[vim.diagnostic.severity.INFO] = "󰋽",
+			[vim.diagnostic.severity.HINT] = "󰌶",
+		},
+	},
+	underline = true,
+	update_in_insert = false,
+	severity_sort = true,
+})
+
+-- ============================================================================
+-- TREESITTER CONFIGURATION
+-- ============================================================================
+
+require("nvim-treesitter").setup({
 	highlight = { enable = true },
 	ensure_installed = {
-		"lua", "go", "javascript", "typescript", "svelte", "html", "css",
-		"json", "yaml", "docker", "templ", "bash", "markdown"
+		"lua",
+		"go",
+		"javascript",
+		"typescript",
+		"svelte",
+		"html",
+		"css",
+		"json",
+		"yaml",
+		"docker",
+		"templ",
+		"bash",
+		"markdown",
 	},
-	auto_install = true,
 })
 
--- Color Scheme Configuration
-require "vague".setup({ transparent = true }) -- Setup vague theme with transparency
-vim.cmd("colorscheme vague")                  -- Apply the colorscheme
-vim.cmd(":hi statusline guibg=NONE")          -- Make statusline background transparent
+-- ============================================================================
+-- COLORSCHEME
+-- ============================================================================
+
+require("vague").setup({ transparent = true })
+vim.cmd("colorscheme vague")
+vim.cmd(":hi statusline guibg=NONE")
