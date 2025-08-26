@@ -50,6 +50,8 @@ vim.opt.synmaxcol = 300
 
 -- Performance
 vim.opt.lazyredraw = true
+vim.opt.redrawtime = 10000
+vim.opt.maxmempattern = 20000
 
 -- ============================================================================
 -- EDITING & INDENTATION
@@ -106,6 +108,10 @@ vim.opt.selection = "exclusive"
 vim.opt.clipboard:append("unnamedplus")
 vim.opt.modifiable = true
 vim.opt.encoding = "UTF-8"
+
+-- Cursor settings
+vim.opt.guicursor =
+	"n-v-c:block,i-ci-ve:block,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175"
 
 -- ============================================================================
 -- SPELL CHECKING
@@ -185,6 +191,32 @@ map("v", "<", "<gv", { desc = "Indent left and reselect" })
 map("v", ">", ">gv", { desc = "Indent right and reselect" })
 
 -- ============================================================================
+-- AUTOCOMMANDS
+-- ============================================================================
+
+local augroup = vim.api.nvim_create_augroup("UserConfig", {})
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+	desc = "Highlight when yanking (copying) text",
+	group = augroup,
+	callback = function()
+		vim.hl.on_yank()
+	end,
+})
+
+-- Return to last edit position when opening files
+vim.api.nvim_create_autocmd("BufReadPost", {
+	group = augroup,
+	callback = function()
+		local mark = vim.api.nvim_buf_get_mark(0, '"')
+		local lcount = vim.api.nvim_buf_line_count(0)
+		if mark[1] > 0 and mark[1] <= lcount then
+			pcall(vim.api.nvim_win_set_cursor, 0, mark)
+		end
+	end,
+})
+
+-- ============================================================================
 -- PLUGIN MANAGEMENT
 -- ============================================================================
 
@@ -192,6 +224,7 @@ vim.pack.add({
 	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/echasnovski/mini.pick" },
+	{ src = "https://github.com/echasnovski/mini.statusline" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
@@ -209,6 +242,7 @@ vim.pack.add({
 -- Core Plugin Setup
 require("mason").setup()
 require("mini.pick").setup()
+require("mini.statusline").setup()
 require("oil").setup()
 require("trouble").setup()
 require("gitsigns").setup()
