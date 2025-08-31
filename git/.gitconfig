@@ -6,6 +6,10 @@
 [core]
 	editor = nvim
 	autocrlf = input
+	compression = 9
+	preloadindex = true
+	whitespace = error
+	excludesfile = ~/.gitignore
 
 [init]
 	defaultBranch = main
@@ -15,9 +19,12 @@
 
 [push]
 	default = simple
+	autoSetupRemote = true
+	followTags = true
 
 [commit]
 	gpgsign = true
+	verbose = true
 
 [alias]
 	st = status
@@ -32,6 +39,83 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+
+[column]
+	ui = auto
+
+[advice]
+	addEmptyPathspec = false
+	pushNonFastForward = false
+	statusHints = false
+
+[blame]
+	coloring = highlightRecent
+	date = relative
+
+[diff]
+	context = 3
+	renames = copies
+	interHunkContext = 10
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+
+[log]
+	abbrevCommit = true
+	graphColors = blue,yellow,cyan,magenta,green,red
+
+[status]
+	branch = true
+	short = true
+	showStash = true
+	showUntrackedFiles = all
+
+[branch]
+	sort = -committerdate
+
+[tag]
+	sort = version:refname
+
+[transfer]
+	fsckObjects = true
+
+[receive]
+	fsckObjects = true
+
+[fetch]
+	fsckObjects = true
+	prune = true
+	pruneTags = true
+	all = true
+
+[rebase]
+	autoStash = true
+	missingCommitsCheck = warn
+	autoSquash = true
+	updateRefs = true
+
+[rerere]
+	enabled = true
+	autoupdate = true
+
+[help]
+	autocorrect = prompt
+
+[submodule]
+	fetchJobs = 16
+
+# Optional performance settings (uncomment if you dare)
+# [core]
+#     fsmonitor = true
+#     untrackedCache = true
+
+# Advanced merge conflict style (requires git >= 2.35)
+# [merge]
+#     conflictstyle = zdiff3
+
+# Use rebase instead of merge for pulls (uncomment to enable)
+# [pull]
+#     rebase = true
 
 [includeIf "gitdir:~/Desktop/whg/**"]
 	path = ~/.config/git/work.gitconfig
