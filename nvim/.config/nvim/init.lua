@@ -224,7 +224,6 @@ vim.pack.add({
 	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/echasnovski/mini.pick" },
-	{ src = "https://github.com/echasnovski/mini.statusline" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
@@ -242,10 +241,9 @@ vim.pack.add({
 -- Core Plugin Setup
 require("mason").setup()
 require("mini.pick").setup()
-require("mini.statusline").setup()
 require("oil").setup()
 require("trouble").setup()
-require("gitsigns").setup()
+require("gitsigns").setup({ current_line_blame = true })
 
 -- Code Formatting (Conform)
 require("conform").setup({
@@ -388,4 +386,19 @@ require("nvim-treesitter").setup({
 
 require("vague").setup({ transparent = true })
 vim.cmd("colorscheme vague")
-vim.cmd(":hi statusline guibg=NONE")
+
+-- Force full transparency for all UI elements
+vim.cmd(":hi Normal guibg=NONE ctermbg=NONE")
+vim.cmd(":hi NonText guibg=NONE ctermbg=NONE")
+vim.cmd(":hi SignColumn guibg=NONE ctermbg=NONE")
+vim.cmd(":hi StatusLine guibg=NONE ctermbg=NONE")
+vim.cmd(":hi StatusLineNC guibg=NONE ctermbg=NONE")
+vim.cmd(":hi VertSplit guibg=NONE ctermbg=NONE")
+vim.cmd(":hi WinSeparator guibg=NONE ctermbg=NONE")
+vim.cmd(":hi LineNr guibg=NONE ctermbg=NONE")
+vim.cmd(":hi CursorLineNr guibg=NONE ctermbg=NONE")
+vim.cmd(":hi EndOfBuffer guibg=NONE ctermbg=NONE")
+vim.cmd(":hi Pmenu guibg=NONE ctermbg=NONE")
+vim.cmd(":hi PmenuSel guibg=NONE ctermbg=NONE")
+vim.cmd(":hi FloatBorder guibg=NONE ctermbg=NONE")
+vim.cmd(":hi NormalFloat guibg=NONE ctermbg=NONE")
