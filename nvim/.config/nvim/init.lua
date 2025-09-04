@@ -105,7 +105,6 @@ vim.opt.autochdir = false
 vim.opt.iskeyword:append("-")
 vim.opt.path:append("**")
 vim.opt.selection = "exclusive"
-vim.opt.clipboard:append("unnamedplus")
 vim.opt.modifiable = true
 vim.opt.encoding = "UTF-8"
 
@@ -227,6 +226,8 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
+	{ src = "https://github.com/williamboman/mason-lspconfig.nvim" },
+	{ src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
 	{ src = "https://github.com/Saghen/blink.cmp" },
 	{ src = "https://github.com/folke/trouble.nvim" },
 	{ src = "https://github.com/mbbill/undotree" },
@@ -239,8 +240,61 @@ vim.pack.add({
 -- ============================================================================
 
 -- Core Plugin Setup
-require("mason").setup()
-require("mini.pick").setup()
+require("mason").setup({
+	ui = {
+		icons = {
+			package_installed = "✓",
+			package_pending = "➜",
+			package_uninstalled = "✗",
+		},
+	},
+})
+
+-- Auto-install LSP servers
+local mason_lspconfig = require("mason-lspconfig")
+mason_lspconfig.setup({
+	ensure_installed = {
+		"lua_ls",
+		"gopls",
+		"svelte",
+		"ts_ls",
+		"tailwindcss",
+		"templ",
+		"emmet_ls",
+		"jsonls",
+		"yamlls",
+		"dockerls",
+		"html",
+		"cssls",
+		"clangd",
+	},
+	automatic_installation = true,
+})
+
+-- Auto-install formatters and linters
+require("mason-tool-installer").setup({
+	ensure_installed = {
+		"stylua", -- Lua formatter
+		"goimports", -- Go imports organizer
+		"gofumpt", -- Go formatter
+		"golines", -- Go line length formatter
+		"templ", -- Templ formatter
+		"prettierd", -- Faster JS/TS/CSS/HTML formatter
+		"golangci-lint", -- Go linter
+		"eslint_d", -- JS/TS linter
+		"clang-format", -- C/C++ formatter
+	},
+	auto_update = false,
+	run_on_start = true,
+})
+
+require("mini.pick").setup({
+	source = {
+		grep_live = {
+			command = { "rg", "--column", "--line-number", "--no-heading", "--color=never", "--smart-case", "-i" },
+		},
+	},
+})
 require("oil").setup()
 require("trouble").setup()
 require("gitsigns").setup({ current_line_blame = true })
@@ -256,11 +310,13 @@ require("conform").setup({
 		lua = { "stylua" },
 		go = { "goimports", "gofumpt", "golines" },
 		templ = { "templ" },
-		javascript = { "prettier" },
-		typescript = { "prettier" },
-		svelte = { "prettier" },
-		css = { "prettier" },
-		html = { "prettier" },
+		javascript = { "prettierd" },
+		typescript = { "prettierd" },
+		svelte = { "prettierd" },
+		css = { "prettierd" },
+		html = { "prettierd" },
+		c = { "clang-format" },
+		cpp = { "clang-format" },
 	},
 })
 
@@ -316,6 +372,22 @@ vim.lsp.enable({
 	"dockerls",
 	"html",
 	"cssls",
+	"clangd",
+})
+
+-- LSP Server Configurations
+vim.lsp.config("emmetls", {
+	filetypes = {
+		"html",
+		"css",
+		"scss",
+		"javascript",
+		"typescript",
+		"javascriptreact",
+		"typescriptreact",
+		"vue",
+		"svelte",
+	},
 })
 
 -- LSP Keymaps (Auto-configured on LSP attach)
@@ -377,6 +449,9 @@ require("nvim-treesitter").setup({
 		"templ",
 		"bash",
 		"markdown",
+		"c",
+		"cpp",
+		"make",
 	},
 })
 
@@ -386,19 +461,3 @@ require("nvim-treesitter").setup({
 
 require("vague").setup({ transparent = true })
 vim.cmd("colorscheme vague")
-
--- Force full transparency for all UI elements
-vim.cmd(":hi Normal guibg=NONE ctermbg=NONE")
-vim.cmd(":hi NonText guibg=NONE ctermbg=NONE")
-vim.cmd(":hi SignColumn guibg=NONE ctermbg=NONE")
-vim.cmd(":hi StatusLine guibg=NONE ctermbg=NONE")
-vim.cmd(":hi StatusLineNC guibg=NONE ctermbg=NONE")
-vim.cmd(":hi VertSplit guibg=NONE ctermbg=NONE")
-vim.cmd(":hi WinSeparator guibg=NONE ctermbg=NONE")
-vim.cmd(":hi LineNr guibg=NONE ctermbg=NONE")
-vim.cmd(":hi CursorLineNr guibg=NONE ctermbg=NONE")
-vim.cmd(":hi EndOfBuffer guibg=NONE ctermbg=NONE")
-vim.cmd(":hi Pmenu guibg=NONE ctermbg=NONE")
-vim.cmd(":hi PmenuSel guibg=NONE ctermbg=NONE")
-vim.cmd(":hi FloatBorder guibg=NONE ctermbg=NONE")
-vim.cmd(":hi NormalFloat guibg=NONE ctermbg=NONE")
