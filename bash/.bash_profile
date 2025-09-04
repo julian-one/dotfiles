@@ -40,9 +40,9 @@ if [[ -f "$HOME/.cargo/env" ]]; then
 fi
 
 # ======= Application Settings =======
-# FZF configuration - vague.nvim theme colors
+# FZF configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --color=bg:#141415,fg:#cdcdcd,border:#878787,hl:#c48282,fg+:#cdcdcd,bg+:#252530,hl+:#e8b589,info:#606079,prompt:#6e94b2,pointer:#c48282,marker:#7fa563,spinner:#bb9dbd'
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 
 # Ripgrep configuration
 export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"

@@ -10,6 +10,7 @@
 	preloadindex = true
 	whitespace = error
 	excludesfile = ~/.gitignore
+	pager = delta
 
 [init]
 	defaultBranch = main
@@ -49,7 +50,6 @@
 	statusHints = false
 
 [blame]
-	coloring = highlightRecent
 	date = relative
 
 [diff]
@@ -57,12 +57,10 @@
 	renames = copies
 	interHunkContext = 10
 	algorithm = histogram
-	colorMoved = plain
 	mnemonicPrefix = true
 
 [log]
 	abbrevCommit = true
-	graphColors = blue,yellow,cyan,magenta,green,red
 
 [status]
 	branch = true
@@ -104,18 +102,16 @@
 [submodule]
 	fetchJobs = 16
 
-# Optional performance settings (uncomment if you dare)
-# [core]
-#     fsmonitor = true
-#     untrackedCache = true
-
-# Advanced merge conflict style (requires git >= 2.35)
-# [merge]
-#     conflictstyle = zdiff3
-
-# Use rebase instead of merge for pulls (uncomment to enable)
-# [pull]
-#     rebase = true
 
 [includeIf "gitdir:~/Desktop/whg/**"]
 	path = ~/.config/git/work.gitconfig
+
+[delta]
+	navigate = true
+	line-numbers = true
+	side-by-side = true
+	syntax-theme = base16
+	hunk-header-style = omit
+
+[interactive]
+	diffFilter = delta --color-only

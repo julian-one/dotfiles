@@ -45,29 +45,18 @@ alias mkdir='mkdir -pv'          # Create parent dirs and be verbose
 
 # Git Aliases
 alias ga='git add'
-alias gap='ga --patch'
-alias gb='git branch'
-alias gba='gb --all'
 alias gc='git commit'
-alias gca='gc --amend --no-edit'
-alias gce='gc --amend'
 alias gco='git checkout'
-alias gcl='git clone --recursive'
-alias gd='git diff --output-indicator-new=" " --output-indicator-old=" "'
-alias gds='gd --staged'
-alias gi='git init'
-alias gl='git log --graph --all --pretty=format:"%C(magenta)%h %C(white) %an  %ar%C(auto)  %D%n%s%n"'
-alias gm='git merge'
-alias gn='git checkout -b'  # new branch
+alias gd='git diff'
+alias gl='git log --oneline --graph'
 alias gp='git push'
-alias gr='git reset'
-alias gs='git status --short'
+alias gs='git status'
 alias gu='git pull'
 
 # Utility Aliases
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
+alias grep='grep'
+alias fgrep='fgrep'
+alias egrep='egrep'
 alias df='df -h'                 # Human readable disk usage
 alias du='du -h'                 # Human readable directory sizes
 alias free='free -h'             # Human readable memory usage (Linux)
