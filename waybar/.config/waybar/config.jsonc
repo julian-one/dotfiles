@@ -1,0 +1,127 @@
+{
+  "layer": "top",
+  "position": "top",
+  "margin-bottom": -5,
+  "spacing": 0,
+  "modules-left": [
+    "hyprland/workspaces",
+    "custom/uptime",
+    "cpu"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "bluetooth",
+    "network",
+    "pulseaudio",
+    "backlight",
+    "battery"
+  ],
+  "hyprland/workspaces": {
+    "format": "{name} {icon}",
+    "format-icons": {
+      "active": "",
+      "default": ""
+    }
+  },
+  "custom/uptime": {
+    "format": "{}",
+    "format-icon": [
+      ""
+    ],
+    "tooltip": false,
+    "interval": 60,
+    "exec": "$HOME/.config/waybar/scripts/uptime.sh"
+  },
+  "cpu": {
+    "interval": 1,
+    "format": "  {icon0}{icon1}{icon2}{icon3} {usage:>2}%",
+    "format-icons": [
+      "▁",
+      "▂",
+      "▃",
+      "▄",
+      "▅",
+      "▆",
+      "▇",
+      "█"
+    ],
+    "on-click": "ghostty -e htop"
+  },
+  "clock": {
+    "timezone": "America/Denver",
+    "tooltip": false,
+    "format": "{:%H:%M:%S  -  %A, %d}",
+    "interval": 1
+  },
+  "bluetooth": {
+    "format": "󰂲",
+    "format-on": "{icon}",
+    "format-off": "{icon}",
+    "format-connected": "{icon}",
+    "format-icons": {
+      "on": "󰂯",
+      "off": "󰂲",
+      "connected": "󰂱"
+    },
+    "on-click": "blueberry"
+  },
+  "network": {
+    "format-wifi": "󰤢",
+    "format-ethernet": "󰈀 ",
+    "format-disconnected": "󰤠 ",
+    "interval": 5,
+    "tooltip-format": "{essid} ({signalStrength}%)",
+    "on-click": "nm-connection-editor"
+  },
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-muted": "",
+    "format-icons": {
+      "default": [
+        "",
+        "",
+        " "
+      ]
+    },
+    "on-click": "pavucontrol"
+  },
+  "backlight": {
+    "format": "{icon}  {percent}%",
+    "format-icons": [
+      "",
+      "󰃜",
+      "󰃛",
+      "󰃞",
+      "󰃝",
+      "󰃟",
+      "󰃠"
+    ],
+    "tooltip": false
+  },
+  "battery": {
+    "interval": 2,
+    "states": {
+      "warning": 40,
+      "critical": 25
+    },
+    "format": "{icon}  {capacity}%",
+    "format-full": "{icon}  {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-alt": "{icon} {time}",
+    "format-icons": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  "custom/lock": {
+    "tooltip": false,
+    "on-click": "sh -c '(sleep 0s; hyprlock)' & disown",
+    "format": ""
+  }
+}
