@@ -23,6 +23,13 @@
     "format-icons": {
       "active": "",
       "default": ""
+    },
+    "persistent-workspaces": {
+      "*": [
+        1,
+        2,
+        3
+      ]
     }
   },
   "custom/uptime": {
@@ -51,9 +58,9 @@
   },
   "clock": {
     "timezone": "America/Denver",
-    "tooltip": false,
-    "format": "{:%H:%M:%S  -  %A, %d}",
-    "interval": 1
+    "format": "{:%H:%M}",
+    "tooltip": true,
+    "tooltip-format": "{:%A, %B %e %Y}"
   },
   "bluetooth": {
     "format": "󰂲",
@@ -88,6 +95,7 @@
     "on-click": "pavucontrol"
   },
   "backlight": {
+    "device": "acpi_video0",
     "format": "{icon}  {percent}%",
     "format-icons": [
       "",
@@ -98,7 +106,8 @@
       "󰃟",
       "󰃠"
     ],
-    "tooltip": false
+    "tooltip": false,
+    "on-click": "$HOME/.config/waybar/scripts/brightness.sh"
   },
   "battery": {
     "interval": 2,
