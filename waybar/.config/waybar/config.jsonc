@@ -9,14 +9,16 @@
     "cpu"
   ],
   "modules-center": [
-    "clock"
+    "clock",
+    "custom/weather"
   ],
   "modules-right": [
     "bluetooth",
     "network",
     "pulseaudio",
     "backlight",
-    "battery"
+    "battery",
+    "custom/lock"
   ],
   "hyprland/workspaces": {
     "format": "{name} {icon}",
@@ -61,6 +63,13 @@
     "format": "{:%H:%M}",
     "tooltip": true,
     "tooltip-format": "{:%A, %B %e %Y}"
+  },
+  "custom/weather": {
+    "tooltip": true,
+    "format": "{}",
+    "interval": 30,
+    "exec": "$HOME/.config/waybar/scripts/weather.py",
+    "return-type": "json"
   },
   "bluetooth": {
     "format": "󰂲",
@@ -130,7 +139,7 @@
   },
   "custom/lock": {
     "tooltip": false,
-    "on-click": "sh -c '(sleep 0s; hyprlock)' & disown",
+    "on-click": "hyprlock",
     "format": ""
   }
 }

@@ -52,6 +52,7 @@ fi
 echo "Installing AUR packages..."
 yay -S --needed neovim-nightly-bin
 yay -S --needed blueberry
+yay -S --needed 1password
 
 # Link neovim config
 echo "Setting up neovim configuration..."
