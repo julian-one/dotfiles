@@ -9,6 +9,21 @@ echo "Installing development tools..."
 sudo pacman -S --noconfirm --needed go nodejs npm tree-sitter-cli
 sudo pacman -S --noconfirm --needed bash-completion fzf ripgrep fd
 
+# Setup npm global packages directory
+echo "Setting up npm global packages directory..."
+if [ ! -d ~/.npm-global ]; then
+    mkdir ~/.npm-global
+fi
+npm config set prefix '~/.npm-global'
+
+# Add npm global to PATH if not already there
+if ! grep -q "export PATH=~/.npm-global/bin:\$PATH" ~/.bashrc; then
+    echo "" >> ~/.bashrc
+    echo "# npm global packages" >> ~/.bashrc
+    echo "export PATH=~/.npm-global/bin:\$PATH" >> ~/.bashrc
+    echo "Added npm global path to ~/.bashrc"
+fi
+
 # Desktop environment
 echo "Installing desktop environment packages..."
 sudo pacman -S --noconfirm --needed waybar hyprpaper otf-font-awesome rofi
@@ -17,9 +32,19 @@ sudo pacman -S --noconfirm --needed waybar hyprpaper otf-font-awesome rofi
 echo "Installing applications..."
 sudo pacman -S --noconfirm --needed firefox ghostty
 
-# Audio and brightness control
-echo "Installing system controls..."
-sudo pacman -S --noconfirm --needed pavucontrol brightnessctl
+# Audio setup (PipeWire stack)
+echo "Setting up audio system..."
+sudo pacman -S --noconfirm --needed pipewire pipewire-pulse pipewire-alsa pipewire-jack wireplumber
+sudo pacman -S --noconfirm --needed alsa-utils pavucontrol
+
+# Enable PipeWire services
+systemctl --user enable --now pipewire.service
+systemctl --user enable --now pipewire-pulse.service
+systemctl --user enable --now wireplumber.service
+
+# Brightness control
+echo "Installing brightness control..."
+sudo pacman -S --noconfirm --needed brightnessctl
 
 # Bluetooth support
 echo "Setting up bluetooth..."
@@ -73,6 +98,13 @@ echo "Setting up rofi configuration..."
 rm -rf ~/.config/rofi
 ln -sf ~/dotfiles/rofi/.config/rofi ~/.config/rofi
 
+# Setup wallpaper
+echo "Setting up wallpaper..."
+if [ ! -d ~/Pictures ]; then
+    mkdir -p ~/Pictures
+fi
+cp ~/dotfiles/wallpaper/wallpaper.jpg ~/Pictures/wallpaper.jpg
+
 # Install custom font
 echo "Installing custom font..."
 FONT_NAME="ComicCodeLigaturesNerdFont.otf"
@@ -93,6 +125,15 @@ if [ ! -f "$FONT_DEST" ]; then
 else
     echo "Comic Code Nerd Font already installed, skipping..."
 fi
+
+# Link git configuration
+echo "Setting up git configuration..."
+if [ ! -d ~/.config/git ]; then
+    mkdir -p ~/.config/git
+fi
+ln -sf ~/dotfiles/git/.config/git/config ~/.config/git/config
+ln -sf ~/dotfiles/git/.config/git/work ~/.config/git/work
+ln -sf ~/dotfiles/git/.config/git/ignore ~/.config/git/ignore
 
 # Setup SSH for GitHub
 if [ ! -f ~/.ssh/id_ed25519 ]; then
