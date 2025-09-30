@@ -1,0 +1,28 @@
+/**
+ * Rofi Configuration
+ * Clean configuration with Vague theme
+ */
+
+configuration {
+    /* Modes */
+    modes: "drun,run,window";
+
+    /* Font */
+    font: "ComicCodeLigaturesNerdFont 12";
+
+    /* Display settings */
+    show-icons: true;
+    display-drun: " Apps";
+    display-run: " Run";
+    display-window: " Window";
+
+    /* Search */
+    matching: "fuzzy";
+    sort: true;
+
+    /* Terminal */
+    terminal: "ghostty";
+}
+
+/* Import theme */
+@theme "vague"
