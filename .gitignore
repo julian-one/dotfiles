@@ -3,3 +3,4 @@ nvim/.config/nvim_bak/*
 nvim/.config/nvim.bak/*
 nvim/.config/nvim/pack
 bash_backup/*
+.claude/

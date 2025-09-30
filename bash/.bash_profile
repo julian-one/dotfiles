@@ -6,7 +6,7 @@ export PATH="$HOME/.npm-global/bin:$PATH"
 # Environment 
 export EDITOR=nvim
 export VISUAL=nvim
-export BROWSER=firefox
+export BROWSER=brave
 export TERMINAL=ghostty
 
 # XDG Stuff 

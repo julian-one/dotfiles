@@ -1,0 +1,38 @@
+# GNU Stow ignore file
+# This file tells stow which files to ignore when creating symlinks
+
+# Version control
+\.git
+\.gitignore
+\.gitmodules
+
+# Documentation
+README.*
+LICENSE.*
+INSTALL.*
+
+# Editor files
+.*\.swp
+.*\.swo
+.*\.swn
+\.DS_Store
+.*~
+\#.*\#
+\.#.*
+
+# Build artifacts
+__pycache__
+*.pyc
+*.pyo
+node_modules
+*.log
+
+# Backup files
+*.backup
+*.bak
+*.old
+*_backup
+
+# Stow metadata
+\.stow-local-ignore
+\.stowrc

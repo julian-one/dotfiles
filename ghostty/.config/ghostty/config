@@ -26,3 +26,4 @@ background-opacity = 0.9
 foreground = #cdcdcd
 selection-background = #252530
 selection-foreground = #cdcdcd
+keybind = shift+enter=text:\x1b\r

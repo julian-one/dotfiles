@@ -1,20 +1,77 @@
 #!/usr/bin/env python3
 import json
+import os
 import re
 import subprocess
 import sys
+import time
 
-def get_weather():
+CACHE_FILE = os.path.expanduser("~/.cache/waybar-weather.json")
+
+def check_network():
+    """Check if network is available by pinging a reliable DNS server."""
     try:
-        result = subprocess.run(['curl', '-s', 'https://wttr.in/Denver'],
-                              capture_output=True, text=True, timeout=10)
-        if result.returncode != 0:
-            print(f"curl failed with code {result.returncode}: {result.stderr}", file=sys.stderr)
-            return None
-        return result.stdout
+        result = subprocess.run(['ping', '-c', '1', '-W', '1', '8.8.8.8'],
+                              capture_output=True, timeout=2)
+        return result.returncode == 0
+    except:
+        return False
+
+def get_weather(retry_count=3, initial_delay=1):
+    """Fetch weather with retry logic and exponential backoff."""
+    for attempt in range(retry_count):
+        try:
+            # Check network connectivity first
+            if not check_network():
+                if attempt == 0:
+                    print("Network not ready, waiting...", file=sys.stderr)
+                time.sleep(initial_delay * (2 ** attempt))
+                continue
+
+            result = subprocess.run(['curl', '-s', '--connect-timeout', '5',
+                                   '--max-time', '10', 'https://wttr.in/Denver'],
+                                  capture_output=True, text=True, timeout=15)
+
+            if result.returncode == 0 and result.stdout:
+                # Cache successful response
+                save_cache(result.stdout)
+                return result.stdout
+
+            if attempt < retry_count - 1:
+                delay = initial_delay * (2 ** attempt)
+                print(f"Attempt {attempt + 1} failed, retrying in {delay}s...", file=sys.stderr)
+                time.sleep(delay)
+        except Exception as e:
+            if attempt < retry_count - 1:
+                delay = initial_delay * (2 ** attempt)
+                print(f"Exception on attempt {attempt + 1}: {e}, retrying in {delay}s...", file=sys.stderr)
+                time.sleep(delay)
+            else:
+                print(f"Final exception in get_weather: {e}", file=sys.stderr)
+
+    return None
+
+def save_cache(data):
+    """Save weather data to cache file."""
+    try:
+        os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
+        with open(CACHE_FILE, 'w') as f:
+            json.dump({'data': data, 'timestamp': time.time()}, f)
     except Exception as e:
-        print(f"Exception in get_weather: {e}", file=sys.stderr)
-        return None
+        print(f"Failed to save cache: {e}", file=sys.stderr)
+
+def load_cache(max_age=3600):
+    """Load cached weather data if it exists and is recent enough."""
+    try:
+        if os.path.exists(CACHE_FILE):
+            with open(CACHE_FILE, 'r') as f:
+                cache = json.load(f)
+                age = time.time() - cache['timestamp']
+                if age < max_age:
+                    return cache['data'], age
+    except Exception as e:
+        print(f"Failed to load cache: {e}", file=sys.stderr)
+    return None, None
 
 def clean_ansi(text):
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
@@ -118,9 +175,17 @@ def extract_forecast(weather_data):
 
 def main():
     weather_raw = get_weather()
+
+    # If fetch failed, try to use cache
     if not weather_raw:
-        print(json.dumps({"text": "🌍 Error", "tooltip": "Failed to fetch weather"}))
-        return
+        weather_raw, cache_age = load_cache(max_age=7200)  # Accept cache up to 2 hours old
+        if weather_raw:
+            cache_mins = int(cache_age / 60)
+            print(f"Using cached weather data ({cache_mins} minutes old)", file=sys.stderr)
+        else:
+            # Show loading indicator on first startup
+            print(json.dumps({"text": "⏳ Loading", "tooltip": "Fetching weather data..."}))
+            return
 
     weather_clean = clean_ansi(weather_raw)
     current = extract_current_weather(weather_clean)

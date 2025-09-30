@@ -22,11 +22,15 @@ alias diff='diff --color=auto'
 alias hc='$EDITOR ~/.config/hypr/hyprland.conf'
 alias hr='hyprctl reload'
 
+# Brave browser - disable KDE wallet integration
+alias brave='brave --password-store=basic'
+
 # Bash Completion 
 if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
 fi
 
-# FZF 
+# FZF
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 [ -f /usr/share/fzf/key-bindings.bash ] && source /usr/share/fzf/key-bindings.bash
 [ -f /usr/share/fzf/completion.bash ] && source /usr/share/fzf/completion.bash
