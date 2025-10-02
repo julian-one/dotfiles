@@ -266,7 +266,6 @@ mason_lspconfig.setup({
 		"dockerls",
 		"html",
 		"cssls",
-		"clangd",
 	},
 	automatic_installation = true,
 })
@@ -282,7 +281,6 @@ require("mason-tool-installer").setup({
 		"prettierd", -- Faster JS/TS/CSS/HTML formatter
 		"golangci-lint", -- Go linter
 		"eslint_d", -- JS/TS linter
-		"clang-format", -- C/C++ formatter
 	},
 	auto_update = false,
 	run_on_start = true,
@@ -315,8 +313,6 @@ require("conform").setup({
 		svelte = { "prettierd" },
 		css = { "prettierd" },
 		html = { "prettierd" },
-		c = { "clang-format" },
-		cpp = { "clang-format" },
 	},
 })
 
@@ -372,7 +368,6 @@ vim.lsp.enable({
 	"dockerls",
 	"html",
 	"cssls",
-	"clangd",
 })
 
 -- LSP Server Configurations

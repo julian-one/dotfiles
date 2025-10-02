@@ -1,0 +1,203 @@
+/**
+ * Vague Theme for Rofi
+ * Matches ghostty terminal color scheme exactly
+ */
+
+* {
+    /* Vague Color Palette from ghostty */
+    vague-bg:          #141415;      /* ghostty background */
+    vague-bg-alt:      #252530;      /* palette 0 - alternate background */
+    vague-red:         #d8647e;      /* palette 1 */
+    vague-green:       #7fa563;      /* palette 2 */
+    vague-yellow:      #f3be7c;      /* palette 3 */
+    vague-blue:        #6e94b2;      /* palette 4 */
+    vague-magenta:     #bb9dbd;      /* palette 5 */
+    vague-cyan:        #aeaed1;      /* palette 6 */
+    vague-fg:          #cdcdcd;      /* palette 7 - foreground */
+    vague-gray:        #606079;      /* palette 8 - gray/hover */
+    vague-light-red:   #e08398;      /* palette 9 */
+    vague-light-green: #99b782;      /* palette 10 */
+    vague-light-yellow:#f5cb96;      /* palette 11 */
+    vague-light-blue:  #8ba9c1;      /* palette 12 */
+    vague-light-magenta:#c9b1ca;     /* palette 13 */
+    vague-light-cyan:  #bebeda;      /* palette 14 */
+    vague-bright:      #d7d7d7;      /* palette 15 */
+
+    /* Global defaults */
+    background-color:  @vague-bg;
+    text-color:        @vague-fg;
+    font:              "ComicCodeLigaturesNerdFont 12";
+
+    /* Selection and hover colors */
+    selected-bg:       @vague-gray;
+    selected-fg:       @vague-light-blue;
+    border-color:      rgba(190, 190, 218, 0.2);  /* vague-light-cyan with transparency */
+}
+
+window {
+    background-color:  rgba(20, 20, 21, 0.9);  /* vague-bg with transparency matching ghostty */
+    border:            1px;
+    border-color:      @border-color;
+    border-radius:     8px;
+    padding:           0;
+    width:             500px;
+}
+
+mainbox {
+    background-color:  transparent;
+    padding:           0;
+    spacing:           0;
+    children:          [ inputbar, message, listview, mode-switcher ];
+}
+
+inputbar {
+    background-color:  @vague-bg-alt;
+    text-color:        @vague-fg;
+    padding:           14px;
+    spacing:           8px;
+    children:          [ prompt, entry, num-filtered-rows, textbox-slash, num-rows ];
+}
+
+prompt {
+    background-color:  transparent;
+    text-color:        @vague-light-blue;
+    padding:           0 8px 0 0;
+    font:              "ComicCodeLigaturesNerdFont Bold 12";
+}
+
+entry {
+    background-color:  transparent;
+    text-color:        @vague-fg;
+    placeholder:       "Search...";
+    placeholder-color: @vague-gray;
+    cursor:            text;
+    blink:             true;
+}
+
+num-filtered-rows, textbox-slash, num-rows {
+    background-color:  transparent;
+    text-color:        @vague-light-cyan;
+    expand:            false;
+}
+
+textbox-slash {
+    content:           "/";
+    margin:            0 4px;
+}
+
+message {
+    background-color:  @vague-bg-alt;
+    padding:           8px 14px;
+    border:            0 0 1px 0;
+    border-color:      @border-color;
+}
+
+textbox {
+    background-color:  transparent;
+    text-color:        @vague-fg;
+}
+
+listview {
+    background-color:  transparent;
+    padding:           8px;
+    lines:             8;
+    columns:           1;
+    spacing:           4px;
+    cycle:             true;
+    dynamic:           true;
+    scrollbar:         true;
+}
+
+scrollbar {
+    background-color:  @vague-bg-alt;
+    handle-color:      @vague-gray;
+    handle-width:      3px;
+    border-radius:     8px;
+    margin:            0 0 0 4px;
+}
+
+element {
+    background-color:  transparent;
+    text-color:        @vague-fg;
+    padding:           10px 12px;
+    spacing:           8px;
+    border-radius:     6px;
+    cursor:            pointer;
+    orientation:       horizontal;
+}
+
+element normal.normal {
+    background-color:  transparent;
+    text-color:        @vague-fg;
+}
+
+element normal.urgent {
+    background-color:  transparent;
+    text-color:        @vague-red;
+}
+
+element normal.active {
+    background-color:  transparent;
+    text-color:        @vague-green;
+}
+
+element selected.normal {
+    background-color:  @selected-bg;
+    text-color:        @selected-fg;
+}
+
+element selected.urgent {
+    background-color:  @vague-red;
+    text-color:        @vague-bg;
+}
+
+element selected.active {
+    background-color:  @vague-green;
+    text-color:        @vague-bg;
+}
+
+element alternate.normal {
+    background-color:  transparent;
+    text-color:        @vague-fg;
+}
+
+element-icon {
+    background-color:  transparent;
+    text-color:        inherit;
+    size:              24px;
+    padding:           0 8px 0 0;
+}
+
+element-text {
+    background-color:  transparent;
+    text-color:        inherit;
+    vertical-align:    0.5;
+    highlight:         bold;
+}
+
+mode-switcher {
+    background-color:  @vague-bg-alt;
+    padding:           8px;
+    spacing:           8px;
+    border:            1px 0 0 0;
+    border-color:      @border-color;
+}
+
+button {
+    background-color:  transparent;
+    text-color:        @vague-gray;
+    padding:           6px 12px;
+    border-radius:     4px;
+    cursor:            pointer;
+}
+
+button selected {
+    background-color:  @vague-gray;
+    text-color:        @vague-light-blue;
+}
+
+error-message {
+    background-color:  @vague-bg;
+    text-color:        @vague-red;
+    padding:           20px;
+}

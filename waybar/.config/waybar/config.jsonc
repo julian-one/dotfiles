@@ -1,0 +1,145 @@
+{
+  "layer": "top",
+  "position": "top",
+  "margin-bottom": -5,
+  "spacing": 0,
+  "modules-left": [
+    "hyprland/workspaces",
+    "custom/uptime",
+    "cpu"
+  ],
+  "modules-center": [
+    "clock",
+    "custom/weather"
+  ],
+  "modules-right": [
+    "bluetooth",
+    "network",
+    "pulseaudio",
+    "backlight",
+    "battery",
+    "custom/lock"
+  ],
+  "hyprland/workspaces": {
+    "format": "{name} {icon}",
+    "format-icons": {
+      "active": "",
+      "default": ""
+    },
+    "persistent-workspaces": {
+      "*": [
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  "custom/uptime": {
+    "format": "{}",
+    "format-icon": [
+      ""
+    ],
+    "tooltip": false,
+    "interval": 60,
+    "exec": "$HOME/.config/waybar/scripts/uptime.sh"
+  },
+  "cpu": {
+    "interval": 1,
+    "format": "  {icon0}{icon1}{icon2}{icon3} {usage:>2}%",
+    "format-icons": [
+      "▁",
+      "▂",
+      "▃",
+      "▄",
+      "▅",
+      "▆",
+      "▇",
+      "█"
+    ],
+    "on-click": "ghostty -e htop"
+  },
+  "clock": {
+    "timezone": "America/Denver",
+    "format": "{:%H:%M}",
+    "tooltip": true,
+    "tooltip-format": "{:%A, %B %e %Y}"
+  },
+  "custom/weather": {
+    "tooltip": true,
+    "format": "{}",
+    "interval": 30,
+    "exec": "$HOME/.config/waybar/scripts/weather.py",
+    "return-type": "json"
+  },
+  "bluetooth": {
+    "format": "󰂲",
+    "format-on": "{icon}",
+    "format-off": "{icon}",
+    "format-connected": "{icon}",
+    "format-icons": {
+      "on": "󰂯",
+      "off": "󰂲",
+      "connected": "󰂱"
+    },
+    "on-click": "blueman-manager"
+  },
+  "network": {
+    "format-wifi": "󰤢",
+    "format-ethernet": "󰈀 ",
+    "format-disconnected": "󰤠 ",
+    "interval": 5,
+    "tooltip-format": "{essid} ({signalStrength}%)",
+    "on-click": "nm-connection-editor"
+  },
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-muted": "",
+    "format-icons": {
+      "default": [
+        "",
+        "",
+        " "
+      ]
+    },
+    "on-click": "pavucontrol"
+  },
+  "backlight": {
+    "device": "acpi_video0",
+    "format": "{icon}  {percent}%",
+    "format-icons": [
+      "",
+      "󰃜",
+      "󰃛",
+      "󰃞",
+      "󰃝",
+      "󰃟",
+      "󰃠"
+    ],
+    "tooltip": false,
+    "on-click": "$HOME/.config/waybar/scripts/brightness.sh"
+  },
+  "battery": {
+    "interval": 2,
+    "states": {
+      "warning": 40,
+      "critical": 25
+    },
+    "format": "{icon}  {capacity}%",
+    "format-full": "{icon}  {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-alt": "{icon} {time}",
+    "format-icons": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  },
+  "custom/lock": {
+    "tooltip": false,
+    "on-click": "hyprlock",
+    "format": ""
+  }
+}

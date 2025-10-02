@@ -1,75 +1,109 @@
-# Suppress macOS zsh deprecation warning
-export BASH_SILENCE_DEPRECATION_WARNING=1
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
-# Essential shell options (only for bash)
-if [[ "$BASH_VERSION" ]]; then
-    set -o vi                     # Vi-style command line editing
-    shopt -s cdspell             # Correct minor spelling errors in cd commands
-    shopt -s checkwinsize        # Check window size after each command
-    
-    # Enable newer bash features if available
-    shopt -s direxpand 2>/dev/null   # Expand directory names during tab completion
-    shopt -s autocd 2>/dev/null      # cd by typing directory name (Bash 4.0+)
-    shopt -s globstar 2>/dev/null    # Enable ** for recursive globbing (Bash 4.0+)
-fi
-
-# Enhanced History Management
+# History Configuration (optimized for Hyprland)
 HISTFILE="$HOME/.bash_history"
-HISTSIZE=10000
-HISTFILESIZE=20000
-HISTTIMEFORMAT="[%F %T] "        # Add timestamps to history
-if [[ "$BASH_VERSION" ]]; then
-    shopt -s histappend          # Append to history file, don't overwrite
-    shopt -s histverify          # Verify history expansions before executing
-fi
-export HISTCONTROL=ignoredups:ignorespace:erasedups  # Remove duplicates across entire history
+HISTSIZE=50000                      # More in-memory history
+HISTFILESIZE=100000                  # Larger history file
+HISTCONTROL=ignoreboth:erasedups    # Ignore dups and spaces
+HISTIGNORE="ls:ll:cd:pwd:exit:date:* --help"  # Ignore common commands
+shopt -s histappend                  # Append to history, don't overwrite
+shopt -s cmdhist                     # Store multi-line commands as one
+PROMPT_COMMAND="history -a; history -c; history -r"  # Sync history across terminals
 
-# Key bindings - vi mode (only for bash)
-if [[ "$BASH_VERSION" ]]; then
-    # Vi mode indicator in prompt (optional)
-    bind 'set show-mode-in-prompt on'
-    # Essential navigation bindings that work in vi mode
-    bind '"\e[H": beginning-of-line'    # Home
-    bind '"\e[F": end-of-line'          # End
-    bind '"\e[3~": delete-char'         # Delete
-fi
+# Better history search
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+bind '"\C-r": "\C-x1\e^\er"'
+bind -x '"\C-x1": __fzf_history'
 
-# File and Directory Operations
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias mkdir='mkdir -pv'          # Create parent dirs and be verbose
+# FZF history function for better searching
+__fzf_history() {
+    local selected
+    selected=$(history | fzf --tac --no-sort --query="$READLINE_LINE" | sed 's/^[ ]*[0-9]*[ ]*//')
+    READLINE_LINE="$selected"
+    READLINE_POINT=${#READLINE_LINE}
+}
 
-# Git Aliases
-alias ga='git add'
-alias gc='git commit'
-alias gco='git checkout'
-alias gd='git diff'
-alias gl='git log --oneline --graph'
-alias gp='git push'
-alias gs='git status'
-alias gu='git pull'
+# Colors from Vague theme
+COLOR_RESET='\[\033[0m\]'
+COLOR_RED='\[\033[38;2;216;100;126m\]'      # #d8647e
+COLOR_GREEN='\[\033[38;2;127;165;99m\]'     # #7fa563
+COLOR_YELLOW='\[\033[38;2;243;190;124m\]'   # #f3be7c
+COLOR_BLUE='\[\033[38;2;110;148;178m\]'     # #6e94b2
+COLOR_PURPLE='\[\033[38;2;187;157;189m\]'   # #bb9dbd
+COLOR_CYAN='\[\033[38;2;174;174;209m\]'     # #aeaed1
+COLOR_GRAY='\[\033[38;2;96;96;121m\]'       # #606079
+COLOR_WHITE='\[\033[38;2;205;205;205m\]'    # #cdcdcd
 
-# Utility Aliases
-alias grep='grep'
-alias fgrep='fgrep'
-alias egrep='egrep'
-alias df='df -h'                 # Human readable disk usage
-alias du='du -h'                 # Human readable directory sizes
-alias free='free -h'             # Human readable memory usage (Linux)
-alias path='echo $PATH | tr ":" "\n"'  # Show PATH in readable format
-
-# Faster git branch detection for prompt
+# Git branch function
 git_branch() {
-    local branch
-    branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-    if [ -n "$branch" ]; then
-        echo " [$branch]"
+    git branch 2>/dev/null | grep '^*' | colrm 1 2
+}
+
+# Git status indicators
+git_status() {
+    if [[ -n $(git status -s 2>/dev/null) ]]; then
+        echo "*"
     fi
 }
 
-# Simple prompt
-PS1='\u:\w$(git_branch) \$ '
+# Command status indicator
+set_prompt() {
+    local last_exit=$?
+    local status_color=""
+    local status_symbol=""
+
+    if [[ $last_exit -eq 0 ]]; then
+        status_color=$COLOR_GREEN
+        status_symbol="›"
+    else
+        status_color=$COLOR_RED
+        status_symbol="›"
+    fi
+
+    # Build the prompt
+    PS1=""
+
+    # Current directory in yellow
+    PS1+="${COLOR_YELLOW}\w "
+
+    # Git branch if in a git repo
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        PS1+="${COLOR_PURPLE}($(git_branch)$(git_status)) "
+    fi
+
+    # Status symbol
+    PS1+="${status_color}${status_symbol}${COLOR_RESET} "
+}
+
+# Set the prompt command
+PROMPT_COMMAND="set_prompt; history -a; history -c; history -r"
+
+# Editor
+alias vim='nvim'
+alias vi='nvim'
+
+# Aliases with color support
+alias ls='ls --color=auto'
+alias ll='ls -alF --color=auto'
+alias la='ls -A --color=auto'
+alias grep='grep --color=auto'
+alias diff='diff --color=auto'
+
+# Hyprland shortcuts
+alias hc='$EDITOR ~/.config/hypr/hyprland.conf'
+alias hr='hyprctl reload'
+
+# Brave browser - disable KDE wallet integration
+alias brave='brave --password-store=basic'
+
+# Bash Completion 
+if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+fi
+
+# FZF
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f /usr/share/fzf/shell/key-bindings.bash ] && source /usr/share/fzf/shell/key-bindings.bash
+[ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
