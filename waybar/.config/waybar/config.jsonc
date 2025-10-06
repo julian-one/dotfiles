@@ -4,142 +4,220 @@
   "margin-bottom": -5,
   "spacing": 0,
   "modules-left": [
+    "custom/launcher",
     "hyprland/workspaces",
-    "custom/uptime",
-    "cpu"
+    "custom/separator",
+    "cpu",
+    "memory",
+    "custom/uptime"
   ],
   "modules-center": [
     "clock",
+    "custom/separator2",
     "custom/weather"
   ],
   "modules-right": [
+    "tray",
     "bluetooth",
     "network",
     "pulseaudio",
     "backlight",
+    "custom/kbd_backlight",
     "battery",
-    "custom/lock"
+    "custom/hyprlock"
   ],
+
+  "custom/launcher": {
+    "format": "◉",
+    "tooltip": false,
+    "on-click": "rofi -show drun"
+  },
+
   "hyprland/workspaces": {
-    "format": "{name} {icon}",
-    "format-icons": {
-      "active": "",
-      "default": ""
-    },
+    "format": "{name}",
     "persistent-workspaces": {
-      "*": [
-        1,
-        2,
-        3
-      ]
+      "*": [1, 2, 3, 4, 5]
+    },
+    "on-click": "activate",
+    "on-scroll-up": "hyprctl dispatch workspace e+1",
+    "on-scroll-down": "hyprctl dispatch workspace e-1"
+  },
+
+  "custom/separator": {
+    "format": "┊",
+    "interval": "once",
+    "tooltip": false
+  },
+
+  "custom/separator2": {
+    "format": "◆",
+    "interval": "once",
+    "tooltip": false
+  },
+
+  "cpu": {
+    "interval": 2,
+    "format": "󰘚 {usage:>2}%",
+    "format-alt": "󰘚 {icon0}{icon1}{icon2}{icon3}",
+    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
+    "tooltip": true,
+    "tooltip-format": "CPU Usage: {usage}%\nLoad Average: {load}",
+    "on-click": "ghostty -e top"
+  },
+
+  "memory": {
+    "interval": 5,
+    "format": "󰾆 {percentage}%",
+    "format-alt": "󰾆 {used:0.1f}G",
+    "tooltip": true,
+    "tooltip-format": "RAM: {used:0.1f}GB / {total:0.1f}GB\nSwap: {swapUsed:0.1f}GB / {swapTotal:0.1f}GB",
+    "on-click": "ghostty -e top"
+  },
+
+  "custom/uptime": {
+    "format": "󰔟 {}",
+    "tooltip": true,
+    "interval": 60,
+    "exec": "$HOME/.config/waybar/scripts/uptime.sh",
+    "tooltip-format": "System Uptime"
+  },
+
+  "clock": {
+    "interval": 1,
+    "format": "󰥔 {:%H:%M}",
+    "format-alt": "󰃰 {:%Y-%m-%d}",
+    "timezone": "America/Denver",
+    "tooltip": true,
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "calendar": {
+      "mode": "year",
+      "mode-mon-col": 3,
+      "weeks-pos": "right",
+      "on-scroll": 1,
+      "on-click-right": "mode",
+      "format": {
+        "months": "<span color='#E97A01'><b>{}</b></span>",
+        "days": "<span color='#cdcdcd'><b>{}</b></span>",
+        "weeks": "<span color='#216D8A'><b>W{}</b></span>",
+        "weekdays": "<span color='#E97A01'><b>{}</b></span>",
+        "today": "<span color='#216D8A'><b><u>{}</u></b></span>"
+      }
     }
   },
-  "custom/uptime": {
-    "format": "{}",
-    "format-icon": [
-      ""
-    ],
-    "tooltip": false,
-    "interval": 60,
-    "exec": "$HOME/.config/waybar/scripts/uptime.sh"
-  },
-  "cpu": {
-    "interval": 1,
-    "format": "  {icon0}{icon1}{icon2}{icon3} {usage:>2}%",
-    "format-icons": [
-      "▁",
-      "▂",
-      "▃",
-      "▄",
-      "▅",
-      "▆",
-      "▇",
-      "█"
-    ],
-    "on-click": "ghostty -e htop"
-  },
-  "clock": {
-    "timezone": "America/Denver",
-    "format": "{:%H:%M}",
-    "tooltip": true,
-    "tooltip-format": "{:%A, %B %e %Y}"
-  },
+
   "custom/weather": {
-    "tooltip": true,
     "format": "{}",
-    "interval": 30,
+    "format-alt": "{alt}: {}",
+    "format-alt-click": "click-left",
+    "interval": 300,
+    "return-type": "json",
     "exec": "$HOME/.config/waybar/scripts/weather.py",
-    "return-type": "json"
+    "exec-if": "ping wttr.in -c1",
+    "tooltip": true
   },
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8,
+    "show-passive-items": true
+  },
+
   "bluetooth": {
-    "format": "󰂲",
-    "format-on": "{icon}",
-    "format-off": "{icon}",
-    "format-connected": "{icon}",
-    "format-icons": {
-      "on": "󰂯",
-      "off": "󰂲",
-      "connected": "󰂱"
-    },
-    "on-click": "blueman-manager"
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-connected": "󰂱 {num_connections}",
+    "format-connected-battery": "󰥈 {device_battery_percentage}%",
+    "tooltip": true,
+    "tooltip-format": "{controller_alias}\t{controller_address}",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
+    "on-click": "blueman-manager",
+    "on-click-right": "rfkill toggle bluetooth"
   },
+
   "network": {
-    "format-wifi": "󰤢",
-    "format-ethernet": "󰈀 ",
-    "format-disconnected": "󰤠 ",
     "interval": 5,
-    "tooltip-format": "{essid} ({signalStrength}%)",
-    "on-click": "nm-connection-editor"
+    "format-wifi": "󰤨 {signalStrength}%",
+    "format-ethernet": "󰈀",
+    "format-linked": "󰤫",
+    "format-disconnected": "󰤮",
+    "format-alt": "󰤨 {essid}",
+    "tooltip": true,
+    "tooltip-format": "Interface: {ifname}\nIP: {ipaddr}/{cidr}\nGateway: {gwaddr}\nSignal: {signalStrength}% | {frequency} MHz\n⬆ {bandwidthUpBytes} ⬇ {bandwidthDownBytes}",
+    "on-click": "nm-connection-editor",
+    "on-click-right": "nmcli radio wifi toggle"
   },
+
   "pulseaudio": {
-    "format": "{icon}  {volume}%",
-    "format-muted": "",
+    "format": "{icon} {volume}%",
+    "format-muted": "󰸈",
+    "format-bluetooth": "󰂰 {volume}%",
+    "format-bluetooth-muted": "󰂲",
     "format-icons": {
-      "default": [
-        "",
-        "",
-        " "
-      ]
+      "headphone": "󰋋",
+      "hands-free": "󱡏",
+      "headset": "󰋎",
+      "phone": "󰏲",
+      "portable": "󰏳",
+      "car": "󰄋",
+      "default": ["󰕿", "󰖀", "󰕾"]
     },
-    "on-click": "pavucontrol"
+    "tooltip": true,
+    "tooltip-format": "{desc}\nVolume: {volume}%",
+    "on-click": "pavucontrol",
+    "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ +5%",
+    "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
+    "smooth-scrolling-threshold": 1
   },
+
   "backlight": {
     "device": "acpi_video0",
-    "format": "{icon}  {percent}%",
-    "format-icons": [
-      "",
-      "󰃜",
-      "󰃛",
-      "󰃞",
-      "󰃝",
-      "󰃟",
-      "󰃠"
-    ],
-    "tooltip": false,
-    "on-click": "$HOME/.config/waybar/scripts/brightness.sh"
+    "format": "{icon} {percent}%",
+    "format-icons": ["󱩎", "󱩏", "󱩐", "󱩑", "󱩒", "󱩓", "󱩔", "󱩕", "󱩖", "󰛨"],
+    "tooltip": true,
+    "tooltip-format": "Screen Brightness: {percent}%",
+    "on-click": "$HOME/.config/waybar/scripts/brightness.sh",
+    "on-scroll-up": "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-",
+    "smooth-scrolling-threshold": 1
   },
+
   "battery": {
-    "interval": 2,
+    "interval": 10,
     "states": {
-      "warning": 40,
-      "critical": 25
+      "warning": 30,
+      "critical": 15
     },
-    "format": "{icon}  {capacity}%",
-    "format-full": "{icon}  {capacity}%",
-    "format-charging": " {capacity}%",
-    "format-plugged": " {capacity}%",
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-full": "󰁹 {capacity}%",
     "format-alt": "{icon} {time}",
-    "format-icons": [
-      "",
-      "",
-      "",
-      "",
-      ""
-    ]
+    "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "tooltip": true,
+    "tooltip-format": "Battery: {capacity}%\n{timeTo}\nPower: {power}W",
+    "on-click": "ghostty -e top"
   },
-  "custom/lock": {
-    "tooltip": false,
-    "on-click": "hyprlock",
-    "format": ""
+
+  "custom/kbd_backlight": {
+    "format": "{}",
+    "exec": "$HOME/.config/waybar/scripts/kbd_backlight_status.sh",
+    "interval": 1,
+    "tooltip": true,
+    "tooltip-format": "Keyboard Backlight\nClick: Toggle | Scroll: Adjust",
+    "on-click": "$HOME/.config/waybar/scripts/kbd_backlight.sh toggle",
+    "on-click-right": "$HOME/.config/waybar/scripts/kbd_backlight.sh",
+    "on-scroll-up": "$HOME/.config/waybar/scripts/kbd_backlight.sh up",
+    "on-scroll-down": "$HOME/.config/waybar/scripts/kbd_backlight.sh down",
+    "smooth-scrolling-threshold": 1
+  },
+
+  "custom/hyprlock": {
+    "format": "󰌾",
+    "tooltip": true,
+    "tooltip-format": "Lock Screen",
+    "on-click": "hyprlock"
   }
 }

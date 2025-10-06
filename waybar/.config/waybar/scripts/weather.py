@@ -1,12 +1,28 @@
 #!/usr/bin/env python3
 import json
 import os
-import re
 import subprocess
 import sys
 import time
+from datetime import datetime
 
+# Configuration
+CONFIG_FILE = os.path.expanduser("~/.config/waybar/weather-config.json")
 CACHE_FILE = os.path.expanduser("~/.cache/waybar-weather.json")
+DEFAULT_LOCATION = "Denver"
+
+def load_config():
+    """Load configuration from file or use defaults."""
+    try:
+        if os.path.exists(CONFIG_FILE):
+            with open(CONFIG_FILE, 'r') as f:
+                config = json.load(f)
+                return config.get('location', DEFAULT_LOCATION)
+    except Exception:
+        pass
+    return DEFAULT_LOCATION
+
+LOCATION = load_config()
 
 def check_network():
     """Check if network is available by pinging a reliable DNS server."""
@@ -28,14 +44,19 @@ def get_weather(retry_count=3, initial_delay=1):
                 time.sleep(initial_delay * (2 ** attempt))
                 continue
 
+            # Use wttr.in JSON API for more reliable parsing
             result = subprocess.run(['curl', '-s', '--connect-timeout', '5',
-                                   '--max-time', '10', 'https://wttr.in/Denver'],
+                                   '--max-time', '10', f'https://wttr.in/{LOCATION}?format=j1'],
                                   capture_output=True, text=True, timeout=15)
 
             if result.returncode == 0 and result.stdout:
-                # Cache successful response
-                save_cache(result.stdout)
-                return result.stdout
+                try:
+                    data = json.loads(result.stdout)
+                    # Cache successful response
+                    save_cache(data)
+                    return data
+                except json.JSONDecodeError:
+                    print(f"Failed to parse JSON response on attempt {attempt + 1}", file=sys.stderr)
 
             if attempt < retry_count - 1:
                 delay = initial_delay * (2 ** attempt)
@@ -73,167 +94,200 @@ def load_cache(max_age=3600):
         print(f"Failed to load cache: {e}", file=sys.stderr)
     return None, None
 
-def clean_ansi(text):
-    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-    return ansi_escape.sub('', text)
+def get_weather_icon(weather_code, is_day=True):
+    """Convert weather code to appropriate icon."""
+    # Weather codes from https://www.worldweatheronline.com/developer/api/docs/weather-icons.aspx
+    weather_icons = {
+        # Clear/Sunny
+        113: "󰖙" if is_day else "󰖔",  # Clear/Sunny
 
-def fahrenheit_to_celsius(f_str):
-    """Convert temperature string like '60 °F' to both F and C"""
-    f_match = re.search(r'(\d+)', f_str)
-    if f_match:
-        f = int(f_match.group(1))
-        c = round((f - 32) * 5/9)
-        return f"{f}°F ({c}°C)"
-    return f_str
+        # Partly cloudy
+        116: "󰖕" if is_day else "󰼱",  # Partly cloudy
 
-def extract_current_weather(weather_data):
-    lines = weather_data.split('\n')
+        # Cloudy
+        119: "󰖐",  # Cloudy
+        122: "󰖐",  # Overcast
 
-    # Find current temperature - look for pattern like "+50(48) °F" or "50 °F"
-    temp_match = re.search(r'\+?(\d+)(?:\(\d+\))?\s*°F', weather_data)
-    if temp_match:
-        temp_f = f"{temp_match.group(1)} °F"
-    else:
-        temp_f = "-- °F"
-    temp = fahrenheit_to_celsius(temp_f)
+        # Fog
+        143: "󰖑",  # Mist
+        248: "󰖑",  # Fog
+        260: "󰖑",  # Freezing fog
 
-    # Find current condition
-    condition_match = re.search(r'(Clear|Sunny|Partly cloudy|Cloudy|Overcast|Rain|Snow)', weather_data)
-    condition = condition_match.group(1) if condition_match else "Unknown"
+        # Light rain/drizzle
+        176: "󰖗",  # Patchy rain possible
+        179: "󰖘",  # Patchy snow possible
+        182: "󰖘",  # Patchy sleet possible
+        185: "󰖘",  # Patchy freezing drizzle possible
+        263: "󰖗",  # Patchy light drizzle
+        266: "󰖗",  # Light drizzle
+        281: "󰖗",  # Freezing drizzle
+        284: "󰖗",  # Heavy freezing drizzle
+        293: "󰖗",  # Patchy light rain
+        296: "󰖗",  # Light rain
+        299: "󰖗",  # Moderate rain at times
+        302: "󰖗",  # Moderate rain
+        305: "󰖗",  # Heavy rain at times
+        308: "󰖗",  # Heavy rain
+        311: "󰖗",  # Light freezing rain
+        314: "󰖗",  # Moderate or heavy freezing rain
 
-    # Find wind
-    wind_match = re.search(r'[←→↑↓↗↘↙↖] [\d-]+ mph', weather_data)
-    wind = wind_match.group(0) if wind_match else None
+        # Thunderstorm
+        200: "󰖓",  # Thundery outbreaks possible
+        386: "󰖓",  # Patchy light rain with thunder
+        389: "󰖓",  # Moderate or heavy rain with thunder
+        392: "󰖓",  # Patchy light snow with thunder
+        395: "󰖓",  # Moderate or heavy snow with thunder
 
-    # Find visibility
-    visibility_match = re.search(r'(\d+ mi)', weather_data)
-    visibility = visibility_match.group(1) if visibility_match else None
-
-    # Find precipitation
-    precip_match = re.search(r'([\d.]+ in)', weather_data)
-    precipitation = precip_match.group(1) if precip_match else None
-
-    # Determine icon (using working Nerd Font icons from your config)
-    icon = "󰖙"  # default weather icon (from your config style)
-    if "Clear" in condition or "Sunny" in condition:
-        icon = "󰖙"  # sunny (bright sun)
-    elif "Partly" in condition:
-        icon = "󰖕"  # partly cloudy
-    elif "Cloudy" in condition or "Overcast" in condition:
-        icon = "󰖐"  # cloudy
-    elif "Rain" in condition:
-        icon = "󰖗"  # rain
-    elif "Snow" in condition:
-        icon = "󰼶"  # snow
-
-    return {
-        'temp': temp,
-        'temp_f': temp_f,  # Keep F-only for display text
-        'condition': condition,
-        'wind': wind,
-        'visibility': visibility,
-        'precipitation': precipitation,
-        'icon': icon
+        # Snow
+        179: "󰼶",  # Patchy snow possible
+        182: "󰼶",  # Patchy sleet possible
+        185: "󰼶",  # Patchy freezing drizzle possible
+        227: "󰼶",  # Blowing snow
+        230: "󰼶",  # Blizzard
+        317: "󰼶",  # Light sleet
+        320: "󰼶",  # Moderate or heavy sleet
+        323: "󰼶",  # Patchy light snow
+        326: "󰼶",  # Light snow
+        329: "󰼶",  # Patchy moderate snow
+        332: "󰼶",  # Moderate snow
+        335: "󰼶",  # Patchy heavy snow
+        338: "󰼶",  # Heavy snow
+        350: "󰼶",  # Ice pellets
+        353: "󰖗",  # Light rain shower
+        356: "󰖗",  # Moderate or heavy rain shower
+        359: "󰖗",  # Torrential rain shower
+        362: "󰼶",  # Light sleet showers
+        365: "󰼶",  # Moderate or heavy sleet showers
+        368: "󰼶",  # Light snow showers
+        371: "󰼶",  # Moderate or heavy snow showers
+        374: "󰼶",  # Light showers of ice pellets
+        377: "󰼶",  # Moderate or heavy showers of ice pellets
     }
 
-def extract_forecast(weather_data):
-    forecast = []
+    code = int(weather_code)
+    return weather_icons.get(code, "󰖙")  # Default to sun icon if code not found
 
-    # Find all day headers like "Wed 24 Sep"
-    day_pattern = r'([A-Z][a-z]+ \d+ [A-Z][a-z]+)'
-    days = re.findall(day_pattern, weather_data)[:3]  # Only first 3 days
+def format_temperature(temp_f, temp_c):
+    """Format temperature for display."""
+    return f"{temp_f}°F ({temp_c}°C)"
 
-    for day in days:
-        # Find the section for this day
-        day_start = weather_data.find(day)
-        if day_start == -1:
-            continue
-
-        # Get roughly 300 characters after the day header to capture the forecast table
-        day_section = weather_data[day_start:day_start + 500]
-
-        # Extract temperatures - look for patterns like "57 °F", "+59(57) °F", etc.
-        temp_matches = re.findall(r'(?:\+?(\d+)(?:\(\d+\))? °F)', day_section)
-        temps = [fahrenheit_to_celsius(f"{t} °F") for t in temp_matches[:4]]  # Morning, Noon, Evening, Night
-
-        # Extract conditions
-        condition_matches = re.findall(r'(Clear|Sunny|Partly Cloudy|Cloudy|Overcast|Rain|Snow)', day_section)
-        conditions = '/'.join(list(dict.fromkeys(condition_matches)))  # Remove duplicates, preserve order
-
-        # Extract precipitation percentage
-        precip_matches = re.findall(r'(\d+%)', day_section)
-        precip_chance = precip_matches[-1] if precip_matches else "0%"
-
-        forecast.append({
-            'day': day,
-            'temps': temps,
-            'conditions': conditions,
-            'precipitation': precip_chance
-        })
-
-    return forecast
+def get_wind_direction_arrow(degrees):
+    """Convert wind direction degrees to arrow."""
+    arrows = ["↓", "↙", "←", "↖", "↑", "↗", "→", "↘"]
+    index = int((degrees + 22.5) / 45) % 8
+    return arrows[index]
 
 def main():
-    weather_raw = get_weather()
+    weather_data = get_weather()
 
     # If fetch failed, try to use cache
-    if not weather_raw:
-        weather_raw, cache_age = load_cache(max_age=7200)  # Accept cache up to 2 hours old
-        if weather_raw:
+    if not weather_data:
+        weather_data, cache_age = load_cache(max_age=7200)  # Accept cache up to 2 hours old
+        if weather_data:
             cache_mins = int(cache_age / 60)
             print(f"Using cached weather data ({cache_mins} minutes old)", file=sys.stderr)
         else:
             # Show loading indicator on first startup
-            print(json.dumps({"text": "⏳ Loading", "tooltip": "Fetching weather data..."}))
+            print(json.dumps({
+                "text": "⏳ Loading",
+                "tooltip": "Fetching weather data...",
+                "class": "weather-loading"
+            }))
             return
 
-    weather_clean = clean_ansi(weather_raw)
-    current = extract_current_weather(weather_clean)
-    forecast = extract_forecast(weather_clean)
+    try:
+        current = weather_data['current_condition'][0]
+        location = weather_data['nearest_area'][0]
 
-    # Build tooltip (using working Nerd Font icons)
-    tooltip = f"󰔏 {current['condition']} • {current['temp']}"
-    if current['wind']:
-        tooltip += f"\n󰖝 Wind: {current['wind']}"
-    if current['visibility']:
-        tooltip += f"\n󰍉 Visibility: {current['visibility']}"
-    if current['precipitation']:
-        tooltip += f"\n󰖗 Precipitation: {current['precipitation']}"
+        # Extract current weather data
+        temp_f = int(current['temp_F'])
+        temp_c = int(current['temp_C'])
+        feels_like_f = int(current['FeelsLikeF'])
+        feels_like_c = int(current['FeelsLikeC'])
+        condition = current['weatherDesc'][0]['value']
+        humidity = int(current['humidity'])
+        wind_speed = int(current['windspeedMiles'])
+        wind_dir = current['winddir16Point']
+        wind_degrees = int(current['winddirDegree'])
+        visibility = int(current['visibilityMiles'])
+        pressure = int(current['pressureInches'])
+        weather_code = int(current['weatherCode'])
 
-    # Add forecast
-    for day_data in forecast:
-        tooltip += f"\n\n󰃭 {day_data['day']}"
-        if len(day_data['temps']) >= 4:
-            # Find min and max temps for the day
-            temp_nums = []
-            for temp_str in day_data['temps']:
-                match = re.search(r'(\d+)°F', temp_str)
-                if match:
-                    temp_nums.append(int(match.group(1)))
+        # Get appropriate icon
+        # Determine if it's day (simple check based on time)
+        current_hour = datetime.now().hour
+        is_day = 6 <= current_hour < 20
+        icon = get_weather_icon(weather_code, is_day)
 
-            if temp_nums:
-                min_f = min(temp_nums)
-                max_f = max(temp_nums)
-                min_c = round((min_f - 32) * 5/9)
-                max_c = round((max_f - 32) * 5/9)
-                tooltip += f"\n     󰔏 {min_f}°F - {max_f}°F ({min_c}°C - {max_c}°C)"
-                tooltip += f"\n     󰃰 Morning: {day_data['temps'][0]} | Noon: {day_data['temps'][1]} | Evening: {day_data['temps'][2]} | Night: {day_data['temps'][3]}"
-            else:
-                tooltip += f"\n     󰔏 {', '.join(day_data['temps'])}"
-        elif day_data['temps']:
-            tooltip += f"\n     󰔏 {', '.join(day_data['temps'])}"
+        # Get wind direction arrow
+        wind_arrow = get_wind_direction_arrow(wind_degrees)
 
-        if day_data['conditions']:
-            tooltip += f"\n     󰖙 {day_data['conditions']}"
-        if day_data['precipitation']:
-            tooltip += f"\n     󰖗 Precipitation: {day_data['precipitation']}"
+        # Build display text
+        display_text = f"{icon} {temp_f}°F"
 
-    result = {
-        "text": f"{current['icon']} {current['temp_f']}",
-        "tooltip": tooltip
-    }
+        # Build tooltip
+        location_name = location['areaName'][0]['value']
+        tooltip = f"📍 {location_name}\n"
+        tooltip += f"───────────────\n"
+        tooltip += f"󰔏 {condition}\n"
+        tooltip += f"🌡️ {temp_f}°F ({temp_c}°C)\n"
+        tooltip += f"🤔 Feels like {feels_like_f}°F ({feels_like_c}°C)\n"
+        tooltip += f"💧 Humidity: {humidity}%\n"
+        tooltip += f"💨 Wind: {wind_arrow} {wind_speed} mph {wind_dir}\n"
+        tooltip += f"👁️ Visibility: {visibility} mi\n"
+        tooltip += f"🔽 Pressure: {pressure} in\n"
 
-    print(json.dumps(result))
+        # Add forecast
+        if 'weather' in weather_data:
+            tooltip += f"\n📅 3-Day Forecast\n"
+            tooltip += f"───────────────\n"
+
+            for day_data in weather_data['weather'][:3]:
+                date = datetime.strptime(day_data['date'], '%Y-%m-%d')
+                day_name = date.strftime('%a %b %d')
+                max_temp_f = int(day_data['maxtempF'])
+                max_temp_c = int(day_data['maxtempC'])
+                min_temp_f = int(day_data['mintempF'])
+                min_temp_c = int(day_data['mintempC'])
+
+                # Get average conditions for the day
+                hourly_data = day_data['hourly']
+                conditions = set()
+                total_precip = 0
+
+                for hour in hourly_data:
+                    conditions.add(hour['weatherDesc'][0]['value'])
+                    total_precip += float(hour['precipInches'])
+
+                # Get most common condition
+                condition_str = ', '.join(list(conditions)[:2])  # Show up to 2 conditions
+
+                tooltip += f"\n{day_name}:\n"
+                tooltip += f"  📊 {min_temp_f}-{max_temp_f}°F ({min_temp_c}-{max_temp_c}°C)\n"
+                tooltip += f"  🌤️ {condition_str}\n"
+                if total_precip > 0:
+                    tooltip += f"  💧 Precip: {total_precip:.1f} in\n"
+
+        # Add last update time
+        update_time = datetime.now().strftime('%H:%M')
+        tooltip += f"\n🔄 Updated: {update_time}"
+
+        result = {
+            "text": display_text,
+            "tooltip": tooltip,
+            "class": "weather",
+            "alt": condition
+        }
+
+        print(json.dumps(result))
+
+    except Exception as e:
+        print(f"Error processing weather data: {e}", file=sys.stderr)
+        print(json.dumps({
+            "text": "⚠️ Error",
+            "tooltip": f"Error processing weather data:\n{str(e)}",
+            "class": "weather-error"
+        }))
 
 if __name__ == "__main__":
     main()
