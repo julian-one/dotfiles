@@ -1,0 +1,15 @@
+width=600
+height=400
+mode=drun
+allow_images=true
+image_size=32
+insensitive=true
+sort_order=alphabetical
+prompt=
+columns=1
+hide_scroll=false
+matching=contains
+normal_window=false
+layer=overlay
+gtk_dark=true
+location=center

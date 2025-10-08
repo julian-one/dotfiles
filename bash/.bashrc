@@ -1,23 +1,51 @@
-# If not running interactively, don't do anything
+# Bash Configuration - Interactive Shell
+
+# Exit if not running interactively
 [[ $- != *i* ]] && return
 
-# History Configuration (optimized for Hyprland)
-HISTFILE="$HOME/.bash_history"
-HISTSIZE=50000                      # More in-memory history
-HISTFILESIZE=100000                  # Larger history file
-HISTCONTROL=ignoreboth:erasedups    # Ignore dups and spaces
-HISTIGNORE="ls:ll:cd:pwd:exit:date:* --help"  # Ignore common commands
-shopt -s histappend                  # Append to history, don't overwrite
-shopt -s cmdhist                     # Store multi-line commands as one
-PROMPT_COMMAND="history -a; history -c; history -r"  # Sync history across terminals
+# Shell Options
 
-# Better history search
+# Better directory navigation
+shopt -s autocd                         # Auto-cd when entering just a path
+shopt -s cdspell                        # Autocorrect typos in path names
+shopt -s dirspell                       # Autocorrect directory names in completion
+shopt -s cdable_vars                    # cd into variables
+
+# Improved globbing
+shopt -s nocaseglob                     # Case-insensitive globbing
+shopt -s globstar                       # Enable ** for recursive directory matching
+shopt -s dotglob                        # Include dotfiles in pathname expansion
+
+# Better shell behavior
+shopt -s checkwinsize                   # Update LINES and COLUMNS after each command
+shopt -s no_empty_cmd_completion        # No completion on empty line
+
+# History Configuration
+
+# History file settings
+HISTFILE="$HOME/.bash_history"
+HISTSIZE=50000                          # Commands in memory
+HISTFILESIZE=100000                     # Commands in history file
+HISTCONTROL=ignoreboth:erasedups        # Ignore duplicates and leading spaces
+
+# Don't save common/trivial commands
+HISTIGNORE="ls:ll:la:cd:pwd:exit:clear:history:* --help"
+
+# Shell options for better history handling
+shopt -s histappend                     # Append to history, don't overwrite
+shopt -s cmdhist                        # Save multi-line commands as one entry
+
+# Enhanced History Navigation
+
+# Arrow keys search history based on what you've typed
 bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
+
+# Ctrl+R for FZF history search
 bind '"\C-r": "\C-x1\e^\er"'
 bind -x '"\C-x1": __fzf_history'
 
-# FZF history function for better searching
+# FZF-powered history search function
 __fzf_history() {
     local selected
     selected=$(history | fzf --tac --no-sort --query="$READLINE_LINE" | sed 's/^[ ]*[0-9]*[ ]*//')
@@ -25,85 +53,73 @@ __fzf_history() {
     READLINE_POINT=${#READLINE_LINE}
 }
 
-# Colors from Vague theme
-COLOR_RESET='\[\033[0m\]'
-COLOR_RED='\[\033[38;2;216;100;126m\]'      # #d8647e
-COLOR_GREEN='\[\033[38;2;127;165;99m\]'     # #7fa563
-COLOR_YELLOW='\[\033[38;2;243;190;124m\]'   # #f3be7c
-COLOR_BLUE='\[\033[38;2;110;148;178m\]'     # #6e94b2
-COLOR_PURPLE='\[\033[38;2;187;157;189m\]'   # #bb9dbd
-COLOR_CYAN='\[\033[38;2;174;174;209m\]'     # #aeaed1
-COLOR_GRAY='\[\033[38;2;96;96;121m\]'       # #606079
-COLOR_WHITE='\[\033[38;2;205;205;205m\]'    # #cdcdcd
 
-# Git branch function
+# Git Prompt Helpers
+
+# Get current git branch name
 git_branch() {
-    git branch 2>/dev/null | grep '^*' | colrm 1 2
+    git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
 }
 
-# Git status indicators
-git_status() {
-    if [[ -n $(git status -s 2>/dev/null) ]]; then
-        echo "*"
-    fi
+# Get git repository status indicators
+git_status_info() {
+    local status=$(git status --porcelain 2>/dev/null) || return
+    [[ -z "$status" ]] && return
+
+    local m=0 a=0 d=0 u=0
+    while IFS= read -r line; do
+        case "$line" in
+            ' M'*) ((m++)) ;;
+            'A'*) ((a++)) ;;
+            'D'*) ((d++)) ;;
+            '??'*) ((u++)) ;;
+        esac
+    done <<< "$status"
+
+    local out=""
+    ((m)) && out+="~$m"
+    ((a)) && out+="+$a"
+    ((d)) && out+="-$d"
+    ((u)) && out+="?$u"
+    [[ -n "$out" ]] && echo " $out"
 }
 
-# Command status indicator
+# Dynamic Prompt Builder
 set_prompt() {
-    local last_exit=$?
-    local status_color=""
-    local status_symbol=""
-
-    if [[ $last_exit -eq 0 ]]; then
-        status_color=$COLOR_GREEN
-        status_symbol="›"
-    else
-        status_color=$COLOR_RED
-        status_symbol="›"
-    fi
-
-    # Build the prompt
+    # Start building prompt
     PS1=""
 
-    # Current directory in yellow
-    PS1+="${COLOR_YELLOW}\w "
+    # Current directory
+    PS1+="\w "
 
-    # Git branch if in a git repo
-    if git rev-parse --git-dir > /dev/null 2>&1; then
-        PS1+="${COLOR_PURPLE}($(git_branch)$(git_status)) "
+    # Git information (if in a repository)
+    if git rev-parse --git-dir &>/dev/null; then
+        local branch=$(git_branch)
+        local git_info=$(git_status_info)
+        PS1+="(${branch}${git_info}) "
     fi
 
-    # Status symbol
-    PS1+="${status_color}${status_symbol}${COLOR_RESET} "
+    # Prompt character
+    PS1+="> "
 }
 
-# Set the prompt command
+# Update prompt before each command
 PROMPT_COMMAND="set_prompt; history -a; history -c; history -r"
 
-# Editor
+# Editor Aliases
+
 alias vim='nvim'
 alias vi='nvim'
 
-# Aliases with color support
-alias ls='ls --color=auto'
-alias ll='ls -alF --color=auto'
-alias la='ls -A --color=auto'
-alias grep='grep --color=auto'
-alias diff='diff --color=auto'
+# Shell Enhancements
 
-# Hyprland shortcuts
-alias hc='$EDITOR ~/.config/hypr/hyprland.conf'
-alias hr='hyprctl reload'
-
-# Brave browser - disable KDE wallet integration
-alias brave='brave --password-store=basic'
-
-# Bash Completion 
-if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
+# Enable programmable completion
+if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+    source /usr/share/bash-completion/bash_completion
 fi
 
-# FZF
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-[ -f /usr/share/fzf/shell/key-bindings.bash ] && source /usr/share/fzf/shell/key-bindings.bash
-[ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
+# FZF integration
+for fzf_file in ~/.fzf.bash /usr/share/fzf/shell/key-bindings.bash; do
+    [[ -f "$fzf_file" ]] && source "$fzf_file"
+done
+

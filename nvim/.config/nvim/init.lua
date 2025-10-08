@@ -220,9 +220,9 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- ============================================================================
 
 vim.pack.add({
-	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/echasnovski/mini.pick" },
+	{ src = "https://github.com/echasnovski/mini.statusline" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
@@ -293,6 +293,7 @@ require("mini.pick").setup({
 		},
 	},
 })
+require("mini.statusline").setup()
 require("oil").setup()
 require("trouble").setup()
 require("gitsigns").setup({ current_line_blame = true })
@@ -451,8 +452,19 @@ require("nvim-treesitter").setup({
 })
 
 -- ============================================================================
--- COLORSCHEME
+-- TRANSPARENCY
 -- ============================================================================
 
-require("vague").setup({ transparent = true })
-vim.cmd("colorscheme vague")
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "*",
+	callback = function()
+		vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+		vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+		vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
+	end,
+})
+
+-- Apply transparency immediately
+vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })

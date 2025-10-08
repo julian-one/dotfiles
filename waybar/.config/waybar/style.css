@@ -1,17 +1,8 @@
-/* ╔═══════════════════════════════════════════════════════════════╗
-   ║  WAYBAR MODERN STYLE - ASCII ART ENHANCED                    ║
-   ║  Color Palette:                                               ║
-   ║  • #141611 - Deep Forest (Primary BG)                         ║
-   ║  • #216D8A - Ocean Teal (Accents)                            ║
-   ║  • #E97A01 - Sunset Orange (Highlights)                      ║
-   ╚═══════════════════════════════════════════════════════════════╝ */
-
-/* ┌─────────────────────────────────────────┐
-   │           GLOBAL STYLES                 │
-   └─────────────────────────────────────────┘ */
 * {
-  font-family: "ComicCodeLigaturesNerdFont", "JetBrainsMono Nerd Font", "Font Awesome 6 Pro";
-  font-size: 13px;
+  font-family:
+    "ComicCodeLigaturesNerdFont", "JetBrainsMono Nerd Font",
+    "Font Awesome 6 Pro";
+  font-size: 16px;
   font-weight: 600;
   min-height: 0;
 }
@@ -27,13 +18,14 @@ window#waybar.hidden {
   margin-top: -35px;
 }
 
-/* ┌─────────────────────────────────────────┐
-   │           BASE MODULE STYLE             │
-   └─────────────────────────────────────────┘ */
 .modules-left,
 .modules-center,
 .modules-right {
-  background: linear-gradient(135deg, rgba(20, 22, 17, 0.95), rgba(20, 22, 17, 0.85));
+  background: linear-gradient(
+    135deg,
+    rgba(20, 22, 17, 0.95),
+    rgba(20, 22, 17, 0.85)
+  );
   border: 1px solid rgba(33, 109, 138, 0.2);
   border-radius: 15px;
   margin: 6px 4px;
@@ -56,34 +48,40 @@ window#waybar.hidden {
   }
 }
 
-/* ┌─────────────────────────────────────────┐
-   │          MODULE ANIMATIONS              │
-   └─────────────────────────────────────────┘ */
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes glow {
-  0% { box-shadow: 0 0 5px rgba(33, 109, 138, 0.5); }
-  50% { box-shadow: 0 0 20px rgba(33, 109, 138, 0.8); }
-  100% { box-shadow: 0 0 5px rgba(33, 109, 138, 0.5); }
+  0% {
+    box-shadow: 0 0 5px rgba(33, 109, 138, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(33, 109, 138, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(33, 109, 138, 0.5);
+  }
 }
 
-/* ┌─────────────────────────────────────────┐
-   │            LEFT MODULES                 │
-   └─────────────────────────────────────────┘ */
 #custom-launcher {
-  color: #E97A01;
-  font-size: 18px;
+  color: #e97a01;
+  font-size: 22px;
   padding: 0 12px 0 8px;
   margin-right: 4px;
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 #custom-launcher:hover {
-  color: #216D8A;
+  color: #216d8a;
   text-shadow: 0 0 10px rgba(33, 109, 138, 0.8);
 }
 
@@ -105,22 +103,26 @@ window#waybar.hidden {
 }
 
 #workspaces button:hover {
-  color: #E97A01;
+  color: #e97a01;
   background: rgba(233, 122, 1, 0.1);
   margin-top: -2px;
   box-shadow: 0 4px 12px rgba(233, 122, 1, 0.3);
 }
 
 #workspaces button.active {
-  color: #216D8A;
-  background: linear-gradient(135deg, rgba(33, 109, 138, 0.2), rgba(33, 109, 138, 0.1));
+  color: #216d8a;
+  background: linear-gradient(
+    135deg,
+    rgba(33, 109, 138, 0.2),
+    rgba(33, 109, 138, 0.1)
+  );
   box-shadow:
     inset 0 2px 4px rgba(33, 109, 138, 0.3),
     0 2px 8px rgba(33, 109, 138, 0.4);
 }
 
 #workspaces button.urgent {
-  color: #E97A01;
+  color: #e97a01;
   background: rgba(233, 122, 1, 0.2);
   animation: pulse 1s ease-in-out infinite;
 }
@@ -144,26 +146,23 @@ window#waybar.hidden {
 #cpu:hover,
 #memory:hover,
 #custom-uptime:hover {
-  color: #216D8A;
+  color: #216d8a;
   padding-left: 12px;
 }
 
-/* ┌─────────────────────────────────────────┐
-   │           CENTER MODULES                │
-   └─────────────────────────────────────────┘ */
 #clock {
-  color: #216D8A;
+  color: #216d8a;
   padding: 0 12px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 18px;
   letter-spacing: 1px;
   transition: all 0.3s ease;
 }
 
 #clock:hover {
-  color: #E97A01;
+  color: #e97a01;
   text-shadow: 0 0 10px rgba(233, 122, 1, 0.5);
-  font-size: 15px;
+  font-size: 19px;
 }
 
 #custom-weather {
@@ -173,13 +172,10 @@ window#waybar.hidden {
 }
 
 #custom-weather:hover {
-  color: #216D8A;
+  color: #216d8a;
   margin-top: -2px;
 }
 
-/* ┌─────────────────────────────────────────┐
-   │           RIGHT MODULES                 │
-   └─────────────────────────────────────────┘ */
 #tray {
   padding: 0 8px;
   background: transparent;
@@ -214,20 +210,19 @@ window#waybar.hidden {
 #custom-kbd_backlight:hover,
 #battery:hover,
 #custom-hyprlock:hover {
-  color: #E97A01;
-  font-size: 14px;
+  color: #e97a01;
+  font-size: 17px;
   margin-top: -2px;
   text-shadow: 0 4px 8px rgba(233, 122, 1, 0.4);
 }
 
-/* Special States */
 #bluetooth.connected {
-  color: #216D8A;
+  color: #216d8a;
   animation: pulse 2s ease-in-out infinite;
 }
 
 #network.disconnected {
-  color: #E97A01;
+  color: #e97a01;
   animation: pulse 1s ease-in-out infinite;
 }
 
@@ -238,12 +233,12 @@ window#waybar.hidden {
 
 #battery.charging,
 #battery.plugged {
-  color: #216D8A;
+  color: #216d8a;
   animation: pulse 2s ease-in-out infinite;
 }
 
 #battery.warning:not(.charging) {
-  color: #E97A01;
+  color: #e97a01;
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -255,22 +250,23 @@ window#waybar.hidden {
 
 #custom-hyprlock {
   color: rgba(205, 205, 205, 0.6);
-  font-size: 16px;
+  font-size: 20px;
   padding-right: 12px;
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 #custom-hyprlock:hover {
-  color: #E97A01;
-  font-size: 18px;
+  color: #e97a01;
+  font-size: 22px;
   text-shadow: 0 0 15px rgba(233, 122, 1, 0.8);
 }
 
-/* ┌─────────────────────────────────────────┐
-   │            TOOLTIP STYLES               │
-   └─────────────────────────────────────────┘ */
 tooltip {
-  background: linear-gradient(135deg, rgba(20, 22, 17, 0.98), rgba(20, 22, 17, 0.95));
+  background: linear-gradient(
+    135deg,
+    rgba(20, 22, 17, 0.98),
+    rgba(20, 22, 17, 0.95)
+  );
   color: #cdcdcd;
   border: 1px solid rgba(33, 109, 138, 0.3);
   border-radius: 12px;
@@ -278,7 +274,7 @@ tooltip {
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 500;
   animation: fadeIn 0.2s ease-in;
 }
@@ -299,6 +295,3 @@ tooltip label {
   }
 }
 
-/* ╔═══════════════════════════════════════════════════════════════╗
-   ║                    END OF STYLES                              ║
-   ╚═══════════════════════════════════════════════════════════════╝ */
