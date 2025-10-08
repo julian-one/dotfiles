@@ -220,9 +220,9 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- ============================================================================
 
 vim.pack.add({
-	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/echasnovski/mini.pick" },
+	{ src = "https://github.com/echasnovski/mini.statusline" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
@@ -266,7 +266,6 @@ mason_lspconfig.setup({
 		"dockerls",
 		"html",
 		"cssls",
-		"clangd",
 	},
 	automatic_installation = true,
 })
@@ -282,7 +281,6 @@ require("mason-tool-installer").setup({
 		"prettierd", -- Faster JS/TS/CSS/HTML formatter
 		"golangci-lint", -- Go linter
 		"eslint_d", -- JS/TS linter
-		"clang-format", -- C/C++ formatter
 	},
 	auto_update = false,
 	run_on_start = true,
@@ -295,6 +293,7 @@ require("mini.pick").setup({
 		},
 	},
 })
+require("mini.statusline").setup()
 require("oil").setup()
 require("trouble").setup()
 require("gitsigns").setup({ current_line_blame = true })
@@ -304,7 +303,7 @@ require("conform").setup({
 	notify_on_error = false,
 	format_on_save = {
 		lsp_format = "fallback",
-		timeout_ms = 3000,
+		timeout_ms = 500,
 	},
 	formatters_by_ft = {
 		lua = { "stylua" },
@@ -315,8 +314,6 @@ require("conform").setup({
 		svelte = { "prettierd" },
 		css = { "prettierd" },
 		html = { "prettierd" },
-		c = { "clang-format" },
-		cpp = { "clang-format" },
 	},
 })
 
@@ -372,7 +369,6 @@ vim.lsp.enable({
 	"dockerls",
 	"html",
 	"cssls",
-	"clangd",
 })
 
 -- LSP Server Configurations
@@ -433,6 +429,7 @@ vim.diagnostic.config({
 -- TREESITTER CONFIGURATION
 -- ============================================================================
 
+vim.cmd("packadd nvim-treesitter")
 require("nvim-treesitter").setup({
 	highlight = { enable = true },
 	ensure_installed = {
@@ -456,8 +453,19 @@ require("nvim-treesitter").setup({
 })
 
 -- ============================================================================
--- COLORSCHEME
+-- TRANSPARENCY
 -- ============================================================================
 
-require("vague").setup({ transparent = true })
-vim.cmd("colorscheme vague")
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "*",
+	callback = function()
+		vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+		vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+		vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
+	end,
+})
+
+-- Apply transparency immediately
+vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
