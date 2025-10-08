@@ -1,35 +1,25 @@
-# FZF Configuration
+# FZF Configuration - Simplified
 
-# Default command - use fd for better filtering
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git --exclude node_modules --exclude .cache --exclude .npm --exclude .local/share --exclude .cargo --exclude .rustup --exclude go/pkg'
+# Basic file search - exclude common directories
+export FZF_DEFAULT_COMMAND='find . -type f -not -path "*/\.git/*" -not -path "*/node_modules/*" 2>/dev/null'
 
-# Apply same filtering when using CTRL-T
+# Use same command for CTRL-T
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-# Preview files with bat, directories with tree
-export FZF_CTRL_T_OPTS="
-  --preview 'bat --color=always --style=numbers --line-range=:500 {}'
-  --bind 'ctrl-/:toggle-preview'
-  --preview-window right:60%:wrap"
+# Simple preview with less (no external deps)
+export FZF_CTRL_T_OPTS="--preview 'head -100 {}' --preview-window=right:50%"
 
-# ALT-C options - directory navigation
-export FZF_ALT_C_COMMAND='fd --type d --hidden --exclude .git --exclude node_modules --exclude .cache'
-export FZF_ALT_C_OPTS="
-  --preview 'tree -C {} | head -50'
-  --preview-window right:50%"
+# Directory navigation with ALT-C
+export FZF_ALT_C_COMMAND='find . -type d -not -path "*/\.git/*" -not -path "*/node_modules/*" 2>/dev/null'
+export FZF_ALT_C_OPTS="--preview 'ls -la {}'"
 
-# Default fzf options
+# Clean default options
 export FZF_DEFAULT_OPTS="
-  --height 60%
+  --height=40%
   --layout=reverse
   --border
-  --info=inline
   --multi
-  --bind 'ctrl-/:toggle-preview'
-  --bind 'ctrl-a:select-all'
-  --bind 'ctrl-d:deselect-all'
-  --bind 'ctrl-e:execute(nvim {} < /dev/tty)'
-  --color=fg:#c5cdd9,bg:#252530,hl:#6e94b2
-  --color=fg+:#c5cdd9,bg+:#32323e,hl+:#bb9dbd
-  --color=info:#bb9dbd,prompt:#6e94b2,pointer:#bb9dbd
-  --color=marker:#6e94b2,spinner:#bb9dbd,header:#6e94b2"
+  --bind='ctrl-/:toggle-preview'
+  --bind='ctrl-e:execute(nvim {})'
+  --bind='enter:execute(nvim {})'
+"
