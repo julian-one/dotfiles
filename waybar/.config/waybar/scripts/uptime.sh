@@ -1,6 +1,2 @@
 #!/bin/bash
-UPTIME_PRETTY=$(uptime -p)
-
-UPTIME_FORMATTED=$(echo "$UPTIME_PRETTY" | sed 's/^up //;s/, / /g;s/ minutes\?/m/g;s/ hours\?/h/g;s/ days\?/d/g;s/ weeks\?/w/g')
-
-echo " $UPTIME_FORMATTED"
+uptime -p | sed 's/^up //;s/, / /g;s/ \(minute\|hour\|day\|week\)s\?/\L\1/g;s/minute/m/;s/hour/h/;s/day/d/;s/week/w/'

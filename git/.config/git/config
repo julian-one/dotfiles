@@ -3,3 +3,5 @@
 	name = Julian One
 [includeIf "gitdir:~/whg/"]
 	path = ~/.config/git/work
+[push]
+	autoSetupRemote = true
