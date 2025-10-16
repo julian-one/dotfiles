@@ -3,18 +3,33 @@
 # Exit if not running interactively
 [[ $- != *i* ]] && return
 
+# OS Detection
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    OS="macos"
+    # Suppress zsh deprecation warning on macOS
+    export BASH_SILENCE_DEPRECATION_WARNING=1
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    OS="linux"
+else
+    OS="unknown"
+fi
+
 # Shell Options
 
 # Better directory navigation
-shopt -s autocd                         # Auto-cd when entering just a path
-shopt -s cdspell                        # Autocorrect typos in path names
-shopt -s dirspell                       # Autocorrect directory names in completion
-shopt -s cdable_vars                    # cd into variables
+shopt -s cdspell 2>/dev/null            # Autocorrect typos in path names
+shopt -s cdable_vars 2>/dev/null        # cd into variables
+
+# Bash 4.0+ options
+if ((BASH_VERSINFO[0] >= 4)); then
+    shopt -s autocd 2>/dev/null         # Auto-cd when entering just a path
+    shopt -s dirspell 2>/dev/null       # Autocorrect directory names in completion
+    shopt -s globstar 2>/dev/null       # Enable ** for recursive directory matching
+fi
 
 # Improved globbing
-shopt -s nocaseglob                     # Case-insensitive globbing
-shopt -s globstar                       # Enable ** for recursive directory matching
-shopt -s dotglob                        # Include dotfiles in pathname expansion
+shopt -s nocaseglob 2>/dev/null         # Case-insensitive globbing
+shopt -s dotglob 2>/dev/null            # Include dotfiles in pathname expansion
 
 # Better shell behavior
 shopt -s checkwinsize                   # Update LINES and COLUMNS after each command
@@ -114,7 +129,15 @@ alias vi='nvim'
 # Shell Enhancements
 
 # Enable programmable completion
-if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+if [[ "$OS" == "macos" ]]; then
+    # macOS (Homebrew)
+    if [[ -f /opt/homebrew/etc/profile.d/bash_completion.sh ]]; then
+        source /opt/homebrew/etc/profile.d/bash_completion.sh
+    elif [[ -f /usr/local/etc/profile.d/bash_completion.sh ]]; then
+        source /usr/local/etc/profile.d/bash_completion.sh
+    fi
+elif [[ -f /usr/share/bash-completion/bash_completion ]]; then
+    # Linux
     source /usr/share/bash-completion/bash_completion
 fi
 
@@ -123,3 +146,10 @@ for fzf_file in ~/.fzf.bash /usr/share/fzf/shell/key-bindings.bash; do
     [[ -f "$fzf_file" ]] && source "$fzf_file"
 done
 
+
+# Claude CLI alias (OS-specific paths)
+if [[ "$OS" == "macos" ]]; then
+    alias claude="$HOME/.claude/local/claude"
+elif [[ "$OS" == "linux" ]]; then
+    alias claude="$HOME/.claude/local/claude"
+fi
