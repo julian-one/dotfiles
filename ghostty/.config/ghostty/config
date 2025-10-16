@@ -1,11 +1,5 @@
-# Font configuration
-font-family = "ComicCodeLigaturesNerdFont"
-font-size = 12
+font-family = "ComicCodeLigatures Nerd Font"
+font-size = 18
 
-background = 141611
-background-opacity = 0.9
-foreground = #cdcdcd
-selection-background = #216D8A
-selection-foreground = #cdcdcd
-
-keybind = shift+enter=text:\x1b\r
+background = 000000
+background-opacity = 0.95

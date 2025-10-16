@@ -9,7 +9,7 @@ if [[ -z "$percent" ]] || [[ ! "$percent" =~ ^[0-9]+$ ]]; then
 fi
 
 # Convert percentage to icon
-if [[ "$percent" == "0" ]]; then
+if [[ "$percent" != "0" ]]; then
     icon="󰌌"
 else
     icon="󰌐"
