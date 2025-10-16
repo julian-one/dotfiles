@@ -1,6 +1,6 @@
 [user]
     email = julianroberts@westhillglobal.com
 [core]
-    sshCommand = ssh -i ~/.ssh/id_ed25519_westhillglobal
+    sshCommand = ssh -i ~/.ssh/id_ed25519_work
 [url "git@github-westhill:"]
     insteadOf = git@github.com:
