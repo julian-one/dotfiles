@@ -87,31 +87,32 @@
       "on-scroll": 1,
       "on-click-right": "mode",
       "format": {
-        "months": "<span color='#E97A01'><b>{}</b></span>",
-        "days": "<span color='#cdcdcd'><b>{}</b></span>",
-        "weeks": "<span color='#216D8A'><b>W{}</b></span>",
-        "weekdays": "<span color='#E97A01'><b>{}</b></span>",
-        "today": "<span color='#216D8A'><b><u>{}</u></b></span>"
+        "months": "<span color='#f6c177'><b>{}</b></span>",
+        "days": "<span color='#e0def4'><b>{}</b></span>",
+        "weeks": "<span color='#31748f'><b>W{}</b></span>",
+        "weekdays": "<span color='#f6c177'><b>{}</b></span>",
+        "today": "<span color='#31748f'><b><u>{}</u></b></span>"
       }
     }
   },
   "tray": {
     "icon-size": 16,
     "spacing": 8,
-    "show-passive-items": true
+    "show-passive-items": true,
+    "ignored-items": ["blueman-applet", "blueman", "blueman-tray", "Blueman"]
   },
   "bluetooth": {
     "format": "󰂯",
     "format-disabled": "󰂲",
-    "format-connected": "󰂱 {num_connections}",
-    "format-connected-battery": "󰥈 {device_battery_percentage}%",
+    "format-off": "󰂲",
+    "format-connected": "󰂱",
+    "format-connected-battery": "󰂱",
     "tooltip": true,
-    "tooltip-format": "{controller_alias}\t{controller_address}",
-    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+    "tooltip-format": "{controller_alias}\t{controller_address}\n{status}",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n{num_connections} connected\n\n{device_enumerate}",
     "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
     "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
-    "on-click": "blueman-manager",
-    "on-click-right": "rfkill toggle bluetooth"
+    "on-click": "blueman-manager & sleep 0.5 && killall blueman-applet blueman-tray 2>/dev/null"
   },
   "network": {
     "interval": 5,
@@ -126,6 +127,7 @@
     "on-click-right": "nmcli radio wifi toggle"
   },
   "pulseaudio": {
+    "interval": 1,
     "format": "{icon} {volume}%",
     "format-muted": "󰸈",
     "format-bluetooth": "{icon} {volume}%",
@@ -147,8 +149,8 @@
     "tooltip-format": "{desc}\nVolume: {volume}%",
     "on-click": "pavucontrol",
     "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
-    "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ +5%",
-    "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ -l 1.0",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
     "smooth-scrolling-threshold": 1
   },
   "backlight": {

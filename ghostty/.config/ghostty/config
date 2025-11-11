@@ -1,8 +1,5 @@
+theme = Rose Pine
 font-family = "ComicCodeLigatures Nerd Font"
-font-size = 16
+font-size = 14
 
-background = 141611
-background-opacity = 0.9
-foreground = #cdcdcd
-selection-background = #216D8A
-selection-foreground = #cdcdcd
+background-opacity = 0.98

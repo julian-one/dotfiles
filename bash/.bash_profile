@@ -28,3 +28,4 @@ export GOPATH="$HOME/go"
 
 # Source bashrc for interactive shells
 [[ -f ~/.bashrc ]] && source ~/.bashrc
+. "$HOME/.cargo/env"

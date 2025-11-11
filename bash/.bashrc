@@ -99,23 +99,31 @@ git_status_info() {
     [[ -n "$out" ]] && echo " $out"
 }
 
+# Rose Pine Colors for Bash Prompt
+# Using RGB escape sequences: \033[38;2;R;G;Bm
+COLOR_FOAM="\[\033[38;2;156;207;216m\]"    # #9ccfd8 - directories
+COLOR_IRIS="\[\033[38;2;196;167;231m\]"    # #c4a7e7 - git branch
+COLOR_GOLD="\[\033[38;2;246;193;119m\]"    # #f6c177 - git status
+COLOR_TEXT="\[\033[38;2;224;222;244m\]"    # #e0def4 - prompt char
+COLOR_RESET="\[\033[0m\]"
+
 # Dynamic Prompt Builder
 set_prompt() {
     # Start building prompt
     PS1=""
 
-    # Current directory
-    PS1+="\w "
+    # Current directory (foam color)
+    PS1+="${COLOR_FOAM}\w${COLOR_RESET} "
 
     # Git information (if in a repository)
     if git rev-parse --git-dir &>/dev/null; then
         local branch=$(git_branch)
         local git_info=$(git_status_info)
-        PS1+="(${branch}${git_info}) "
+        PS1+="${COLOR_IRIS}(${branch}${COLOR_RESET}${COLOR_GOLD}${git_info}${COLOR_IRIS})${COLOR_RESET} "
     fi
 
-    # Prompt character
-    PS1+="> "
+    # Prompt character (text color)
+    PS1+="${COLOR_TEXT}>${COLOR_RESET} "
 }
 
 # Update prompt before each command
@@ -145,11 +153,10 @@ fi
 for fzf_file in ~/.fzf.bash /usr/share/fzf/shell/key-bindings.bash; do
     [[ -f "$fzf_file" ]] && source "$fzf_file"
 done
+export PATH=~/.npm-global/bin:$PATH
+. "$HOME/.cargo/env"
+# Rust cargo
+. "$HOME/.cargo/env"
 
-
-# Claude CLI alias (OS-specific paths)
-if [[ "$OS" == "macos" ]]; then
-    alias claude="$HOME/.claude/local/claude"
-elif [[ "$OS" == "linux" ]]; then
-    alias claude="$HOME/.claude/local/claude"
-fi
+# Go binaries
+export PATH="$HOME/go/bin:$PATH"
