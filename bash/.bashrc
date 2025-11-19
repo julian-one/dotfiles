@@ -1,93 +1,65 @@
-# Bash Configuration - Interactive Shell
-
 # Exit if not running interactively
 [[ $- != *i* ]] && return
 
-# OS Detection
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    OS="macos"
-    # Suppress zsh deprecation warning on macOS
-    export BASH_SILENCE_DEPRECATION_WARNING=1
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    OS="linux"
-else
-    OS="unknown"
-fi
-
 # Shell Options
+shopt -s cdspell 2>/dev/null
+shopt -s cdable_vars 2>/dev/null
+shopt -s checkwinsize
+shopt -s no_empty_cmd_completion
+shopt -s histappend
+shopt -s cmdhist
 
-# Better directory navigation
-shopt -s cdspell 2>/dev/null            # Autocorrect typos in path names
-shopt -s cdable_vars 2>/dev/null        # cd into variables
-
-# Bash 4.0+ options
 if ((BASH_VERSINFO[0] >= 4)); then
-    shopt -s autocd 2>/dev/null         # Auto-cd when entering just a path
-    shopt -s dirspell 2>/dev/null       # Autocorrect directory names in completion
-    shopt -s globstar 2>/dev/null       # Enable ** for recursive directory matching
+    shopt -s autocd 2>/dev/null
+    shopt -s dirspell 2>/dev/null
+    shopt -s globstar 2>/dev/null
 fi
 
-# Improved globbing
-shopt -s nocaseglob 2>/dev/null         # Case-insensitive globbing
-shopt -s dotglob 2>/dev/null            # Include dotfiles in pathname expansion
-
-# Better shell behavior
-shopt -s checkwinsize                   # Update LINES and COLUMNS after each command
-shopt -s no_empty_cmd_completion        # No completion on empty line
+# Rose Pine ls colors
+# shellcheck source=/dev/null
+[[ -f ~/.ls_colors ]] && source ~/.ls_colors
 
 # History Configuration
-
-# History file settings
 HISTFILE="$HOME/.bash_history"
-HISTSIZE=50000                          # Commands in memory
-HISTFILESIZE=100000                     # Commands in history file
-HISTCONTROL=ignoreboth:erasedups        # Ignore duplicates and leading spaces
-
-# Don't save common/trivial commands
+HISTSIZE=50000
+HISTFILESIZE=100000
+HISTCONTROL=ignoreboth:erasedups
 HISTIGNORE="ls:ll:la:cd:pwd:exit:clear:history:* --help"
 
-# Shell options for better history handling
-shopt -s histappend                     # Append to history, don't overwrite
-shopt -s cmdhist                        # Save multi-line commands as one entry
-
-# Enhanced History Navigation
-
-# Arrow keys search history based on what you've typed
+# History Navigation
 bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
 
-# Ctrl+R for FZF history search
-bind '"\C-r": "\C-x1\e^\er"'
-bind -x '"\C-x1": __fzf_history'
+if command -v fzf &>/dev/null; then
+    bind '"\C-r": "\C-x1\e^\er"'
+    bind -x '"\C-x1": __fzf_history'
+    __fzf_history() {
+        local selected
+        selected=$(history | fzf --tac --no-sort --query="$READLINE_LINE" 2>/dev/null | sed -E 's/^[[:space:]]*[0-9]+[[:space:]]*//')
+        if [[ -n "$selected" ]]; then
+            READLINE_LINE="$selected"
+            READLINE_POINT=${#READLINE_LINE}
+        fi
+    }
+fi
 
-# FZF-powered history search function
-__fzf_history() {
-    local selected
-    selected=$(history | fzf --tac --no-sort --query="$READLINE_LINE" | sed 's/^[ ]*[0-9]*[ ]*//')
-    READLINE_LINE="$selected"
-    READLINE_POINT=${#READLINE_LINE}
-}
-
-
-# Git Prompt Helpers
-
-# Get current git branch name
+# Git Helpers
 git_branch() {
     git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
 }
 
-# Get git repository status indicators
 git_status_info() {
-    local status=$(git status --porcelain 2>/dev/null) || return
+    local status
+    status=$(git status --porcelain 2>/dev/null) || return
     [[ -z "$status" ]] && return
 
     local m=0 a=0 d=0 u=0
     while IFS= read -r line; do
-        case "$line" in
-            ' M'*) ((m++)) ;;
-            'A'*) ((a++)) ;;
-            'D'*) ((d++)) ;;
-            '??'*) ((u++)) ;;
+        case "${line:0:2}" in
+            ' M'|'M '|'MM') ((m++)) ;;
+            'A '|'AM') ((a++)) ;;
+            ' D'|'D '|'DM'|'AD') ((d++)) ;;
+            '??') ((u++)) ;;
         esac
     done <<< "$status"
 
@@ -99,64 +71,69 @@ git_status_info() {
     [[ -n "$out" ]] && echo " $out"
 }
 
-# Rose Pine Colors for Bash Prompt
-# Using RGB escape sequences: \033[38;2;R;G;Bm
-COLOR_FOAM="\[\033[38;2;156;207;216m\]"    # #9ccfd8 - directories
-COLOR_IRIS="\[\033[38;2;196;167;231m\]"    # #c4a7e7 - git branch
-COLOR_GOLD="\[\033[38;2;246;193;119m\]"    # #f6c177 - git status
-COLOR_TEXT="\[\033[38;2;224;222;244m\]"    # #e0def4 - prompt char
+# Rose Pine Prompt
+COLOR_FOAM="\[\033[38;2;156;207;216m\]"
+COLOR_IRIS="\[\033[38;2;196;167;231m\]"
+COLOR_GOLD="\[\033[38;2;246;193;119m\]"
+COLOR_TEXT="\[\033[38;2;224;222;244m\]"
 COLOR_RESET="\[\033[0m\]"
 
-# Dynamic Prompt Builder
 set_prompt() {
-    # Start building prompt
-    PS1=""
-
-    # Current directory (foam color)
-    PS1+="${COLOR_FOAM}\w${COLOR_RESET} "
-
-    # Git information (if in a repository)
+    PS1="${COLOR_FOAM}\w${COLOR_RESET} "
     if git rev-parse --git-dir &>/dev/null; then
-        local branch=$(git_branch)
-        local git_info=$(git_status_info)
+        local branch
+        local git_info
+        branch=$(git_branch)
+        git_info=$(git_status_info)
         PS1+="${COLOR_IRIS}(${branch}${COLOR_RESET}${COLOR_GOLD}${git_info}${COLOR_IRIS})${COLOR_RESET} "
     fi
-
-    # Prompt character (text color)
     PS1+="${COLOR_TEXT}>${COLOR_RESET} "
 }
 
-# Update prompt before each command
-PROMPT_COMMAND="set_prompt; history -a; history -c; history -r"
+PROMPT_COMMAND="set_prompt; history -a"
 
-# Editor Aliases
-
+# Aliases
 alias vim='nvim'
 alias vi='nvim'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias h='history'
+alias j='jobs -l'
+alias path='echo -e ${PATH//:/\\n}'
+alias du='du -h'
+alias df='df -h'
+alias mkdir='mkdir -pv'
 
-# Shell Enhancements
+# Linux-specific ls aliases
+alias ls='ls --color=auto --group-directories-first'
+alias ll='ls -lh'
+alias la='ls -lAh'
+alias l='ls -CF'
+alias lt='ls -lhtr'
+alias lS='ls -lhSr'
 
-# Enable programmable completion
-if [[ "$OS" == "macos" ]]; then
-    # macOS (Homebrew)
-    if [[ -f /opt/homebrew/etc/profile.d/bash_completion.sh ]]; then
-        source /opt/homebrew/etc/profile.d/bash_completion.sh
-    elif [[ -f /usr/local/etc/profile.d/bash_completion.sh ]]; then
-        source /usr/local/etc/profile.d/bash_completion.sh
+# Linux-specific preserve-root
+alias chown='chown --preserve-root'
+alias chmod='chmod --preserve-root'
+alias chgrp='chgrp --preserve-root'
+
+# Bash completion
+# shellcheck source=/dev/null
+if ! shopt -oq posix; then
+    if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+        source /usr/share/bash-completion/bash_completion
+    elif [[ -f /etc/bash_completion ]]; then
+        source /etc/bash_completion
     fi
-elif [[ -f /usr/share/bash-completion/bash_completion ]]; then
-    # Linux
-    source /usr/share/bash-completion/bash_completion
 fi
 
 # FZF integration
+# shellcheck source=/dev/null
 for fzf_file in ~/.fzf.bash /usr/share/fzf/shell/key-bindings.bash; do
     [[ -f "$fzf_file" ]] && source "$fzf_file"
 done
-export PATH=~/.npm-global/bin:$PATH
-. "$HOME/.cargo/env"
-# Rust cargo
-. "$HOME/.cargo/env"
 
-# Go binaries
-export PATH="$HOME/go/bin:$PATH"

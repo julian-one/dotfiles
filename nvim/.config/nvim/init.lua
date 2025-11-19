@@ -1,6 +1,6 @@
 -- OPTIONS
 
--- Leader 
+-- Leader
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
@@ -75,39 +75,23 @@ map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 map("v", "<", "<gv", { desc = "Indent left and reselect" })
 map("v", ">", ">gv", { desc = "Indent right and reselect" })
 
--- Tab Navigation
-map("n", "<leader>1", "1gt", { desc = "Go to tab 1" })
-map("n", "<leader>2", "2gt", { desc = "Go to tab 2" })
-map("n", "<leader>3", "3gt", { desc = "Go to tab 3" })
-map("n", "<leader>4", "4gt", { desc = "Go to tab 4" })
-map("n", "<leader>5", "5gt", { desc = "Go to tab 5" })
-map("n", "<leader>6", "6gt", { desc = "Go to tab 6" })
-map("n", "<leader>7", "7gt", { desc = "Go to tab 7" })
-map("n", "<leader>8", "8gt", { desc = "Go to tab 8" })
-
--- Text Manipulation
-map("n", "J", "mzJ`z", { desc = "Join line (keep cursor position)" })
-map("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make file executable" })
-
--- Buffer Management
+-- Buffers
 map("n", "<leader>bd", "<cmd>bd<CR>", { desc = "Close buffer" })
 
 -- AUTOCOMMANDS
 
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
 
--- Highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight when yanking (copying) text",
+	desc = "Highlight when yanking text",
 	group = augroup,
 	callback = function()
 		vim.hl.on_yank()
 	end,
 })
 
--- Restore cursor position
 vim.api.nvim_create_autocmd("BufReadPost", {
-	desc = "Restore cursor to last position when opening file",
+	desc = "Restore cursor to last position",
 	group = augroup,
 	callback = function()
 		local mark = vim.api.nvim_buf_get_mark(0, '"')
@@ -117,7 +101,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
--- LSP-based folding
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = augroup,
 	callback = function()
@@ -145,6 +128,7 @@ vim.pack.add({
 	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
 	{ src = "https://github.com/stevearc/conform.nvim" },
 	{ src = "https://github.com/brenoprata10/nvim-highlight-colors" },
+	{ src = "https://github.com/stevearc/quicker.nvim" },
 })
 
 -- FZF
@@ -183,68 +167,48 @@ require("fzf-lua").setup({
 	},
 })
 
--- Oil
+-- Register FzfLua as vim.ui.select backend
+require("fzf-lua").register_ui_select()
+
+require("nvim-web-devicons").setup()
 require("oil").setup()
 
--- Color Preview
 require("nvim-highlight-colors").setup({
-	render = "background", -- 'background' | 'foreground' | 'virtual'
+	render = "background",
 	enable_named_colors = true,
 	enable_tailwind = true,
 })
 
--- Git Signs
-require('gitsigns').setup {
-  signs = {
-    add          = { text = '┃' },
-    change       = { text = '┃' },
-    delete       = { text = '_' },
-    topdelete    = { text = '‾' },
-    changedelete = { text = '~' },
-    untracked    = { text = '┆' },
-  },
-  signs_staged = {
-    add          = { text = '┃' },
-    change       = { text = '┃' },
-    delete       = { text = '_' },
-    topdelete    = { text = '‾' },
-    changedelete = { text = '~' },
-    untracked    = { text = '┆' },
-  },
-  signs_staged_enable = true,
-  signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
-  numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
-  linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
-  word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
-  watch_gitdir = {
-    follow_files = true
-  },
-  auto_attach = true,
-  attach_to_untracked = false,
-  current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
-  current_line_blame_opts = {
-    virt_text = true,
-    virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
-    delay = 1000,
-    ignore_whitespace = false,
-    virt_text_priority = 100,
-    use_focus = true,
-  },
-  current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
-  sign_priority = 6,
-  update_debounce = 100,
-  status_formatter = nil, -- Use default
-  max_file_length = 40000, -- Disable if file is longer than this (in lines)
-  preview_config = {
-    -- Options passed to nvim_open_win
-    style = 'minimal',
-    relative = 'cursor',
-    row = 0,
-    col = 1
-  },
-}
+require("gitsigns").setup({
+	signs = {
+		add = { text = "┃" },
+		change = { text = "┃" },
+		delete = { text = "_" },
+		topdelete = { text = "‾" },
+		changedelete = { text = "~" },
+		untracked = { text = "┆" },
+	},
+	signs_staged = {
+		add = { text = "┃" },
+		change = { text = "┃" },
+		delete = { text = "_" },
+		topdelete = { text = "‾" },
+		changedelete = { text = "~" },
+		untracked = { text = "┆" },
+	},
+	signs_staged_enable = true,
+	current_line_blame = true,
+	current_line_blame_opts = {
+		virt_text = true,
+		virt_text_pos = "eol",
+		delay = 1000,
+		ignore_whitespace = false,
+		virt_text_priority = 100,
+		use_focus = true,
+	},
+	current_line_blame_formatter = "<author>, <author_time:%R> - <summary>",
+})
 
--- Conform
 require("conform").setup({
 	notify_on_error = false,
 	format_on_save = {
@@ -276,6 +240,25 @@ require("conform").setup({
 	},
 })
 
+require("quicker").setup({
+	keys = {
+		{
+			">",
+			function()
+				require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
+			end,
+			desc = "Expand quickfix context",
+		},
+		{
+			"<",
+			function()
+				require("quicker").collapse()
+			end,
+			desc = "Collapse quickfix context",
+		},
+	},
+})
+
 -- Blink Completion
 require("blink.cmp").setup({
 	keymap = { preset = "default" },
@@ -285,52 +268,56 @@ require("blink.cmp").setup({
 	signature = { enabled = true },
 	completion = {
 		documentation = { auto_show = true },
+		menu = {
+			border = "rounded",
+			winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+		},
+	},
+	appearance = {
+		use_nvim_cmp_as_default = false,
+		nerd_font_variant = "mono",
 	},
 })
 
 -- FZF Keymaps
--- Files & Buffers
 map("n", "<leader>f", "<cmd>FzfLua files<CR>", { desc = "Find files" })
 map("n", "<leader>b", "<cmd>FzfLua buffers<CR>", { desc = "Buffers" })
 map("n", "<leader>o", "<cmd>FzfLua oldfiles<CR>", { desc = "Recent files" })
 map("n", "<leader>r", "<cmd>FzfLua resume<CR>", { desc = "Resume last search" })
-
--- Search
 map("n", "<leader>g", "<cmd>FzfLua live_grep<CR>", { desc = "Live grep" })
 map("n", "<leader>/", "<cmd>FzfLua grep_curbuf<CR>", { desc = "Grep current buffer" })
 map("n", "<leader>*", "<cmd>FzfLua grep_cword<CR>", { desc = "Grep word under cursor" })
-map("n", "<leader>l", "<cmd>FzfLua blines<CR>", { desc = "Buffer lines" })
-
--- Git
 map("n", "<leader>gf", "<cmd>FzfLua git_files<CR>", { desc = "Git files" })
 map("n", "<leader>gs", "<cmd>FzfLua git_status<CR>", { desc = "Git status" })
 map("n", "<leader>gc", "<cmd>FzfLua git_commits<CR>", { desc = "Git commits" })
 map("n", "<leader>gb", "<cmd>FzfLua git_branches<CR>", { desc = "Git branches" })
-
--- LSP (active in LSP buffers)
 map("n", "<leader>sd", "<cmd>FzfLua lsp_document_symbols<CR>", { desc = "Document symbols" })
 map("n", "<leader>sw", "<cmd>FzfLua lsp_workspace_symbols<CR>", { desc = "Workspace symbols" })
-
--- Diagnostics
 map("n", "<leader>dd", "<cmd>FzfLua diagnostics_document<CR>", { desc = "Document diagnostics" })
 map("n", "<leader>dw", "<cmd>FzfLua diagnostics_workspace<CR>", { desc = "Workspace diagnostics" })
-
--- Other
+map("n", "<leader>dq", function()
+	vim.diagnostic.setqflist({ open = true })
+end, { desc = "All diagnostics to quickfix" })
 map("n", "<leader>h", "<cmd>FzfLua help_tags<CR>", { desc = "Help tags" })
 map("n", "<leader>k", "<cmd>FzfLua keymaps<CR>", { desc = "Keymaps" })
 map("n", "<leader>m", "<cmd>FzfLua marks<CR>", { desc = "Marks" })
 map("n", "<leader>j", "<cmd>FzfLua jumps<CR>", { desc = "Jumps" })
 map("n", "<leader>c", "<cmd>FzfLua colorschemes<CR>", { desc = "Colorschemes" })
 
--- Plugin Keymaps
+-- Other Keymaps
 map("n", "<leader>e", "<cmd>Oil<CR>", { desc = "File explorer" })
 map("n", "<leader>u", "<cmd>UndotreeToggle<CR>", { desc = "Undo tree" })
-map("n", "<leader>F", function() require("conform").format({ async = true, lsp_format = "fallback" }) end, { desc = "Format buffer" })
+map("n", "<leader>F", function()
+	require("conform").format({ async = true, lsp_format = "fallback" })
+end, { desc = "Format buffer" })
+map("n", "<leader>q", function()
+	require("quicker").toggle()
+end, { desc = "Toggle quickfix" })
+map("n", "<leader>l", function()
+	require("quicker").toggle({ loclist = true })
+end, { desc = "Toggle loclist" })
 
 -- LSP
-
--- Configure LSP servers BEFORE enabling them
--- Emmet configuration
 vim.lsp.config("emmet_ls", {
 	filetypes = {
 		"html",
@@ -356,9 +343,6 @@ vim.lsp.config("svelte", {
 	},
 })
 
--- Enable LSP servers (install manually via package manager)
--- Fedora: dnf install lua-language-server gopls nodejs-typescript-language-server
--- macOS: brew install lua-language-server gopls typescript-language-server
 vim.lsp.enable({
 	"lua_ls",
 	"gopls",
@@ -372,30 +356,33 @@ vim.lsp.enable({
 	"dockerls",
 	"html",
 	"cssls",
+	"bashls",
 })
 
--- LSP keymaps
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(event)
 		local opts = { buffer = event.buf }
 		local fzf = require("fzf-lua")
 
-		-- Use fzf-lua for LSP navigation
-		vim.keymap.set("n", "gd", function() fzf.lsp_definitions({ jump1 = true }) end, opts)
+		vim.keymap.set("n", "gd", function()
+			fzf.lsp_definitions({ jump1 = true })
+		end, opts)
 		vim.keymap.set("n", "gr", fzf.lsp_references, opts)
-		vim.keymap.set("n", "gi", function() fzf.lsp_implementations({ jump_to_single_result = true }) end, opts)
-		vim.keymap.set("n", "gt", function() fzf.lsp_typedefs({ jump_to_single_result = true }) end, opts)
-
-		-- Code actions and rename
+		vim.keymap.set("n", "gi", function()
+			fzf.lsp_implementations({ jump_to_single_result = true })
+		end, opts)
+		vim.keymap.set("n", "gt", function()
+			fzf.lsp_typedefs({ jump_to_single_result = true })
+		end, opts)
 		vim.keymap.set("n", "<leader>ca", fzf.lsp_code_actions, opts)
 		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-
-		-- Diagnostics
 		vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
-		vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-		vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-
-		-- Standard LSP functions
+		vim.keymap.set("n", "[d", function()
+			vim.diagnostic.jump({ count = -1, float = true })
+		end, opts)
+		vim.keymap.set("n", "]d", function()
+			vim.diagnostic.jump({ count = 1, float = true })
+		end, opts)
 		vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 	end,
 })
@@ -421,18 +408,12 @@ vim.diagnostic.config({
 local ts_ok, ts_configs = pcall(require, "nvim-treesitter.configs")
 if ts_ok then
 	ts_configs.setup({
-		ensure_installed = {}, -- Install manually via :TSInstall
+		ensure_installed = {},
 		auto_install = false,
-		highlight = {
-			enable = true,
-			additional_vim_regex_highlighting = false,
-		},
-		indent = {
-			enable = true,
-		},
+		highlight = { enable = true },
+		indent = { enable = true },
 	})
 else
-	-- Fallback: enable treesitter manually for each buffer
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = "*",
 		callback = function()
@@ -458,19 +439,49 @@ require("rose-pine").setup({
 	},
 })
 
--- Apply colorscheme
 pcall(vim.cmd.colorscheme, "rose-pine")
 
--- Transparency helper function
 local function apply_transparency()
 	vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
 	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
 	vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
 end
 
--- Apply transparency immediately and on colorscheme changes
+local function apply_blink_highlights()
+	local colors = require("rose-pine.palette")
+
+	vim.api.nvim_set_hl(0, "BlinkCmpMenu", { bg = "NONE" })
+	vim.api.nvim_set_hl(0, "BlinkCmpMenuBorder", { fg = colors.highlight_med })
+	vim.api.nvim_set_hl(0, "BlinkCmpMenuSelection", { bg = colors.highlight_med, fg = colors.text })
+	vim.api.nvim_set_hl(0, "BlinkCmpDoc", { bg = "NONE" })
+	vim.api.nvim_set_hl(0, "BlinkCmpDocBorder", { fg = colors.highlight_med })
+	vim.api.nvim_set_hl(0, "BlinkCmpKind", { fg = colors.iris })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindText", { fg = colors.text })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindMethod", { fg = colors.foam })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindFunction", { fg = colors.foam })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindConstructor", { fg = colors.gold })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindField", { fg = colors.rose })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindVariable", { fg = colors.text })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindClass", { fg = colors.gold })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindInterface", { fg = colors.gold })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindModule", { fg = colors.iris })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindProperty", { fg = colors.rose })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindKeyword", { fg = colors.pine })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindSnippet", { fg = colors.love })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindColor", { fg = colors.rose })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindFile", { fg = colors.text })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindFolder", { fg = colors.foam })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindConstant", { fg = colors.gold })
+	vim.api.nvim_set_hl(0, "BlinkCmpKindOperator", { fg = colors.subtle })
+end
+
 apply_transparency()
+apply_blink_highlights()
+
 vim.api.nvim_create_autocmd("ColorScheme", {
 	pattern = "*",
-	callback = apply_transparency,
+	callback = function()
+		apply_transparency()
+		apply_blink_highlights()
+	end,
 })
