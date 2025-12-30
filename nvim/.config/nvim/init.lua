@@ -110,6 +110,22 @@ vim.lsp.config("svelte", {
 	},
 })
 
+vim.lsp.config("yamlls", {
+	settings = {
+		yaml = {
+			schemas = {
+				["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.29.0-standalone-strict/all.json"] = {
+					"/*.k8s.yaml",
+					"/*.k8s.yml",
+				},
+			},
+			validate = true,
+			completion = true,
+			hover = true,
+		},
+	},
+})
+
 -- autocomplete
 require("luasnip.loaders.from_vscode").lazy_load()
 require("blink.cmp").setup({
@@ -243,6 +259,7 @@ require("nvim-treesitter").install({
 	"go",
 	"gomod",
 	"gosum",
+	"yaml",
 })
 
 -- colors!

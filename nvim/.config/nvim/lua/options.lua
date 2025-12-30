@@ -25,6 +25,7 @@ vim.opt.undofile = true -- persistent undo
 vim.opt.updatetime = 300 -- faster completion
 vim.opt.foldmethod = "expr" -- use expression for folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- use treesitter for folding
+vim.opt.wrap = false
 vim.opt.foldlevel = 99 -- open all folds by default
 
 -- undo local storage
