@@ -23,3 +23,4 @@ bindkey '^Y' autosuggest-accept  # accept suggestion with Ctrl+Y
 
 # Path
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$(npm get prefix -g)/bin:$PATH"
