@@ -4,7 +4,13 @@ Configuration files managed with [GNU Stow](https://www.gnu.org/software/stow).
 
 ## Packages
 
-`ghostty` `git` `hypr` `nvim` `waybar` `wofi` `zsh`
+- `ghostty`
+- `git`
+- `hypr`
+- `nvim`
+- `waybar`
+- `wofi`
+- `zsh`
 
 ## Usage
 
