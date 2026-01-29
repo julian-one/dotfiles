@@ -66,17 +66,19 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 		end
 
+		local fzf = require("fzf-lua")
+
 		-- keymaps
-		map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+		map("gd", fzf.lsp_definitions, "[G]oto [D]efinition")
 		map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-		map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-		map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-		map("gy", require("telescope.builtin").lsp_type_definitions, "[G]oto T[y]pe Definition")
+		map("gr", fzf.lsp_references, "[G]oto [R]eferences")
+		map("gi", fzf.lsp_implementations, "[G]oto [I]mplementation")
+		map("gy", fzf.lsp_typedefs, "[G]oto T[y]pe Definition")
 		map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 		map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
 		map("K", vim.lsp.buf.hover, "Hover Documentation")
-		map("gO", require("telescope.builtin").lsp_document_symbols, "[G]oto Document Symbols")
-		map("gW", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[G]oto Workspace Symbols")
+		map("gO", fzf.lsp_document_symbols, "[G]oto Document Symbols")
+		map("gW", fzf.lsp_live_workspace_symbols, "[G]oto Workspace Symbols")
 
 		-- document highlighting
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
@@ -115,4 +117,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 	end,
 })
-

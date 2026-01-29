@@ -14,10 +14,7 @@ vim.pack.add({
 	{ src = "https://github.com/stevearc/conform.nvim" },
 	{ src = "https://github.com/stevearc/quicker.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
-	{ src = "https://github.com/nvim-lua/plenary.nvim" },
-	{ src = "https://github.com/nvim-telescope/telescope.nvim" },
-	{ src = "https://github.com/nvim-telescope/telescope-ui-select.nvim" },
-	{ src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim" },
+	{ src = "https://github.com/ibhagwan/fzf-lua" },
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" },
 	{ src = "https://github.com/mbbill/undotree" },
 	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
@@ -25,6 +22,8 @@ vim.pack.add({
 	{ src = "https://github.com/echasnovski/mini.nvim" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter-context" },
+	{ src = "https://github.com/zbirenbaum/copilot.lua" },
+	{ src = "https://github.com/giuxtaposition/blink-cmp-copilot" },
 	{ src = "https://github.com/rose-pine/neovim" },
 })
 
@@ -42,6 +41,7 @@ require("mason-tool-installer").setup({
 		"goimports",
 		"gofumpt",
 		"golines",
+		"golangci-lint",
 		"svelte",
 		"tailwindcss",
 		"emmet_ls",
@@ -127,6 +127,12 @@ vim.lsp.config("yamlls", {
 	},
 })
 
+-- copilot
+require("copilot").setup({
+	suggestion = { enabled = false },
+	panel = { enabled = false },
+})
+
 -- autocomplete
 require("luasnip.loaders.from_vscode").lazy_load()
 require("blink.cmp").setup({
@@ -138,7 +144,10 @@ require("blink.cmp").setup({
 	},
 	signature = { enabled = true },
 	completion = {
-		documentation = { auto_show = true },
+		documentation = {
+			auto_show = true,
+			auto_show_delay_ms = 500,
+		},
 		menu = {
 			auto_show = true,
 			draw = {
@@ -148,7 +157,15 @@ require("blink.cmp").setup({
 		},
 	},
 	sources = {
-		default = { "lsp", "path", "snippets" },
+		default = { "lsp", "path", "snippets", "copilot" },
+		providers = {
+			copilot = {
+				name = "copilot",
+				module = "blink-cmp-copilot",
+				score_offset = 100,
+				async = true,
+			},
+		},
 	},
 })
 
@@ -182,36 +199,23 @@ require("quicker").setup() -- quickfix
 require("oil").setup() -- file explorer
 
 -- fuzzy finder
-require("telescope").setup({
-	defaults = {
-		layout_strategy = "bottom_pane",
-		layout_config = {
-			height = 0.4,
-			prompt_position = "bottom",
-		},
+require("fzf-lua").setup({
+	"fzf-native",
+	winopts = {
+		height = 0.4,
+		width = 1,
+		row = 1,
+		col = 0,
 		border = true,
-		hidden = true,
 	},
-	extensions = {
-		fzf = {},
-		["ui-select"] = {},
+	files = {
+		fd_opts = [[--color=never --type f --hidden --follow --exclude .git]],
 	},
-	pickers = {
-		live_grep = {
-			file_ignore_patterns = { "node_modules", ".git" },
-			additional_args = function(_)
-				return { "--hidden" }
-			end,
-		},
-		find_files = {
-			file_ignore_patterns = { "node_modules", ".git" },
-			hidden = true,
-		},
+	grep = {
+		rg_opts = [[--column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e]],
 	},
 })
-require("telescope").load_extension("fzf")
-require("telescope").load_extension("ui-select")
-require("telescope").load_extension("fidget")
+require("fzf-lua").register_ui_select()
 
 require("gitsigns").setup({
 	current_line_blame = true,
@@ -260,7 +264,10 @@ require("nvim-treesitter").install({
 	"yaml",
 })
 
-require("treesitter-context").setup({})
+require("treesitter-context").setup({
+	max_lines = 3,
+	zindex = 20,
+})
 
 -- colors!
 require("rose-pine").setup({
