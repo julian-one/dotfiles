@@ -38,7 +38,6 @@ vim.opt.pumblend = 10 -- Popup menu transparency
 vim.opt.winblend = 0 -- Floating window transparency
 vim.opt.conceallevel = 0 -- Don't hide markup
 vim.opt.concealcursor = "" -- Don't hide cursor line markup
-vim.opt.lazyredraw = true -- Don't redraw during macros
 vim.opt.synmaxcol = 300 -- Syntax highlighting limit
 
 -- Create undo directory if it doesn't exist
@@ -74,7 +73,7 @@ vim.opt.encoding = "UTF-8" -- Set encoding
 
 -- Folding settings
 vim.opt.foldmethod = "expr" -- Use expression for folding
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()" -- Use treesitter for folding
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- Use treesitter for folding
 vim.opt.foldlevel = 99 -- Start with all folds open
 
 -- Split behavior
@@ -266,28 +265,13 @@ require("copilot").setup({
 -- autocomplete
 require("luasnip.loaders.from_vscode").lazy_load()
 require("blink.cmp").setup({
-	fuzzy = {
-		prebuilt_binaries = {
-			download = true,
-			force_version = "v1.3.1",
-		},
-	},
-	signature = { enabled = true },
-	completion = {
-		documentation = {
-			auto_show = true,
-			auto_show_delay_ms = 500,
-		},
-		menu = {
-			auto_show = true,
-			draw = {
-				treesitter = { "lsp" },
-				columns = { { "kind_icon", "label", "label_description", gap = 1 }, { "kind" } },
-			},
-		},
-	},
+	cmdline = { enabled = true },
+	keymap = { preset = "default" },
+	appearance = { nerd_font_variant = "mono" },
+	completion = { documentation = { auto_show = false } },
+	fuzzy = { implementation = "prefer_rust" },
 	sources = {
-		default = { "lsp", "path", "snippets", "copilot" },
+		default = { "lsp", "path", "snippets", "buffer", "copilot" },
 		providers = {
 			copilot = {
 				name = "copilot",
