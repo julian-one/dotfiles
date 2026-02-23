@@ -61,7 +61,8 @@ window#waybar {
 #pulseaudio,
 #backlight,
 #custom-kbd_backlight,
-#battery {
+#battery,
+#custom-lock {
   padding: 0 8px;
 }
 

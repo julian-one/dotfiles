@@ -2,12 +2,10 @@
   "layer": "top",
   "position": "top",
   "spacing": 0,
-  "modules-left": ["hyprland/workspaces", "custom/separator", "cpu", "custom/uptime"],
+  "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["network", "pulseaudio", "backlight", "custom/kbd_backlight", "battery"],
+  "modules-right": ["network", "pulseaudio", "backlight", "custom/kbd_backlight", "battery", "custom/lock"],
   "hyprland/workspaces": {
-    "on-scroll-up": "hyprctl dispatch workspace r-1",
-    "on-scroll-down": "hyprctl dispatch workspace r+1",
     "on-click": "activate",
     "active-only": false,
     "all-outputs": true,
@@ -20,21 +18,6 @@
     "persistent-workspaces": {
       "*": 5
     }
-  },
-  "custom/separator": {
-    "format": "┊",
-    "tooltip": false
-  },
-  "cpu": {
-    "interval": 2,
-    "format": "󰘚 {usage:>2}%",
-    "format-alt": "󰘚 {icon0}{icon1}{icon2}{icon3}",
-    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
-  },
-  "custom/uptime": {
-    "format": "󰔟 {}",
-    "interval": 60,
-    "exec": "$HOME/.config/waybar/scripts/uptime.sh"
   },
   "clock": {
     "interval": 1,
@@ -81,18 +64,20 @@
   "backlight": {
     "format": "{icon} {percent}%",
     "format-icons": ["󰃞", "󰃟", "󰃠"],
-    "on-click": "$HOME/.config/waybar/scripts/brightness.sh",
     "on-scroll-up": "brightnessctl set +5%",
     "on-scroll-down": "brightnessctl set 5%-"
   },
   "custom/kbd_backlight": {
     "format": "{}",
-    "exec": "$HOME/.config/waybar/scripts/kbd_backlight.sh status",
-    "interval": 1,
-    "on-click": "$HOME/.config/waybar/scripts/kbd_backlight.sh toggle",
-    "on-click-right": "$HOME/.config/waybar/scripts/kbd_backlight.sh",
-    "on-scroll-up": "$HOME/.config/waybar/scripts/kbd_backlight.sh up",
-    "on-scroll-down": "$HOME/.config/waybar/scripts/kbd_backlight.sh down"
+    "exec": "p=$(brightnessctl -d kbd_backlight -m 2>/dev/null | cut -d',' -f4 | tr -d '%'); [[ \"$p\" =~ ^[0-9]+$ ]] || p=0; echo \"$([[ \"$p\" != \"0\" ]] && echo '󰌌' || echo '󰌐') $p%\"",
+    "interval": 5,
+    "on-scroll-up": "brightnessctl -d kbd_backlight set +1%",
+    "on-scroll-down": "brightnessctl -d kbd_backlight set 1%-"
+  },
+  "custom/lock": {
+    "format": "󰌾",
+    "tooltip": false,
+    "on-click": "hyprlock"
   },
   "battery": {
     "states": { "warning": 30, "critical": 15 },
