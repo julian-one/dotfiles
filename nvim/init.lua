@@ -1,56 +1,92 @@
-vim.g.mapleader = " " -- leader key
-vim.g.maplocalleader = " " -- local leader key
+-- Basic settings
+vim.opt.number = true -- Line numbers
+vim.opt.relativenumber = true -- Relative line numbers
+vim.opt.cursorline = true -- Highlight current line
+vim.opt.wrap = false -- Don't wrap lines
+vim.opt.scrolloff = 10 -- Keep 10 lines above/below cursor
+vim.opt.sidescrolloff = 8 -- Keep 8 columns left/right of cursor
+
+-- Indentation
+vim.opt.tabstop = 2 -- Tab width
+vim.opt.shiftwidth = 2 -- Indent width
+vim.opt.softtabstop = 2 -- Soft tab stop
+vim.opt.expandtab = true -- Use spaces instead of tabs
+vim.opt.smartindent = true -- Smart auto-indenting
+vim.opt.autoindent = true -- Copy indent from current line
+
+-- Search settings
+vim.opt.ignorecase = true -- Case insensitive search
+vim.opt.smartcase = true -- Case sensitive if uppercase in search
+vim.opt.hlsearch = false -- Don't highlight search results
+vim.opt.incsearch = true -- Show matches as you type
+vim.opt.inccommand = "split" -- live preview of substitutions
+
+-- Visual settings
 vim.g.have_nerd_font = true -- enable nerd font icons
 vim.opt.winborder = "rounded" -- rounded window borders
-vim.opt.showmode = false -- dont show -- INSERT -- etc since lualine shows it
 vim.opt.breakindent = true -- maintain indent on wrap
-vim.opt.mouse = "" -- disable mouse
-vim.o.confirm = true -- confirm before exiting unsaved
-vim.opt.number = true -- show line numbers
-vim.opt.relativenumber = true -- show relative line numbers
-vim.opt.cursorline = true -- highlight current line
-vim.opt.signcolumn = "yes" -- always show sign column
-vim.opt.colorcolumn = "100" -- column guide at 100 chars
-vim.opt.termguicolors = true -- enable 24-bit colors
-vim.opt.scrolloff = 10 -- keep 10 lines above/below cursor
-vim.opt.splitbelow = true -- horizontal splits go below
-vim.opt.splitright = true -- vertical splits go right
-vim.opt.tabstop = 2 -- tab width
-vim.opt.shiftwidth = 2 -- indent width
-vim.opt.expandtab = true -- use spaces instead of tabs
-vim.opt.smartindent = true -- auto indent new lines
-vim.opt.ignorecase = true -- ignore case in search
-vim.opt.smartcase = true -- unless uppercase is used
-vim.opt.hlsearch = false -- don't highlight search results
-vim.opt.incsearch = true -- incremental search
-vim.opt.inccommand = "split" -- live preview of substitutions
-vim.opt.undofile = true -- persistent undo
-vim.opt.updatetime = 300 -- faster completion
-vim.opt.timeoutlen = 300 -- faster key sequences
-vim.opt.foldmethod = "expr" -- use expression for folding
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- use treesitter for folding
-vim.opt.wrap = false
-vim.opt.foldlevel = 99 -- open all folds by default
+vim.opt.termguicolors = true -- Enable 24-bit colors
+vim.opt.signcolumn = "yes" -- Always show sign column
+vim.opt.colorcolumn = "100" -- Show column at 100 characters
+vim.opt.showmatch = true -- Highlight matching brackets
+vim.opt.matchtime = 2 -- How long to show matching bracket
+vim.opt.cmdheight = 1 -- Command line height
+vim.opt.completeopt = "menuone,noinsert,noselect" -- Completion options
+vim.opt.showmode = false -- Don't show mode in command line
+vim.opt.pumheight = 10 -- Popup menu height
+vim.opt.pumblend = 10 -- Popup menu transparency
+vim.opt.winblend = 0 -- Floating window transparency
+vim.opt.conceallevel = 0 -- Don't hide markup
+vim.opt.concealcursor = "" -- Don't hide cursor line markup
+vim.opt.lazyredraw = true -- Don't redraw during macros
+vim.opt.synmaxcol = 300 -- Syntax highlighting limit
 
--- undo local storage
+-- Create undo directory if it doesn't exist
 local undodir = vim.fn.expand("~/.vim/undodir")
 if vim.fn.isdirectory(undodir) == 0 then
 	vim.fn.mkdir(undodir, "p")
 end
-vim.opt.undodir = undodir
 
--- :help vim.diagnostic.Opts
-vim.diagnostic.config({
-	update_in_insert = false,
-	severity_sort = true,
-	float = { border = "rounded", source = "if_many" },
-	underline = { severity = vim.diagnostic.severity.ERROR },
-	virtual_text = true,
-	virtual_lines = false,
-	jump = { float = true },
-})
+-- File handling
+vim.opt.backup = false -- Don't create backup files
+vim.opt.writebackup = false -- Don't create backup before writing
+vim.opt.swapfile = false -- Don't create swap files
+vim.opt.undofile = true -- Persistent undo
+vim.opt.undodir = vim.fn.expand("~/.vim/undodir") -- Undo directory
+vim.opt.updatetime = 300 -- Faster completion
+vim.opt.timeoutlen = 500 -- Key timeout duration
+vim.opt.ttimeoutlen = 0 -- Key code timeout
+vim.opt.autoread = true -- Auto reload files changed outside vim
+vim.opt.autowrite = false -- Don't auto save
+vim.o.confirm = true -- Confirm before exiting unsaved
 
--- keymaps
+-- Behavior settings
+vim.opt.hidden = true -- Allow hidden buffers
+vim.opt.errorbells = false -- No error bells
+vim.opt.backspace = "indent,eol,start" -- Better backspace behavior
+vim.opt.autochdir = false -- Don't auto change directory
+vim.opt.iskeyword:append("-") -- Treat dash as part of word
+vim.opt.path:append("**") -- include subdirectories in search
+vim.opt.selection = "exclusive" -- Selection behavior
+vim.opt.mouse = "" -- Enable mouse support
+vim.opt.modifiable = true -- Allow buffer modifications
+vim.opt.encoding = "UTF-8" -- Set encoding
+
+-- Folding settings
+vim.opt.foldmethod = "expr" -- Use expression for folding
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()" -- Use treesitter for folding
+vim.opt.foldlevel = 99 -- Start with all folds open
+
+-- Split behavior
+vim.opt.splitbelow = true -- Horizontal splits go below
+vim.opt.splitright = true -- Vertical splits go right
+
+-- Key mappings
+vim.g.mapleader = " " -- Set leader key to space
+vim.g.maplocalleader = " " -- Set local leader key (NEW)
+
+vim.keymap.set("n", "Y", "y$", { desc = "Yank to end of line" })
+
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
 vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { desc = "Paste from system clipboard" })
 
@@ -68,10 +104,31 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 
+vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic list" })
+vim.keymap.set("n", "<leader>dl", vim.diagnostic.open_float, { desc = "Show line diagnostics" })
+
+-- Autocommands
 require("autocmds")
+
+-- Floating terminal
 require("terminal")
 
--- plugins
+-- Diagnostics settings
+vim.diagnostic.config({
+	update_in_insert = false,
+	severity_sort = true,
+	float = { border = "rounded", source = "if_many" },
+	underline = { severity = vim.diagnostic.severity.ERROR },
+	virtual_text = {
+		prefix = "●",
+		spacing = 4,
+	},
+	virtual_lines = false,
+	signs = true,
+	jump = { float = true },
+})
+
+-- Plugins
 vim.pack.add({
 	{ src = "https://github.com/j-hui/fidget.nvim" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
@@ -81,7 +138,6 @@ vim.pack.add({
 	{ src = "https://github.com/L3MON4D3/LuaSnip" },
 	{ src = "https://github.com/Saghen/blink.cmp" },
 	{ src = "https://github.com/stevearc/conform.nvim" },
-	{ src = "https://github.com/stevearc/quicker.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/nvim-telescope/telescope.nvim" },
 	{ src = "https://github.com/nvim-telescope/telescope-ui-select.nvim" },
@@ -94,6 +150,7 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter-context" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects" },
 	{ src = "https://github.com/zbirenbaum/copilot.lua" },
 	{ src = "https://github.com/giuxtaposition/blink-cmp-copilot" },
 	{ src = "https://github.com/rose-pine/neovim" },
@@ -247,12 +304,12 @@ require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
 		go = { "goimports", "gofumpt", "golines" },
-		javascript = { "prettierd" },
-		typescript = { "prettierd" },
-		markdown = { "prettierd" },
-		svelte = { "prettierd" },
-		css = { "prettierd" },
-		html = { "prettierd" },
+		javascript = { "prettier" },
+		typescript = { "prettier" },
+		markdown = { "prettier" },
+		svelte = { "prettier" },
+		css = { "prettier" },
+		html = { "prettier" },
 		sql = { "sql_formatter" },
 		["*"] = { "codespell" },
 		["_"] = { "trim_whitespace" },
@@ -271,12 +328,6 @@ require("conform").setup({
 
 -- undo tree
 vim.keymap.set("n", "<leader>u", "<cmd>UndotreeToggle<cr>", { desc = "Undo tree" })
-
--- quickfix
-require("quicker").setup()
-vim.keymap.set("n", "<leader>q", function()
-	require("quicker").toggle()
-end, { desc = "Toggle quickfix" })
 
 -- file explorer
 require("oil").setup()
@@ -375,20 +426,16 @@ require("gitsigns").setup({
 })
 vim.keymap.set("n", "<leader>gf", builtin.git_files, { desc = "[G]it [F]iles" })
 
-local symbols = require("trouble").statusline({
-	mode = "lsp_document_symbols",
-	groups = {},
-	title = false,
-	filter = { range = true },
-	format = "{kind_icon}{symbol.name:Normal}",
-	hl_group = "lualine_c_normal",
-})
 require("lualine").setup({
 	sections = {
+		lualine_a = { "mode" },
+		lualine_b = { "branch", "diagnostics" },
 		lualine_c = {
-			"filename",
-			{ symbols.get, cond = symbols.has },
+			{ "filename", path = 1 },
 		},
+		lualine_x = { "filetype" },
+		lualine_y = { "progress" },
+		lualine_z = { "location" },
 	},
 })
 
@@ -399,10 +446,13 @@ require("which-key").setup({
 		mappings = true,
 	},
 	spec = {
+		{ "<leader>c", group = "[C]ode" },
+		{ "<leader>d", group = "[D]iagnostics" },
+		{ "<leader>g", group = "[G]it" },
+		{ "<leader>r", group = "[R]ename" },
 		{ "<leader>s", group = "[S]earch" },
 		{ "<leader>t", group = "[T]oggle" },
-		{ "<leader>c", group = "[C]ode" },
-		{ "<leader>r", group = "[R]ename" },
+		{ "<leader>x", group = "Trouble" },
 	},
 })
 
@@ -432,6 +482,54 @@ require("nvim-treesitter").install({
 require("treesitter-context").setup({
 	max_lines = 3,
 	zindex = 20,
+})
+
+require("nvim-treesitter-textobjects").setup({
+	textobjects = {
+		select = {
+			lookahead = true,
+			keymaps = {
+				["af"] = "@function.outer",
+				["if"] = "@function.inner",
+				["ac"] = "@class.outer",
+				["ic"] = "@class.inner",
+				["aa"] = "@parameter.outer",
+				["ia"] = "@parameter.inner",
+				["al"] = "@loop.outer",
+				["il"] = "@loop.inner",
+				["ai"] = "@conditional.outer",
+				["ii"] = "@conditional.inner",
+			},
+		},
+		move = {
+			goto_next_start = {
+				["]f"] = "@function.outer",
+				["]c"] = "@class.outer",
+				["]a"] = "@parameter.inner",
+			},
+			goto_next_end = {
+				["]F"] = "@function.outer",
+				["]C"] = "@class.outer",
+			},
+			goto_previous_start = {
+				["[f"] = "@function.outer",
+				["[c"] = "@class.outer",
+				["[a"] = "@parameter.inner",
+			},
+			goto_previous_end = {
+				["[F"] = "@function.outer",
+				["[C"] = "@class.outer",
+			},
+		},
+		swap = {
+			swap_next = {
+				["<leader>a"] = "@parameter.inner",
+			},
+			swap_previous = {
+				["<leader>A"] = "@parameter.inner",
+			},
+		},
+	},
 })
 
 -- colors!

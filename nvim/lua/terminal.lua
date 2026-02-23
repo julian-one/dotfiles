@@ -57,4 +57,4 @@ end
 vim.api.nvim_create_user_command("Floaterminal", toggle_terminal, {})
 
 -- Keymap for toggling terminal
-vim.keymap.set("n", "<leader>tt", toggle_terminal, { desc = "[T]oggle [T]erminal" })
+vim.keymap.set("n", "<leader>t", toggle_terminal, { desc = "[T]oggle Terminal" })
