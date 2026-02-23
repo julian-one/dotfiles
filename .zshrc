@@ -27,3 +27,4 @@ export EDITOR=/usr/bin/nvim
 # Path
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$(npm get prefix -g)/bin:$PATH"
+export PATH="/usr/local/go/bin:$PATH"
