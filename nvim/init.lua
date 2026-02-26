@@ -106,6 +106,11 @@ vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic list" })
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.open_float, { desc = "Show line diagnostics" })
 
+vim.keymap.set("n", "]q", "<cmd>cnext<cr>zz", { desc = "Next quickfix item" })
+vim.keymap.set("n", "[q", "<cmd>cprev<cr>zz", { desc = "Previous quickfix item" })
+vim.keymap.set("n", "<leader>co", "<cmd>copen<cr>", { desc = "Open quickfix list" })
+vim.keymap.set("n", "<leader>cc", "<cmd>cclose<cr>", { desc = "Close quickfix list" })
+
 -- Autocommands
 require("autocmds")
 
@@ -144,6 +149,7 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" },
 	{ src = "https://github.com/mbbill/undotree" },
 	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
+	{ src = "https://github.com/folke/todo-comments.nvim" },
 	{ src = "https://github.com/folke/trouble.nvim" },
 	{ src = "https://github.com/folke/which-key.nvim" },
 	{ src = "https://github.com/nvim-lualine/lualine.nvim" },
@@ -377,6 +383,13 @@ vim.keymap.set("n", "<leader>sn", function()
 	builtin.find_files({ cwd = vim.fn.stdpath("config") })
 end, { desc = "[S]earch [N]eovim files" })
 
+-- todo-comments
+local todo_comments = require("todo-comments")
+todo_comments.setup({})
+vim.keymap.set("n", "]t", todo_comments.jump_next, { desc = "Next todo comment" })
+vim.keymap.set("n", "[t", todo_comments.jump_prev, { desc = "Previous todo comment" })
+
+-- trouble
 require("trouble").setup({
 	opts = {
 		modes = {
@@ -403,6 +416,8 @@ vim.keymap.set(
 )
 vim.keymap.set("n", "<leader>xL", "<cmd>Trouble loclist toggle<cr>", { desc = "Location List (Trouble)" })
 vim.keymap.set("n", "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", { desc = "Quickfix List (Trouble)" })
+vim.keymap.set("n", "<leader>xt", "<cmd>Trouble todo toggle<cr>", { desc = "Todos (Trouble)" })
+vim.keymap.set("n", "<leader>xT", "<cmd>Trouble todo toggle filter.buf=0<cr>", { desc = "Buffer Todos (Trouble)" })
 
 require("gitsigns").setup({
 	current_line_blame = true,
@@ -410,6 +425,7 @@ require("gitsigns").setup({
 })
 vim.keymap.set("n", "<leader>gf", builtin.git_files, { desc = "[G]it [F]iles" })
 
+-- statusline
 require("lualine").setup({
 	sections = {
 		lualine_a = { "mode" },
