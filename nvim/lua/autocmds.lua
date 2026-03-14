@@ -34,13 +34,6 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
--- enable treesitter highlighting
-vim.api.nvim_create_autocmd("FileType", {
-	callback = function()
-		pcall(vim.treesitter.start)
-	end,
-})
-
 -- show cursorline only in active window enable
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
 	group = vim.api.nvim_create_augroup("active_cursorline", { clear = true }),

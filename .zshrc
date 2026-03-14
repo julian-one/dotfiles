@@ -22,7 +22,7 @@ KEYTIMEOUT=1                     # reduce mode switch delay (1 = 10ms)
 bindkey '^Y' autosuggest-accept  # accept suggestion with Ctrl+Y
 
 # Editor
-export EDITOR=/usr/bin/nvim
+export EDITOR=/usr/local/bin/nvim
 
 # Path
 export PATH="$HOME/.local/bin:$PATH"

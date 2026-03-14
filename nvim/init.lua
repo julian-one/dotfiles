@@ -4,7 +4,7 @@ vim.opt.relativenumber = true -- Relative line numbers
 vim.opt.cursorline = true -- Highlight current line
 vim.opt.wrap = false -- Don't wrap lines
 vim.opt.scrolloff = 10 -- Keep 10 lines above/below cursor
-vim.opt.sidescrolloff = 8 -- Keep 8 columns left/right of cursor
+vim.opt.sidescrolloff = 10 -- Keep 10 columns left/right of cursor
 
 -- Indentation
 vim.opt.tabstop = 2 -- Tab width
@@ -39,6 +39,7 @@ vim.opt.winblend = 0 -- Floating window transparency
 vim.opt.conceallevel = 0 -- Don't hide markup
 vim.opt.concealcursor = "" -- Don't hide cursor line markup
 vim.opt.synmaxcol = 300 -- Syntax highlighting limit
+vim.opt.lazyredraw = true -- Don't redraw while executing macros
 
 -- Create undo directory if it doesn't exist
 local undodir = vim.fn.expand("~/.vim/undodir")
@@ -80,6 +81,12 @@ vim.opt.foldlevel = 99 -- Start with all folds open
 vim.opt.splitbelow = true -- Horizontal splits go below
 vim.opt.splitright = true -- Vertical splits go right
 
+vim.opt.wildmenu = true -- Tab completion
+vim.opt.wildmode = "longest:full,full" -- Complete longest common match, full completion list, cycle through with Tab
+vim.opt.diffopt:append("linematch:60") -- Improve diff display
+vim.opt.redrawtime = 10000 -- Increase neovim redraw tolerance
+vim.opt.maxmempattern = 20000 -- Increase max memory
+
 -- Key mappings
 vim.g.mapleader = " " -- Set leader key to space
 vim.g.maplocalleader = " " -- Set local leader key (NEW)
@@ -118,18 +125,36 @@ require("autocmds")
 require("terminal")
 
 -- Diagnostics settings
+local diagnostic_signs = {
+	Error = " ",
+	Warn = " ",
+	Hint = "",
+	Info = "",
+}
+
 vim.diagnostic.config({
+	virtual_text = { prefix = "●", spacing = 4 },
+	virtual_lines = false,
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = diagnostic_signs.Error,
+			[vim.diagnostic.severity.WARN] = diagnostic_signs.Warn,
+			[vim.diagnostic.severity.INFO] = diagnostic_signs.Info,
+			[vim.diagnostic.severity.HINT] = diagnostic_signs.Hint,
+		},
+	},
+	jump = { float = true },
+	underline = true,
 	update_in_insert = false,
 	severity_sort = true,
-	float = { border = "rounded", source = "if_many" },
-	underline = { severity = vim.diagnostic.severity.ERROR },
-	virtual_text = {
-		prefix = "●",
-		spacing = 4,
+	float = {
+		border = "rounded",
+		source = "if_many",
+		header = "",
+		prefix = "",
+		focusable = true,
+		style = "minimal",
 	},
-	virtual_lines = false,
-	signs = true,
-	jump = { float = true },
 })
 
 -- Plugins
@@ -274,7 +299,14 @@ require("blink.cmp").setup({
 	cmdline = { enabled = true },
 	keymap = { preset = "default" },
 	appearance = { nerd_font_variant = "mono" },
-	completion = { documentation = { auto_show = false } },
+	completion = {
+		menu = {
+			draw = {
+				columns = { { "kind" }, { "label", "label_description" } },
+			},
+		},
+		documentation = { auto_show = true },
+	},
 	fuzzy = { implementation = "prefer_rust" },
 	sources = {
 		default = { "lsp", "path", "snippets", "buffer", "copilot" },
@@ -451,16 +483,17 @@ require("which-key").setup({
 		{ "<leader>g", group = "[G]it" },
 		{ "<leader>r", group = "[R]ename" },
 		{ "<leader>s", group = "[S]earch" },
-		{ "<leader>t", group = "[T]oggle" },
 		{ "<leader>x", group = "Trouble" },
 	},
 })
 
 -- treesitter
-require("nvim-treesitter").setup({
+local treesitter = require("nvim-treesitter")
+treesitter.setup({
 	install_dir = vim.fn.stdpath("data") .. "/site",
 })
-require("nvim-treesitter").install({
+
+local ensure_installed = {
 	"c",
 	"lua",
 	"vim",
@@ -477,6 +510,28 @@ require("nvim-treesitter").install({
 	"gomod",
 	"gosum",
 	"yaml",
+}
+
+local already_installed = require("nvim-treesitter.config").get_installed()
+local parsers_to_install = {}
+
+for _, parser in ipairs(ensure_installed) do
+	if not vim.tbl_contains(already_installed, parser) then
+		table.insert(parsers_to_install, parser)
+	end
+end
+
+if #parsers_to_install > 0 then
+	treesitter.install(parsers_to_install)
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("TreeSitterConfig", { clear = true }),
+	callback = function(args)
+		if vim.list_contains(treesitter.get_installed(), vim.treesitter.language.get_lang(args.match)) then
+			vim.treesitter.start(args.buf)
+		end
+	end,
 })
 
 require("treesitter-context").setup({
