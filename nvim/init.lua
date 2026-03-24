@@ -65,7 +65,6 @@ vim.opt.hidden = true -- Allow hidden buffers
 vim.opt.errorbells = false -- No error bells
 vim.opt.backspace = "indent,eol,start" -- Better backspace behavior
 vim.opt.autochdir = false -- Don't auto change directory
-vim.opt.iskeyword:append("-") -- Treat dash as part of word
 vim.opt.path:append("**") -- include subdirectories in search
 vim.opt.selection = "exclusive" -- Selection behavior
 vim.opt.mouse = "" -- Enable mouse support
@@ -158,7 +157,7 @@ vim.diagnostic.config({
 })
 
 -- Plugins
-vim.pack.add({
+local pack_specs = {
 	{ src = "https://github.com/j-hui/fidget.nvim" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
@@ -183,10 +182,53 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects" },
 	{ src = "https://github.com/zbirenbaum/copilot.lua" },
 	{ src = "https://github.com/giuxtaposition/blink-cmp-copilot" },
-	{ src = "https://github.com/rose-pine/neovim" },
-})
+	{ src = "https://github.com/norcalli/nvim-colorizer.lua" },
+}
+vim.pack.add(pack_specs)
+
+local function pack_clean()
+	local pack_dir = vim.fn.stdpath("data") .. "/site/pack/core/opt"
+	local declared = {}
+	for _, spec in ipairs(pack_specs) do
+		declared[spec.src:match("([^/]+)$")] = true
+	end
+
+	local handle = vim.uv.fs_scandir(pack_dir)
+	if not handle then
+		print("Pack directory not found: " .. pack_dir)
+		return
+	end
+
+	local unused = {}
+	while true do
+		local name, ftype = vim.uv.fs_scandir_next(handle)
+		if not name then
+			break
+		end
+		if ftype == "directory" and not declared[name] then
+			table.insert(unused, name)
+		end
+	end
+
+	if #unused == 0 then
+		print("No unused plugins.")
+		return
+	end
+
+	local msg = "Remove unused plugins?\n" .. table.concat(unused, "\n")
+	local choice = vim.fn.confirm(msg, "&Yes\n&No", 2)
+	if choice == 1 then
+		for _, name in ipairs(unused) do
+			vim.fn.delete(pack_dir .. "/" .. name, "rf")
+		end
+		print("Removed: " .. table.concat(unused, ", "))
+	end
+end
+
+vim.keymap.set("n", "<leader>pc", pack_clean, { desc = "[P]ack [C]lean" })
 
 require("fidget").setup({})
+
 require("mason").setup()
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
@@ -457,14 +499,34 @@ require("gitsigns").setup({
 })
 vim.keymap.set("n", "<leader>gf", builtin.git_files, { desc = "[G]it [F]iles" })
 
+-- colorizer
+require("colorizer").setup({
+	"*",
+	css = { rgb_fn = true, hsl_fn = true },
+	html = { rgb_fn = true, hsl_fn = true },
+	javascript = { rgb_fn = true, hsl_fn = true },
+	svelte = { rgb_fn = true, hsl_fn = true },
+})
+
 -- statusline
+local inactive = { fg = "#4f5258", bg = "none" }
 require("lualine").setup({
+	options = {
+		theme = {
+			normal = {
+				a = { fg = "#c4c6cd", bg = "none", gui = "bold" },
+				b = { fg = "#9b9ea4", bg = "none" },
+				c = { fg = "#4f5258", bg = "none" },
+			},
+			inactive = { a = inactive, b = inactive, c = inactive },
+		},
+		component_separators = "",
+		section_separators = "",
+	},
 	sections = {
 		lualine_a = { "mode" },
 		lualine_b = { "branch", "diagnostics" },
-		lualine_c = {
-			{ "filename", path = 1 },
-		},
+		lualine_c = { { "filename", path = 1 } },
 		lualine_x = { "filetype" },
 		lualine_y = { "progress" },
 		lualine_z = { "location" },
@@ -587,12 +649,14 @@ require("nvim-treesitter-textobjects").setup({
 	},
 })
 
--- colors!
-require("rose-pine").setup({
-	styles = {
-		bold = true,
-		italic = false,
-		transparency = true,
-	},
-})
-vim.cmd("colorscheme rose-pine")
+-- transparent background
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+vim.api.nvim_set_hl(0, "Pmenu", { bg = "none" })
+vim.api.nvim_set_hl(0, "PmenuSel", { bg = "#3a3a3a" })
+vim.api.nvim_set_hl(0, "BlinkCmpMenu", { bg = "none" })
+vim.api.nvim_set_hl(0, "BlinkCmpDoc", { bg = "none" })
+vim.api.nvim_set_hl(0, "BlinkCmpDocBorder", { bg = "none" })
+vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
+vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
