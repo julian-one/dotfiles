@@ -1,18 +1,20 @@
--- highlight yank
+--- Provide visual feedback on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
+	group = vim.api.nvim_create_augroup("highlight_yank", { clear = true }),
 	callback = function()
 		vim.hl.on_yank()
 	end,
 })
 
--- restore cursor to file position in previous editing session
+--- Restore cursor position from previous editing session
 vim.api.nvim_create_autocmd("BufReadPost", {
+	group = vim.api.nvim_create_augroup("restore_cursor", { clear = true }),
 	callback = function(args)
 		local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
 		local line_count = vim.api.nvim_buf_line_count(args.buf)
 		if mark[1] > 0 and mark[1] <= line_count then
 			vim.api.nvim_win_set_cursor(0, mark)
-			-- defer centering slightly so it's applied after render
+			-- Defer centering so it's applied after render
 			vim.schedule(function()
 				vim.cmd("normal! zz")
 			end)
@@ -20,13 +22,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
--- open help in full screen
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "help",
-	command = "only",
-})
-
--- no auto continue comments on new line
+--- Prevent automatically continuing comments on new lines
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("no_auto_comment", {}),
 	callback = function()
@@ -34,7 +30,7 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
--- show cursorline only in active window enable
+--- Highlight exclusively the currently active window
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
 	group = vim.api.nvim_create_augroup("active_cursorline", { clear = true }),
 	callback = function()
@@ -42,7 +38,7 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
 	end,
 })
 
--- show cursorline only in active window disable
+--- Disable highlight when leaving window
 vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
 	group = "active_cursorline",
 	callback = function()
@@ -50,8 +46,9 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
 	end,
 })
 
--- lsp attach autocmd
+--- Bootstrap LSP keymaps and buffer-local features on attach
 vim.api.nvim_create_autocmd("LspAttach", {
+	group = vim.api.nvim_create_augroup("lsp_attach", { clear = true }),
 	callback = function(event)
 		local client = vim.lsp.get_client_by_id(event.data.client_id)
 		local map = function(keys, func, desc, mode)
@@ -70,8 +67,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		map("gO", vim.lsp.buf.document_symbol, "[G]oto Document Symbols")
 		map("gW", vim.lsp.buf.workspace_symbol, "[G]oto Workspace Symbols")
 
-		-- document highlighting
-		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then -- enable dynamic under-cursor referencing
 			local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 				buffer = event.buf,
@@ -94,9 +90,35 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			})
 		end
 
-		-- enable LSP folding if supported
-		if client and client.server_capabilities.foldingRangeProvider then
+		if client and client.server_capabilities.foldingRangeProvider then -- enable LSP-powered folding
 			vim.opt_local.foldexpr = "v:lua.vim.lsp.foldexpr()"
+		end
+	end,
+})
+
+--- Pre-configure unlisted `tree-sitter-godoc` parser from custom repository
+vim.api.nvim_create_autocmd("User", {
+	group = vim.api.nvim_create_augroup("ts_godoc", { clear = true }),
+	pattern = "TSUpdate",
+	callback = function()
+		require("nvim-treesitter.parsers").godoc = {
+			tier = 0,
+			install_info = {
+				url = "https://github.com/fredrikaverpil/tree-sitter-godoc",
+				revision = "main",
+			},
+		}
+	end,
+})
+
+--- Bootstrap native `vim.treesitter` highlighter for actively installed parsers
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("ts_language_start", { clear = true }),
+	callback = function(args)
+		if
+			vim.list_contains(require("nvim-treesitter").get_installed(), vim.treesitter.language.get_lang(args.match))
+		then
+			vim.treesitter.start(args.buf)
 		end
 	end,
 })
