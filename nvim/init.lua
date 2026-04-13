@@ -38,8 +38,6 @@ vim.opt.pumblend = 10 -- Popup menu transparency
 vim.opt.winblend = 0 -- Floating window transparency
 vim.opt.conceallevel = 0 -- Don't hide markup
 vim.opt.concealcursor = "" -- Don't hide cursor line markup
-vim.opt.synmaxcol = 300 -- Syntax highlighting limit
-vim.opt.lazyredraw = true -- Don't redraw while executing macros
 
 -- Create undo directory if it doesn't exist
 local undodir = vim.fn.expand("~/.vim/undodir")
@@ -52,7 +50,7 @@ vim.opt.backup = false -- Don't create backup files
 vim.opt.writebackup = false -- Don't create backup before writing
 vim.opt.swapfile = false -- Don't create swap files
 vim.opt.undofile = true -- Persistent undo
-vim.opt.undodir = vim.fn.expand("~/.vim/undodir") -- Undo directory
+vim.opt.undodir = undodir -- Undo directory
 vim.opt.updatetime = 300 -- Faster completion
 vim.opt.timeoutlen = 500 -- Key timeout duration
 vim.opt.ttimeoutlen = 0 -- Key code timeout
@@ -61,37 +59,26 @@ vim.opt.autowrite = false -- Don't auto save
 vim.opt.confirm = true -- Confirm before exiting unsaved
 
 -- Behavior
-vim.opt.hidden = true -- Allow hidden buffers
-vim.opt.errorbells = false -- No error bells
-vim.opt.backspace = "indent,eol,start" -- Better backspace behavior
 vim.opt.autochdir = false -- Don't auto change directory
 vim.opt.path:append("**") -- Include subdirectories in search
-vim.opt.selection = "exclusive" -- Selection behavior
-vim.opt.mouse = "" -- Enable mouse support
-vim.opt.modifiable = true -- Allow buffer modifications
-vim.opt.encoding = "UTF-8" -- Set encoding
+vim.opt.mouse = "" -- Disable mouse support
 
 -- Folding
-vim.opt.foldmethod = "expr" -- Use expression for folding
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- Use treesitter for folding
 vim.opt.foldlevel = 99 -- Start with all folds open
+vim.opt.foldcolumn = "1" -- Show fold indicators in the sign area
 
 -- Splits
 vim.opt.splitbelow = true -- Horizontal splits go below
 vim.opt.splitright = true -- Vertical splits go right
 
 -- Miscellaneous
-vim.opt.wildmenu = true -- Tab completion
 vim.opt.wildmode = "longest:full,full" -- Complete longest common match, full completion list, cycle through with Tab
 vim.opt.diffopt:append("linematch:60") -- Improve diff display
-vim.opt.redrawtime = 10000 -- Increase neovim redraw tolerance
 vim.opt.maxmempattern = 20000 -- Increase max memory
 
 -- Key mappings
 vim.g.mapleader = " " -- Set leader key to space
 vim.g.maplocalleader = " " -- Set local leader key
-
-vim.keymap.set("n", "Y", "y$", { desc = "Yank to end of line" })
 
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
 vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { desc = "Paste from system clipboard" })
@@ -110,33 +97,17 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic list" })
-vim.keymap.set("n", "<leader>dl", vim.diagnostic.open_float, { desc = "Show line diagnostics" })
-
-vim.keymap.set("n", "]q", "<cmd>cnext<cr>zz", { desc = "Next quickfix item" })
-vim.keymap.set("n", "[q", "<cmd>cprev<cr>zz", { desc = "Previous quickfix item" })
-vim.keymap.set("n", "<leader>co", "<cmd>copen<cr>", { desc = "Open quickfix list" })
-vim.keymap.set("n", "<leader>cc", "<cmd>cclose<cr>", { desc = "Close quickfix list" })
-
-vim.keymap.set(
-	"n",
-	"<leader>xx",
-	"<cmd>lua vim.diagnostic.setqflist()<cr><cmd>copen<cr>",
-	{ desc = "Project Diagnostics (Quickfix)" }
-)
-vim.keymap.set(
-	"n",
-	"<leader>xX",
-	"<cmd>lua vim.diagnostic.setloclist()<cr><cmd>lopen<cr>",
-	{ desc = "Buffer Diagnostics (Location list)" }
-)
+vim.keymap.set("n", "]q", "<cmd>cnext<cr>zz", { desc = "Next quickfix" })
+vim.keymap.set("n", "[q", "<cmd>cprev<cr>zz", { desc = "Prev quickfix" })
+vim.keymap.set("n", "]Q", "<cmd>clast<cr>zz", { desc = "Last quickfix" })
+vim.keymap.set("n", "[Q", "<cmd>cfirst<cr>zz", { desc = "First quickfix" })
 
 -- Diagnostics
 local diagnostic_signs = {
-	Error = " ",
-	Warn = " ",
-	Hint = "",
-	Info = "",
+	Error = "󰅚 ",
+	Warn = "󰀪 ",
+	Hint = "󰌶 ",
+	Info = " ",
 }
 
 vim.diagnostic.config({
@@ -166,13 +137,17 @@ vim.diagnostic.config({
 -- Plugins
 vim.pack.add({
 	{ src = "https://github.com/j-hui/fidget.nvim" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
 	{ src = "https://github.com/mason-org/mason-lspconfig.nvim" },
 	{ src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
 	{ src = "https://github.com/Saghen/blink.cmp" },
+	{ src = "https://github.com/mikavilpas/blink-ripgrep.nvim" },
+	{ src = "https://github.com/onsails/lspkind.nvim" },
 	{ src = "https://github.com/rafamadriz/friendly-snippets" },
 	{ src = "https://github.com/stevearc/conform.nvim" },
+	{ src = "https://github.com/folke/trouble.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/nvim-telescope/telescope.nvim" },
 	{ src = "https://github.com/nvim-telescope/telescope-ui-select.nvim" },
@@ -182,18 +157,83 @@ vim.pack.add({
 	{ src = "https://github.com/mbbill/undotree" },
 	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
 	{ src = "https://github.com/folke/which-key.nvim" },
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter-context" },
-	{ src = "https://github.com/fredrikaverpil/godoc.nvim" },
 	{ src = "https://github.com/NvChad/nvim-colorizer.lua" },
-	{ src = "https://github.com/vague-theme/vague.nvim" },
+	{ src = "https://github.com/Mofiqul/vscode.nvim" },
+})
+
+-- Icons
+require("nvim-web-devicons").setup({
+	default = true,
+	color_icons = true,
 })
 
 -- Fidget
-require("fidget").setup({})
+require("fidget").setup({
+	notification = {
+		view = {
+			icon_separator = " ",
+		},
+		window = { winblend = 0 },
+		configs = {
+			default = {
+				name = "Notifications",
+				icon = "󰎟",
+			},
+		},
+	},
+})
+
+-- Treesitter
+require("nvim-treesitter").setup()
+require("nvim-treesitter").install({
+	"bash",
+	"css",
+	"diff",
+	"dockerfile",
+	"gitignore",
+	"go",
+	"gomod",
+	"gosum",
+	"gowork",
+	"html",
+	"javascript",
+	"json",
+	"lua",
+	"luadoc",
+	"markdown",
+	"markdown_inline",
+	"query",
+	"regex",
+	"sql",
+	"svelte",
+	"templ",
+	"tsx",
+	"typescript",
+	"vim",
+	"vimdoc",
+	"yaml",
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+	callback = function(ev)
+		local lang = vim.treesitter.language.get_lang(vim.bo[ev.buf].filetype)
+		if lang and vim.treesitter.language.add(lang) then
+			vim.treesitter.start(ev.buf, lang)
+		end
+	end,
+})
 
 -- Mason
-require("mason").setup()
+require("mason").setup({
+	ui = {
+		border = "rounded",
+		icons = {
+			package_installed = "󰄳",
+			package_pending = "󰄮",
+			package_uninstalled = "󰚌",
+		},
+	},
+})
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
 	ensure_installed = {
@@ -201,6 +241,7 @@ require("mason-tool-installer").setup({
 		"stylua",
 		"ts_ls",
 		"prettierd",
+		"prettier",
 		"eslint_d",
 		"gopls",
 		"goimports",
@@ -218,40 +259,151 @@ require("mason-tool-installer").setup({
 		"dockerls",
 		"bashls",
 		"sql-formatter",
+		"codespell",
 	},
+})
+
+local lsp_highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
+local lsp_detach_augroup = vim.api.nvim_create_augroup("lsp-detach", { clear = true })
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	group = vim.api.nvim_create_augroup("lsp_attach", { clear = true }),
+	callback = function(event)
+		local client = vim.lsp.get_client_by_id(event.data.client_id)
+		local map = function(keys, func, desc, mode)
+			mode = mode or "n"
+			vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+		end
+
+		map("gd", vim.lsp.buf.definition, "[G]oto [D]definition")
+		map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+		map("gr", vim.lsp.buf.references, "[G]oto [R]eferences")
+		map("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+		map("gy", vim.lsp.buf.type_definition, "[G]oto T[y]pe Definition")
+		map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+		map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
+		map("gO", vim.lsp.buf.document_symbol, "[G]oto Document Symbols")
+		map("gW", vim.lsp.buf.workspace_symbol, "[G]oto Workspace Symbols")
+
+		if client and client:supports_method("textDocument/documentHighlight", event.buf) then
+			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+				buffer = event.buf,
+				group = lsp_highlight_augroup,
+				callback = vim.lsp.buf.document_highlight,
+			})
+			vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+				buffer = event.buf,
+				group = lsp_highlight_augroup,
+				callback = vim.lsp.buf.clear_references,
+			})
+			vim.api.nvim_create_autocmd("LspDetach", {
+				buffer = event.buf,
+				group = lsp_detach_augroup,
+				callback = function(event2)
+					vim.lsp.buf.clear_references()
+					vim.api.nvim_clear_autocmds({ group = lsp_highlight_augroup, buffer = event2.buf })
+				end,
+			})
+		end
+
+		if client and client:supports_method("textDocument/inlayHint", event.buf) then
+			map("<leader>th", function()
+				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
+			end, "[T]oggle Inlay [H]ints")
+		end
+
+		if client and client.server_capabilities.foldingRangeProvider then
+			vim.opt_local.foldmethod = "expr"
+			vim.opt_local.foldexpr = "v:lua.vim.lsp.foldexpr()"
+		end
+	end,
 })
 
 -- Autocomplete
 require("blink.cmp").setup({
 	cmdline = { enabled = true },
-	keymap = {
-		preset = "default",
-		["<Tab>"] = { "snippet_forward", "fallback" },
-		["<S-Tab>"] = { "snippet_backward", "fallback" },
+	appearance = {
+		nerd_font_variant = "mono",
+		use_nvim_cmp_as_default = false,
 	},
-	appearance = { nerd_font_variant = "mono" },
 	completion = {
+		list = {
+			selection = { preselect = true, auto_insert = false },
+		},
 		menu = {
+			border = "rounded",
 			draw = {
-				columns = { { "kind" }, { "label", "label_description" } },
+				treesitter = { "lsp" },
+				columns = {
+					{ "kind_icon" },
+					{ "label", "label_description", gap = 1 },
+					{ "kind" },
+				},
+				components = {
+					kind_icon = {
+						text = function(ctx)
+							if ctx.source_name ~= "Path" then
+								return (require("lspkind").symbol_map[ctx.kind] or "") .. ctx.icon_gap
+							end
+							if ctx.item.data.type == "directory" then
+								return "󰉋" .. ctx.icon_gap
+							end
+							local icon, _ = require("nvim-web-devicons").get_icon(ctx.label, nil, { default = true })
+							return (icon or ctx.kind_icon) .. ctx.icon_gap
+						end,
+						highlight = function(ctx)
+							if ctx.source_name ~= "Path" then
+								return ctx.kind_hl
+							end
+							if ctx.item.data.type == "directory" then
+								return "Directory"
+							end
+							local _, hl = require("nvim-web-devicons").get_icon(ctx.label, nil, { default = true })
+							return hl or ctx.kind_hl
+						end,
+					},
+				},
 			},
 		},
-		documentation = { auto_show = true },
-		ghost_text = { enabled = false },
+		documentation = {
+			auto_show = true,
+			auto_show_delay_ms = 200,
+			window = { border = "rounded" },
+		},
+		ghost_text = { enabled = true, show_with_menu = true },
+		accept = { auto_brackets = { enabled = true } },
 	},
-	signature = { enabled = true },
+	signature = {
+		enabled = true,
+		window = { border = "rounded" },
+	},
 	fuzzy = { implementation = "prefer_rust" },
 	sources = {
-		default = { "lsp", "path", "snippets", "buffer" },
+		default = { "lsp", "path", "snippets", "buffer", "ripgrep" },
 		providers = {
 			lsp = { fallbacks = { "buffer" } },
 			buffer = {
 				min_keyword_length = 3,
 				max_items = 5,
 			},
+			ripgrep = {
+				module = "blink-ripgrep",
+				name = "Ripgrep",
+				score_offset = -3,
+				opts = {
+					prefix_min_len = 3,
+					context_size = 5,
+					max_filesize = "1M",
+				},
+			},
 		},
 	},
 })
+
+-- Trouble (diagnostics / qf / loclist / LSP UI)
+require("trouble").setup()
+vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics tree (Trouble)" })
+vim.keymap.set("n", "<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", { desc = "Symbols outline (Trouble)" })
 
 -- Formatting
 require("conform").setup({
@@ -294,6 +446,7 @@ require("oil").setup({
 vim.keymap.set("n", "<leader>e", "<cmd>Oil<cr>", { desc = "File [E]xplorer" })
 
 -- Fuzzy finder
+local open_with_trouble = require("trouble.sources.telescope").open
 require("telescope").setup({
 	defaults = {
 		preview = { treesitter = true },
@@ -309,12 +462,16 @@ require("telescope").setup({
 			"", -- bottom-right
 			"", -- bottom-left
 		},
-		path_displays = { "smart" },
+		path_display = { "smart" },
 		layout_config = {
-			height = 100,
-			width = 400,
+			height = 0.99,
+			width = 0.99,
 			prompt_position = "top",
 			preview_cutoff = 40,
+		},
+		mappings = {
+			i = { ["<c-t>"] = open_with_trouble },
+			n = { ["<c-t>"] = open_with_trouble },
 		},
 	},
 	extensions = {
@@ -362,23 +519,6 @@ require("gitsigns").setup({
 })
 vim.keymap.set("n", "<leader>gf", builtin.git_files, { desc = "[G]it [F]iles" })
 
--- Godoc
-require("godoc").setup({
-	picker = { type = "telescope" },
-	window = { type = "vsplit" },
-	adapters = {
-		{
-			name = "go",
-			opts = {
-				get_syntax_info = function()
-					return { filetype = "godoc", language = "godoc" }
-				end,
-			},
-		},
-	},
-})
-vim.keymap.set("n", "<leader>gd", "<cmd>GoDoc<cr>", { desc = "[G]o [D]oc" })
-
 -- Which key?
 require("which-key").setup({
 	delay = 0,
@@ -391,54 +531,31 @@ require("which-key").setup({
 		{ "<leader>g", group = "[G]it" },
 		{ "<leader>r", group = "[R]ename" },
 		{ "<leader>s", group = "[S]earch" },
-		{ "<leader>x", group = "[X] Quickfix / List" },
+		{ "<leader>t", group = "[T]oggle" },
+		{ "<leader>x", group = "Trouble" },
 	},
-})
-
--- Treesitter
-require("nvim-treesitter").setup()
-
-require("nvim-treesitter.parsers").godoc = {
-	tier = 0,
-	install_info = {
-		url = "https://github.com/fredrikaverpil/tree-sitter-godoc",
-		revision = "main",
-	},
-}
-
-vim.treesitter.language.register("godoc", "godoc")
-
-require("nvim-treesitter").install({
-	"c",
-	"lua",
-	"vim",
-	"vimdoc",
-	"query",
-	"markdown",
-	"markdown_inline",
-	"svelte",
-	"typescript",
-	"javascript",
-	"html",
-	"css",
-	"go",
-	"gomod",
-	"gosum",
-	"yaml",
-})
-
-require("treesitter-context").setup({
-	max_lines = 3,
-	zindex = 20,
 })
 
 -- Colors!
 require("colorizer").setup({})
 
-require("vague").setup({
+require("vscode").setup({
+	style = "dark",
 	transparent = true,
+	italic_comments = true,
+	terminal_colors = true,
+	group_overrides = {
+		TabLineFill = { bg = "NONE", fg = "#767676" },
+		BlinkCmpMenu = { bg = "NONE" },
+		BlinkCmpMenuBorder = { bg = "NONE" },
+		BlinkCmpDoc = { bg = "NONE" },
+		BlinkCmpDocBorder = { bg = "NONE" },
+		BlinkCmpSignatureHelp = { bg = "NONE" },
+		BlinkCmpSignatureHelpBorder = { bg = "NONE" },
+		BlinkCmpScrollBarGutter = { bg = "NONE" },
+	},
 })
-vim.cmd("colorscheme vague")
+vim.cmd("colorscheme vscode")
 
 -- Load additional modules
 require("autocmds")
