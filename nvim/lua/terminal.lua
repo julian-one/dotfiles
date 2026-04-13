@@ -10,14 +10,9 @@ local function create_floating_window(opts)
 	local col = math.floor((vim.o.columns - width) / 2)
 	local row = math.floor((vim.o.lines - height) / 2)
 
-	local buf = nil
-	-- If a valid buffer was provided in `opts`, reuse it
-	if vim.api.nvim_buf_is_valid(opts.buf) then
-		buf = opts.buf
-	else
-		-- Otherwise, create a temporary scratch buffer without a file
-		buf = vim.api.nvim_create_buf(false, true)
-	end
+	-- Reuse a valid buffer from `opts` if provided, otherwise create a scratch buffer
+	local buf = (opts.buf and vim.api.nvim_buf_is_valid(opts.buf)) and opts.buf
+		or vim.api.nvim_create_buf(false, true)
 
 	-- Configure the floating window properties
 	local win_config = {
@@ -56,6 +51,10 @@ local toggle_terminal = function()
 		-- If the buffer doesn't have a terminal running inside it yet, start one
 		if vim.bo[state.floating.buf].buftype ~= "terminal" then
 			vim.cmd.terminal()
+			vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>", {
+				buffer = state.floating.buf,
+				desc = "Exit terminal mode",
+			})
 		end
 	else
 		-- If the window is valid and open, hide it
@@ -66,6 +65,4 @@ end
 --- Create a user command `:Floaterminal` corresponding to the toggle function
 vim.api.nvim_create_user_command("Floaterminal", toggle_terminal, {})
 
--- Keybindings for terminal usability
-vim.keymap.set("t", "<esc>", "<c-\\><c-n>", { desc = "Exit terminal mode" })
 vim.keymap.set("n", "<leader>t", toggle_terminal, { desc = "[T]oggle terminal" })

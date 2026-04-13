@@ -36,6 +36,7 @@ return {
 				atomicalign = true,
 				sigchanyzer = true,
 				slog = true,
+				ST1000 = false,
 			},
 			vulncheck = "Imports",
 			gofumpt = true,
