@@ -12,7 +12,6 @@ vim.opt.shiftwidth = 2 -- Indent width
 vim.opt.softtabstop = 2 -- Soft tab stop
 vim.opt.expandtab = true -- Use spaces instead of tabs
 vim.opt.smartindent = true -- Smart auto-indenting
-vim.opt.autoindent = true -- Copy indent from current line
 
 -- Search
 vim.opt.ignorecase = true -- Case insensitive search
@@ -22,7 +21,6 @@ vim.opt.incsearch = true -- Show matches as you type
 vim.opt.inccommand = "split" -- Live preview of substitutions
 
 -- Visual
-vim.g.have_nerd_font = true -- Enable nerd font icons
 vim.opt.winborder = "rounded" -- Rounded window borders
 vim.opt.breakindent = true -- Maintain indent on wrap
 vim.opt.termguicolors = true -- Enable 24-bit colors
@@ -30,32 +28,22 @@ vim.opt.signcolumn = "yes" -- Always show sign column
 vim.opt.colorcolumn = "100" -- Show column at 100 characters
 vim.opt.showmatch = true -- Highlight matching brackets
 vim.opt.matchtime = 2 -- How long to show matching bracket
-vim.opt.cmdheight = 1 -- Command line height
-vim.opt.completeopt = "menuone,noinsert,noselect" -- Completion options
-vim.opt.showmode = true -- Show mode in command line
+vim.opt.completeopt = "menuone,noinsert,noselect,fuzzy,popup" -- Completion options
 vim.opt.pumheight = 10 -- Popup menu height
 vim.opt.pumblend = 10 -- Popup menu transparency
 vim.opt.winblend = 0 -- Floating window transparency
 vim.opt.conceallevel = 0 -- Don't hide markup
 vim.opt.concealcursor = "" -- Don't hide cursor line markup
 
--- Create undo directory if it doesn't exist
-local undodir = vim.fn.expand("~/.vim/undodir")
-if vim.fn.isdirectory(undodir) == 0 then
-	vim.fn.mkdir(undodir, "p")
-end
-
 -- File handling
 vim.opt.backup = false -- Don't create backup files
 vim.opt.writebackup = false -- Don't create backup before writing
 vim.opt.swapfile = false -- Don't create swap files
 vim.opt.undofile = true -- Persistent undo
-vim.opt.undodir = undodir -- Undo directory
+vim.opt.undodir = vim.fn.stdpath("state") .. "/undo" -- Undo directory (auto-created by Neovim)
 vim.opt.updatetime = 300 -- Faster completion
 vim.opt.timeoutlen = 500 -- Key timeout duration
 vim.opt.ttimeoutlen = 0 -- Key code timeout
-vim.opt.autoread = true -- Auto reload files changed outside vim
-vim.opt.autowrite = false -- Don't auto save
 vim.opt.confirm = true -- Confirm before exiting unsaved
 
 -- Behavior
@@ -64,8 +52,9 @@ vim.opt.path:append("**") -- Include subdirectories in search
 vim.opt.mouse = "" -- Disable mouse support
 
 -- Folding
+vim.opt.foldmethod = "expr" -- Use expression for folding
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- Use treesitter for folding
 vim.opt.foldlevel = 99 -- Start with all folds open
-vim.opt.foldcolumn = "1" -- Show fold indicators in the sign area
 
 -- Splits
 vim.opt.splitbelow = true -- Horizontal splits go below
@@ -112,7 +101,6 @@ local diagnostic_signs = {
 
 vim.diagnostic.config({
 	virtual_text = { prefix = "●", spacing = 4 },
-	virtual_lines = false,
 	signs = {
 		text = {
 			[vim.diagnostic.severity.ERROR] = diagnostic_signs.Error,
@@ -121,7 +109,7 @@ vim.diagnostic.config({
 			[vim.diagnostic.severity.HINT] = diagnostic_signs.Hint,
 		},
 	},
-	underline = true,
+	underline = { severity = { min = vim.diagnostic.severity.WARN } },
 	update_in_insert = false,
 	severity_sort = true,
 	float = {
@@ -132,12 +120,15 @@ vim.diagnostic.config({
 		focusable = true,
 		style = "minimal",
 	},
+	jump = { float = true },
 })
+
+vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
 -- Plugins
 vim.pack.add({
 	{ src = "https://github.com/j-hui/fidget.nvim" },
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
 	{ src = "https://github.com/mason-org/mason-lspconfig.nvim" },
@@ -147,7 +138,6 @@ vim.pack.add({
 	{ src = "https://github.com/onsails/lspkind.nvim" },
 	{ src = "https://github.com/rafamadriz/friendly-snippets" },
 	{ src = "https://github.com/stevearc/conform.nvim" },
-	{ src = "https://github.com/folke/trouble.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
 	{ src = "https://github.com/nvim-telescope/telescope.nvim" },
 	{ src = "https://github.com/nvim-telescope/telescope-ui-select.nvim" },
@@ -237,34 +227,45 @@ require("mason").setup({
 require("mason-lspconfig").setup()
 require("mason-tool-installer").setup({
 	ensure_installed = {
-		"lua_ls",
+		-- LSP servers
+		"lua-language-server",
+		"typescript-language-server",
+		"gopls",
+		"svelte-language-server",
+		"tailwindcss-language-server",
+		"emmet-ls",
+		"html-lsp",
+		"css-lsp",
+		"templ",
+		"json-lsp",
+		"yaml-language-server",
+		"dockerfile-language-server",
+		"bash-language-server",
+		-- Formatters
 		"stylua",
-		"ts_ls",
 		"prettierd",
 		"prettier",
-		"eslint_d",
-		"gopls",
 		"goimports",
 		"gofumpt",
 		"golines",
-		"golangci-lint",
-		"svelte",
-		"tailwindcss",
-		"emmet_ls",
-		"html",
-		"cssls",
-		"templ",
-		"jsonls",
-		"yamlls",
-		"dockerls",
-		"bashls",
 		"sql-formatter",
+		-- Linters
+		"eslint_d",
+		"golangci-lint",
 		"codespell",
 	},
 })
 
 local lsp_highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 local lsp_detach_augroup = vim.api.nvim_create_augroup("lsp-detach", { clear = true })
+
+vim.api.nvim_create_autocmd("LspDetach", {
+	group = lsp_detach_augroup,
+	callback = function(event)
+		vim.lsp.buf.clear_references()
+		vim.api.nvim_clear_autocmds({ group = lsp_highlight_augroup, buffer = event.buf })
+	end,
+})
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("lsp_attach", { clear = true }),
@@ -296,25 +297,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				group = lsp_highlight_augroup,
 				callback = vim.lsp.buf.clear_references,
 			})
-			vim.api.nvim_create_autocmd("LspDetach", {
-				buffer = event.buf,
-				group = lsp_detach_augroup,
-				callback = function(event2)
-					vim.lsp.buf.clear_references()
-					vim.api.nvim_clear_autocmds({ group = lsp_highlight_augroup, buffer = event2.buf })
-				end,
-			})
 		end
 
 		if client and client:supports_method("textDocument/inlayHint", event.buf) then
 			map("<leader>th", function()
 				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 			end, "[T]oggle Inlay [H]ints")
-		end
-
-		if client and client.server_capabilities.foldingRangeProvider then
-			vim.opt_local.foldmethod = "expr"
-			vim.opt_local.foldexpr = "v:lua.vim.lsp.foldexpr()"
 		end
 	end,
 })
@@ -370,7 +358,7 @@ require("blink.cmp").setup({
 			auto_show_delay_ms = 200,
 			window = { border = "rounded" },
 		},
-		ghost_text = { enabled = true, show_with_menu = true },
+		ghost_text = { enabled = false, show_with_menu = true },
 		accept = { auto_brackets = { enabled = true } },
 	},
 	signature = {
@@ -379,31 +367,16 @@ require("blink.cmp").setup({
 	},
 	fuzzy = { implementation = "prefer_rust" },
 	sources = {
-		default = { "lsp", "path", "snippets", "buffer", "ripgrep" },
+		default = { "lsp", "path", "snippets", "buffer" },
 		providers = {
 			lsp = { fallbacks = { "buffer" } },
 			buffer = {
 				min_keyword_length = 3,
 				max_items = 5,
 			},
-			ripgrep = {
-				module = "blink-ripgrep",
-				name = "Ripgrep",
-				score_offset = -3,
-				opts = {
-					prefix_min_len = 3,
-					context_size = 5,
-					max_filesize = "1M",
-				},
-			},
 		},
 	},
 })
-
--- Trouble (diagnostics / qf / loclist / LSP UI)
-require("trouble").setup()
-vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics tree (Trouble)" })
-vim.keymap.set("n", "<leader>xs", "<cmd>Trouble symbols toggle focus=false<cr>", { desc = "Symbols outline (Trouble)" })
 
 -- Formatting
 require("conform").setup({
@@ -446,7 +419,6 @@ require("oil").setup({
 vim.keymap.set("n", "<leader>e", "<cmd>Oil<cr>", { desc = "File [E]xplorer" })
 
 -- Fuzzy finder
-local open_with_trouble = require("trouble.sources.telescope").open
 require("telescope").setup({
 	defaults = {
 		preview = { treesitter = true },
@@ -468,10 +440,6 @@ require("telescope").setup({
 			width = 0.99,
 			prompt_position = "top",
 			preview_cutoff = 40,
-		},
-		mappings = {
-			i = { ["<c-t>"] = open_with_trouble },
-			n = { ["<c-t>"] = open_with_trouble },
 		},
 	},
 	extensions = {
@@ -527,12 +495,10 @@ require("which-key").setup({
 	},
 	spec = {
 		{ "<leader>c", group = "[C]ode" },
-		{ "<leader>d", group = "[D]iagnostics" },
 		{ "<leader>g", group = "[G]it" },
 		{ "<leader>r", group = "[R]ename" },
 		{ "<leader>s", group = "[S]earch" },
 		{ "<leader>t", group = "[T]oggle" },
-		{ "<leader>x", group = "Trouble" },
 	},
 })
 
@@ -544,16 +510,6 @@ require("vscode").setup({
 	transparent = true,
 	italic_comments = true,
 	terminal_colors = true,
-	group_overrides = {
-		TabLineFill = { bg = "NONE", fg = "#767676" },
-		BlinkCmpMenu = { bg = "NONE" },
-		BlinkCmpMenuBorder = { bg = "NONE" },
-		BlinkCmpDoc = { bg = "NONE" },
-		BlinkCmpDocBorder = { bg = "NONE" },
-		BlinkCmpSignatureHelp = { bg = "NONE" },
-		BlinkCmpSignatureHelpBorder = { bg = "NONE" },
-		BlinkCmpScrollBarGutter = { bg = "NONE" },
-	},
 })
 vim.cmd("colorscheme vscode")
 
