@@ -4,25 +4,36 @@
   "spacing": 0,
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["network", "pulseaudio", "backlight", "custom/kbd_backlight", "battery", "custom/lock"],
+  "modules-right": ["group/net_audio", "group/brightness", "group/power"],
+  "custom/split": {
+    "format": "|",
+    "tooltip": false
+  },
+  "group/net_audio": {
+    "orientation": "horizontal",
+    "modules": ["network", "custom/split", "pulseaudio"]
+  },
+  "group/brightness": {
+    "orientation": "horizontal",
+    "modules": ["backlight", "custom/split", "custom/kbd_backlight"]
+  },
+  "group/power": {
+    "orientation": "horizontal",
+    "modules": ["battery", "custom/split", "custom/lock"]
+  },
   "hyprland/workspaces": {
     "on-click": "activate",
     "active-only": false,
     "all-outputs": true,
     "format": "{}",
-    "format-icons": {
-      "urgent": "",
-      "active": "",
-      "default": ""
-    },
     "persistent-workspaces": {
       "*": 5
     }
   },
   "clock": {
     "interval": 1,
-    "format": "󰥔 {:%H:%M}",
-    "format-alt": "󰃰 {:%Y-%m-%d}",
+    "format": " {:%H:%M}",
+    "format-alt": " {:%Y-%m-%d}",
     "timezone": "America/Denver",
     "tooltip-format": "<tt><small>{calendar}</small></tt>",
     "calendar": {
@@ -41,20 +52,18 @@
     }
   },
   "network": {
-    "format-wifi": "󰤨 {signalStrength}%",
-    "format-ethernet": "󰈀",
-    "format-disconnected": "󰤮",
-    "format-alt": "󰤨 {essid}",
-    "tooltip-format": "{ifname}: {ipaddr}/{cidr}\n⬆ {bandwidthUpBytes} ⬇ {bandwidthDownBytes}",
+    "format-wifi": " {signalStrength}%",
+    "format-ethernet": "",
+    "format-disconnected": "",
+    "format-alt": " {essid}",
+    "tooltip-format": "{ifname}: {ipaddr}/{cidr}\nup {bandwidthUpBytes} down {bandwidthDownBytes}",
     "on-click": "nm-connection-editor"
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
-    "format-muted": "󰸈",
+    "format-muted": "",
     "format-icons": {
-      "headphone": "󰋋",
-      "headset": "󰋎",
-      "default": ["󰕿", "󰖀", "󰕾"]
+      "default": ["", "", ""]
     },
     "on-click": "pavucontrol",
     "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
@@ -62,29 +71,28 @@
     "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
   },
   "backlight": {
-    "format": "{icon} {percent}%",
-    "format-icons": ["󰃞", "󰃟", "󰃠"],
+    "format": " {percent}%",
     "on-scroll-up": "brightnessctl set +5%",
     "on-scroll-down": "brightnessctl set 5%-"
   },
   "custom/kbd_backlight": {
     "format": "{}",
-    "exec": "p=$(brightnessctl -d kbd_backlight -m 2>/dev/null | cut -d',' -f4 | tr -d '%'); [[ \"$p\" =~ ^[0-9]+$ ]] || p=0; echo \"$([[ \"$p\" != \"0\" ]] && echo '󰌌' || echo '󰌐') $p%\"",
+    "exec": "p=$(brightnessctl -d kbd_backlight -m 2>/dev/null | cut -d',' -f4 | tr -d '%'); [[ \"$p\" =~ ^[0-9]+$ ]] || p=0; printf '\\uf11c %s%%' \"$p\"",
     "interval": 5,
     "on-scroll-up": "brightnessctl -d kbd_backlight set +1%",
     "on-scroll-down": "brightnessctl -d kbd_backlight set 1%-"
   },
   "custom/lock": {
-    "format": "󰌾",
+    "format": "",
     "tooltip": false,
     "on-click": "hyprlock"
   },
   "battery": {
     "states": { "warning": 30, "critical": 15 },
     "format": "{icon} {capacity}%",
-    "format-charging": "󰂄 {capacity}%",
-    "format-plugged": "󰚥 {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
     "format-alt": "{icon} {time}",
-    "format-icons": ["󰂎", "󰁻", "󰁽", "󰁿", "󰂁", "󰁹"]
+    "format-icons": ["", "", "", "", ""]
   }
 }

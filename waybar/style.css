@@ -1,9 +1,18 @@
+@define-color bg        rgba(15, 15, 23, 0.85);
+@define-color hairline  rgba(255, 255, 255, 0.06);
+@define-color hover     rgba(255, 255, 255, 0.05);
+@define-color active    rgba(255, 255, 255, 0.10);
+@define-color text      #e0def4;
+@define-color text-dim  #908caa;
+@define-color accent    #c4a7e7;
+@define-color urgent    #eb6f92;
+
 * {
-  font-family: "ComicCodeLigatures Nerd Font";
+  font-family: "Comic Code Ligatures", "Font Awesome 6 Free Solid", "Font Awesome 6 Free", "Font Awesome 6 Brands";
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   min-height: 0;
-  color: #e0def4;
+  color: @text;
 }
 
 window#waybar {
@@ -13,48 +22,45 @@ window#waybar {
 .modules-left,
 .modules-center,
 .modules-right {
-  margin: 6px 12px;
-  padding: 2px 8px;
-  border-radius: 12px;
-  background-color: rgba(0, 0, 0, 0.95);
-  border: 1px solid rgba(110, 106, 134, 0.3);
+  margin: 8px 12px;
+  background: transparent;
+  border: none;
 }
 
-#workspaces {
-  padding: 0;
-  margin: 0;
-  background: transparent;
+#workspaces,
+#clock,
+#net_audio,
+#brightness,
+#power {
+  background-color: @bg;
+  border: 1px solid @hairline;
+  border-radius: 999px;
+  padding: 4px 16px;
+  margin: 0 6px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.38);
 }
 
 #workspaces button {
   background: transparent;
-  padding: 0;
-  margin: 0;
-  min-width: 0;
   border: none;
+  padding: 0 6px;
+  margin: 0 4px;
+  min-width: 0;
 }
 
-#workspaces button.persistent,
-#workspaces button.active {
-  padding: 0 8px;
-  margin: 2px;
-  min-width: 30px;
+#workspaces button label {
+  color: @text-dim;
+  transition: color 150ms ease;
 }
 
-#workspaces button.active {
-  background-color: rgba(38, 35, 58, 0.8);
-  border-radius: 10px;
+#workspaces button:hover label {
+  color: @text;
 }
 
-#workspaces button:hover {
-  background-color: rgba(31, 29, 46, 0.5);
-  border-radius: 10px;
-}
-
-#cpu,
-#custom-uptime,
-#clock {
-  padding: 0 10px;
+#workspaces button.active label,
+#workspaces button.focused label {
+  color: @accent;
+  font-weight: 700;
 }
 
 #network,
@@ -64,11 +70,40 @@ window#waybar {
 #battery,
 #custom-lock {
   padding: 0 8px;
+  transition: color 150ms ease;
+}
+
+#custom-lock:hover,
+#network:hover,
+#pulseaudio:hover,
+#backlight:hover,
+#custom-kbd_backlight:hover,
+#battery:hover {
+  color: @accent;
+}
+
+#custom-split {
+  color: @hairline;
+  padding: 0 6px;
+}
+
+#battery.charging,
+#battery.plugged {
+  color: @accent;
+}
+
+#battery.critical:not(.charging) {
+  color: @urgent;
+  animation: pulse 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  to { color: @text-dim; }
 }
 
 tooltip {
   padding: 8px 12px;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.95);
-  border: 1px solid rgba(110, 106, 134, 0.3);
+  background-color: @bg;
+  border: 1px solid @hairline;
 }
