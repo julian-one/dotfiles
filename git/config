@@ -1,0 +1,7 @@
+[user]
+	email = 38872371+julian-one@users.noreply.github.com
+	name = Julian One
+[includeIf "gitdir:~/whg/"]
+	path = ~/.config/git/work
+[push]
+	autoSetupRemote = true
