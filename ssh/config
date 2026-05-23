@@ -1,0 +1,11 @@
+Include ~/.ssh/1Password/config
+
+Host github-westhill
+    HostName github.com
+
+Host sauron jarvis friday mbp-arch
+    HostName %h.local
+    User julian-one
+
+Host *
+    IdentityAgent ~/.1password/agent.sock
