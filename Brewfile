@@ -6,6 +6,10 @@ brew "zsh-syntax-highlighting"
 # git
 brew "git"
 
+# tmux
+brew "tmux"
+brew "tpm"
+
 # CLI
 brew "gh"
 brew "tree"
