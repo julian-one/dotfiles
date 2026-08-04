@@ -1,0 +1,20 @@
+[user]
+	email = 38872371+julian-one@users.noreply.github.com
+	name = Julian One
+[diff]
+	algorithm = histogram
+[fetch]
+	prune = true
+[init]
+	defaultBranch = main
+[merge]
+	conflictstyle = zdiff3
+[pull]
+	rebase = true
+[push]
+	autoSetupRemote = true
+[rebase]
+	autostash = true
+# Untracked, optional — machine-specific overrides; git skips the include when absent.
+[include]
+	path = ~/.config/git/local.config

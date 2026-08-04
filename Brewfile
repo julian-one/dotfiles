@@ -3,7 +3,11 @@ brew "zsh-completions"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
+# git
+brew "git"
+
 # CLI
+brew "gh"
 brew "tree"
 brew "wget"
 
