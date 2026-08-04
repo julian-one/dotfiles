@@ -11,7 +11,7 @@
 2. **Symlink the configs:**
 
    ```sh
-   mkdir -p ~/.config/git ~/.ssh
+   mkdir -p ~/.config/git ~/.ssh ~/.claude
    chmod 700 ~/.ssh
 
    ln -sfn ~/dotfiles/zsh/.zshrc         ~/.zshrc
@@ -20,6 +20,7 @@
    ln -sfn ~/dotfiles/tmux               ~/.config/tmux
    ln -sfn ~/dotfiles/nvim               ~/.config/nvim
    ln -sfn ~/dotfiles/ssh/config         ~/.ssh/config
+   ln -sfn ~/dotfiles/claude/CLAUDE.md   ~/.claude/CLAUDE.md
    ```
 
 ## Local

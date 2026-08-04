@@ -42,10 +42,12 @@ cask "1password-cli"
 
 # CLI
 brew "gh"
+brew "poppler"
 brew "tree"
 brew "wget"
 
 # Apps
+cask "claude-code@latest"
 cask "docker-desktop"
 cask "gcloud-cli"
 cask "google-chrome"
