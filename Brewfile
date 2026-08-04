@@ -34,6 +34,10 @@ brew "templ"
 brew "golangci-lint"
 brew "govulncheck"
 
+# ssh
+cask "1password"
+cask "1password-cli"
+
 # CLI
 brew "gh"
 brew "tree"

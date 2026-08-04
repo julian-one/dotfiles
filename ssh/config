@@ -1,0 +1,6 @@
+Include ~/.ssh/1Password/config
+Include ~/.ssh/local.config # Untracked
+
+Host *
+    # Agent enabled in 1Password → Settings → Developer.
+    IdentityAgent ~/.1password/agent.sock
