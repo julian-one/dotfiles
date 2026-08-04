@@ -44,6 +44,7 @@ brew "tree"
 brew "wget"
 
 # Apps
+cask "claude-code"
 cask "docker-desktop"
 cask "gcloud-cli"
 cask "google-chrome"
