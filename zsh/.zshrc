@@ -4,6 +4,8 @@ for brew in /opt/homebrew/bin/brew /usr/local/bin/brew; do
 done
 unset brew
 
+path+=("$HOME/dotfiles/bin")
+
 export EDITOR=nvim
 export MANPAGER='nvim +Man!'
 

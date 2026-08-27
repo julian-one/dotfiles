@@ -14,24 +14,12 @@ brew "tpm"
 brew "ripgrep"
 brew "fd"
 brew "neovim"
-brew "stylua"
 brew "tree-sitter-cli"
-brew "bash-language-server"
-brew "dockerfile-language-server"
-brew "lua-language-server"
-brew "tailwindcss-language-server"
-brew "yaml-language-server"
-brew "sql-formatter"
-brew "typescript"
-brew "prettierd"
-brew "prettier"
-brew "codespell"
+brew "node"
+
+# go
 brew "go"
-brew "gopls"
-brew "goimports"
-brew "gofumpt"
-brew "golines"
-brew "air"
+brew "go-air"
 brew "templ"
 brew "golangci-lint"
 brew "govulncheck"
@@ -42,13 +30,19 @@ cask "1password-cli"
 
 # CLI
 brew "gh"
+brew "libpq", link: true
 brew "poppler"
 brew "tree"
 brew "wget"
+brew "woff2"
 
 # Apps
 cask "claude-code@latest"
 cask "docker-desktop"
 cask "gcloud-cli"
 cask "google-chrome"
+cask "pgadmin4"
 cask "slack"
+
+# Fonts
+cask "font-atkynson-mono-nerd-font"

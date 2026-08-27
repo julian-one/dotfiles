@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MORIA=$HOME/web/moria
+SHIRE=$HOME/web/shire
+RIVENDELL=$HOME/web/rivendell
+
+ensure_session() {
+	local session=$1 dir=$2 serve_cmd=$3
+	if ! tmux has-session -t "=$session" 2>/dev/null; then
+		tmux new-session -d -s "$session" -c "$dir" -n nvim
+		tmux new-window -t "=$session" -c "$dir" -n serve
+		tmux send-keys -t "=$session:nvim" nvim Enter
+		tmux send-keys -t "=$session:serve" "$serve_cmd" Enter
+		tmux select-window -t "=$session:nvim"
+	fi
+}
+
+ensure_session moria "$MORIA" 'go run . serve'
+ensure_session shire "$SHIRE" 'make dev'
+ensure_session rivendell "$RIVENDELL" 'go run . serve'
+
+TARGET=${1:-moria}
+
+if [[ -n ${TMUX:-} ]]; then
+	exec tmux switch-client -t "=$TARGET"
+else
+	exec tmux attach-session -t "=$TARGET"
+fi
