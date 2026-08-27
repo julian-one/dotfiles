@@ -2,35 +2,30 @@
 
 ## Setup
 
-1. **Install dependencies:**
+Homebrew must be installed first. Everything else is `./install`:
 
-   ```sh
-   brew bundle --file ~/dotfiles/Brewfile
-   ```
+```sh
+./install          # install the Brewfile, link any config that isn't linked yet
+./install --force  # same, but replace whatever is sitting in a symlink's place
+./install --check  # change nothing, just report drift (non-zero exit if any)
+```
 
-2. **Symlink the configs:**
+## What it manages
 
-   ```sh
-   mkdir -p ~/.config/git ~/.ssh ~/.claude
-   chmod 700 ~/.ssh
+| Repo               | Home                   |
+| ------------------ | ---------------------- |
+| `zsh/.zshrc`       | `~/.zshrc`             |
+| `git/config`       | `~/.config/git/config` |
+| `git/ignore`       | `~/.config/git/ignore` |
+| `tmux`             | `~/.config/tmux`       |
+| `nvim`             | `~/.config/nvim`       |
+| `ssh/config`       | `~/.ssh/config`        |
+| `claude/CLAUDE.md` | `~/.claude/CLAUDE.md`  |
 
-   ln -sfn ~/dotfiles/zsh/.zshrc         ~/.zshrc
-   ln -sfn ~/dotfiles/git/config         ~/.config/git/config
-   ln -sfn ~/dotfiles/git/ignore         ~/.config/git/ignore
-   ln -sfn ~/dotfiles/tmux               ~/.config/tmux
-   ln -sfn ~/dotfiles/nvim               ~/.config/nvim
-   ln -sfn ~/dotfiles/ssh/config         ~/.ssh/config
-   ln -sfn ~/dotfiles/claude/CLAUDE.md   ~/.claude/CLAUDE.md
-   ```
 
-## Local
+## Overrides
 
 Untracked and optional:
 
 - `~/.ssh/local.config` — extra hosts
 - `~/.config/git/local.config` — overrides
-
-## Verification
-
-- `brew bundle check` — verify everything is installed
-- `brew bundle cleanup` — list anything installed that the Brewfile doesn't own
